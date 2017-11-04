@@ -1,6 +1,7 @@
 {
   "name": "ymca-backend",
   "version": "0.0.0",
+  "description": "YMCA Mentor Server Backend",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -12,6 +13,11 @@
     "express": "~4.15.5",
     "morgan": "~1.9.0",
     "pug": "2.0.0-beta11",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "~2.4.5",
+    "mongoose": "latest",
+    "passport": "latest",
+    "bcrypt-nodejs": "latest",
+    "passport-local": "latest",
+
   }
 }
