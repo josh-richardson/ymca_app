@@ -21,6 +21,8 @@
     "jwt-simple": "0.5.1",
     "express-validator": "4.3.0",
     "bluebird": "3.5.1",
-    "uuid": "3.1.0"
+    "uuid": "3.1.0",
+    "twilio": "3.9.2",
+    "sendgrid": "5.2.3"
   }
 }
