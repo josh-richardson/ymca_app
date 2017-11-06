@@ -26,6 +26,7 @@ const createUser = function (value) {
         newUser.firstName = value.firstName;
         newUser.secondName = value.secondName;
         newUser.admin = false;
+        newUser.phone = value.phone;
         newUser.save(function (err, result) {
             if (err) {
                 return reject(err);
@@ -46,6 +47,7 @@ router.post('/register', [
             });
         }).escape(),
     check('password', 'Passwords must be at least 5 characters').isLength({min: 5}),
+    check('phone').exists().isMobilePhone("en-GB").escape(),
     check('firstName').exists().isAlphanumeric().escape(),
     check('secondName').exists().isAlphanumeric().escape(),
 ], (req, res, next) => {
@@ -77,7 +79,7 @@ router.post('/authenticate', [
         }
     }).catch(err => {
         res.status(500).json(config.debug ? err : {error: 'Server error occurred'});
-    });
+    }); 
 });
 
 
