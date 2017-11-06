@@ -7,15 +7,22 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const validator = require('express-validator');
+const config = require('./config/config');
 
-
-mongoose.connect('mongodb://localhost/ymca', () => {
-    console.log('Connected to mongodb.');
+mongoose.connect(config.db_path, function (err) {
+    if (err) {
+        console.log("Failed to connect to mongo: " + err);
+    } else {
+        console.log('Connected to mongodb.');
+    }
 });
+
 require('./config/passport');
 
 const index = require('./routes/index');
-const users = require('./routes/users');
+const api_users = require('./routes/api/users');
+const api_methods = require('./routes/api/methods');
+
 
 const app = express();
 
@@ -35,7 +42,8 @@ app.use(validator());
 app.use(passport.initialize());
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/api/users', api_users);
+app.use('/api/methods', api_methods);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

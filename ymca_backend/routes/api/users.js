@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const {check, validationResult} = require('express-validator/check');
 const {matchedData, sanitize} = require('express-validator/filter');
-const user = require('../models/user');
-const config = require('../config/config');
+const user = require('../../models/user');
+const config = require('../../config/config');
 const jwt = require('jwt-simple');
 const passport = require('passport');
 
@@ -13,7 +13,7 @@ const findUserByEmail = function (value) {
         user.findOne({'email': value}, function (err, result) {
             if (err) resolve(false);
             if (result) resolve(false);
-            return resolve(true);
+            resolve(true);
         });
     });
 };
@@ -59,7 +59,6 @@ router.post('/register', [
     });
 });
 
-
 router.post('/authenticate', [
     check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail().escape(),
     check('password', 'Invalid password').isLength({min: 5}),
@@ -81,10 +80,5 @@ router.post('/authenticate', [
     });
 });
 
-router.post('/profile', passport.authenticate('jwt', { session: false }),
-    function(req, res) {
-        res.send(req.user);
-    }
-);
 
 module.exports = router;
