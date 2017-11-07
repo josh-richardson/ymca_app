@@ -7,6 +7,7 @@ const config = require('../../config/config');
 const jwt = require('jwt-simple');
 const passport = require('passport');
 const twilio = require('../../utils/twilio');
+const sendgrid = require('../../utils/sendgrid');
 
 router.post('/profile', passport.authenticate('jwt', { session: false }),
     function(req, res) {
@@ -19,11 +20,12 @@ router.post('/emergency', passport.authenticate('jwt', { session: false }),
         const managerPhone = req.user.manager.phone;
         const managerEmail = req.user.manager.email;
         twilio.sendSms(managerPhone, "An emergency happened, send help!");
-        twilio.sendEmergencyCall(managerPhone)
-
-
+        twilio.sendEmergencyCall(managerPhone);
+        sendgrid.sendEmail(managerEmail, "YMCA Emergency", "An enmergency happaned, send help!")
+        res.json({success: true});
     }
 );
+
 
 
 

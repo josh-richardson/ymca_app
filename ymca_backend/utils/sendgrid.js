@@ -1,12 +1,12 @@
-const sendEmail = function (to, message) {
+const config = require('../config/config');
 
-    const helper = require('sendgrid').mail;
+const sendEmail = function (to, subject, message) {
+    const helper = require('sendgrid').mail(config.sendgrid_api_key);
+
     const fromEmail = new helper.Email('test@example.com');
-    const toEmail = new helper.Email('test@example.com');
-    const subject = 'Sending with SendGrid is Fun';
-    const content = new helper.Content('text/plain', 'and easy to do anywhere, even with Node.js');
+    const toEmail = new helper.Email(to);
+    const content = new helper.Content('text/plain', message);
     const mail = new helper.Mail(fromEmail, subject, toEmail, content);
-
     const sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
     const request = sg.emptyRequest({
         method: 'POST',
@@ -24,3 +24,5 @@ const sendEmail = function (to, message) {
     });
 };
 
+
+module.exports = {sendEmail};
