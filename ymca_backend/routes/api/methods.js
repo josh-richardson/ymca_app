@@ -21,7 +21,7 @@ router.post('/emergency', passport.authenticate('jwt', { session: false }),
         const managerEmail = req.user.manager.email;
         twilio.sendSms(managerPhone, "An emergency happened, send help!");
         twilio.sendEmergencyCall(managerPhone);
-        sendgrid.sendEmail(managerEmail, "YMCA Emergency", "An enmergency happaned, send help!")
+        sendgrid.sendEmail(managerEmail, "YMCA Emergency", "An enmergency happaned, send help!");
         res.json({success: true});
     }
 );

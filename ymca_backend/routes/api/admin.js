@@ -8,6 +8,7 @@ const manager = require('../../models/user');
 const config = require('../../config/config');
 const jwt = require('jwt-simple');
 const passport = require('passport');
+const api_utils = require('../../utils/db_utils');
 
 
 function isAdmin(req, res, next) {
@@ -15,6 +16,7 @@ function isAdmin(req, res, next) {
         return next();
     res.status(403).json({error: "Access Denied"})
 }
+
 
 router.post('/mentors', passport.authenticate('jwt', {session: false}), isAdmin,
     function (req, res) {
@@ -24,15 +26,20 @@ router.post('/mentors', passport.authenticate('jwt', {session: false}), isAdmin,
     }
 );
 
-router.post('/mentors/add', passport.authenticate('jwt', {session: false}), isAdmin,
+
+router.post('/mentors/delete', passport.authenticate('jwt', {session: false}), isAdmin, [
+        check('id').exists().escape(),
+    ],
     function (req, res) {
-
-    }
-);
-
-router.post('/mentors/delete', passport.authenticate('jwt', {session: false}), isAdmin,
-    function (req, res) {
-
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        user.findByIdAndRemove(data.id, function (err, user) {
+            if (err) res.json(err);
+            res.json({success: true});
+        });
     }
 );
 
@@ -41,8 +48,6 @@ router.post('/mentors/edit', passport.authenticate('jwt', {session: false}), isA
 
     }
 );
-
-
 
 
 router.post('/mentees', passport.authenticate('jwt', {session: false}), isAdmin,
@@ -54,7 +59,21 @@ router.post('/mentees', passport.authenticate('jwt', {session: false}), isAdmin,
 );
 
 
-router.post('/mentees/add', passport.authenticate('jwt', {session: false}), isAdmin,
+router.post('/mentees/add', passport.authenticate('jwt', {session: false}), isAdmin, [
+        check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail()
+            .custom(value => {
+                return api_utils.objectExistsByKey(mentee, 'email', value).then(retVal => {
+                    if (!retVal) throw new Error();
+                    return true;
+                }).catch(() => {
+                    return false;
+                });
+            }).withMessage("This email is either in use, or a server error occurred.").escape(),
+        check('meetingAddress').exists().escape(),
+        check('firstName').exists().isAlphanumeric().escape(),
+        check('secondName').exists().isAlphanumeric().escape(),
+        check('phone').exists().isMobilePhone("en-GB").escape(),
+    ],
     function (req, res) {
 
     }
@@ -75,8 +94,6 @@ router.post('/mentees/edit', passport.authenticate('jwt', {session: false}), isA
 );
 
 
-
-
 router.post('/managers', passport.authenticate('jwt', {session: false}), isAdmin,
     function (req, res) {
         manager.find().then(managers => {
@@ -86,7 +103,20 @@ router.post('/managers', passport.authenticate('jwt', {session: false}), isAdmin
 );
 
 
-router.post('/managers/add', passport.authenticate('jwt', {session: false}), isAdmin,
+router.post('/managers/add', passport.authenticate('jwt', {session: false}), isAdmin, [
+        check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail()
+            .custom(value => {
+                return api_utils.objectExistsByKey(manager, 'email', value).then(retVal => {
+                    if (!retVal) throw new Error();
+                    return true;
+                }).catch(() => {
+                    return false;
+                });
+            }).withMessage("This email is either in use, or a server error occurred.").escape(),
+        check('firstName').exists().isAlphanumeric().escape(),
+        check('secondName').exists().isAlphanumeric().escape(),
+        check('phone').exists().isMobilePhone("en-GB").escape(),
+    ],
     function (req, res) {
 
     }

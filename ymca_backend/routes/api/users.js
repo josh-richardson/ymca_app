@@ -6,17 +6,8 @@ const user = require('../../models/user');
 const config = require('../../config/config');
 const jwt = require('jwt-simple');
 const passport = require('passport');
+const api_utils = require('../../utils/db_utils');
 
-
-const findUserByEmail = function (value) {
-    return new Promise(function (resolve, reject) {
-        user.findOne({'email': value}, function (err, result) {
-            if (err) resolve(false);
-            if (result) resolve(false);
-            resolve(true);
-        });
-    });
-};
 
 const createUser = function (value) {
     return new Promise(function (resolve, reject) {
@@ -39,13 +30,13 @@ const createUser = function (value) {
 router.post('/register', [
     check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail()
         .custom(value => {
-            return findUserByEmail(value).then(retVal => {
-                if (!retVal) throw new Error('This email is already in use');
+            return api_utils.objectExistsByKey(user, 'email', value).then(retVal => {
+                if (!retVal) throw new Error();
                 return true;
             }).catch(() => {
-                throw new Error('Server error occurred');
+                return false;
             });
-        }).escape(),
+        }).withMessage("This email is either in use, or a server error occurred.").escape(),
     check('password', 'Passwords must be at least 5 characters').isLength({min: 5}),
     check('phone').exists().isMobilePhone("en-GB").escape(),
     check('firstName').exists().isAlphanumeric().escape(),
