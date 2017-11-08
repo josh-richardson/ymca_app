@@ -1,6 +1,5 @@
 # Team Project - cpb
 
-Team Project 2017/18 - Team CPB
-YMCA Scotland
+Team Project 2017/18 - Team CPB - YMCA Scotland
 
-Please see the [Wiki](http://130.209.251.25/cpb-group/cpb-project/wikis/home)
+For more info please see the [Wiki](http://130.209.251.25/cpb-group/cpb-project/wikis/home)
