@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, TextInput, TouchableWithoutFeedback, TouchableOpacity, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TextInput, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Alert } from 'react-native';
 import { styles } from './styles';
+import { BaseStyles } from '../../BaseStyles';
 import PropTypes from 'prop-types';
 
 export default class LoginScreen extends React.Component {
@@ -27,16 +28,16 @@ export default class LoginScreen extends React.Component {
     const { navigate } = this.props.navigation;
     return(
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
+        <View style={BaseStyles.container}>
           <Image
             source={require('../../images/ymca_logo.png')}
             style={styles.logo}
           />
-          <TextInput style={styles.loginField} placeholder="  Email" keyboardType='email-address' onChangeText={(text) => this.setState()} />
-          <TextInput style={styles.loginField} placeholder="  Password" secureTextEntry={true} />
+          <TextInput style={styles.loginField} placeholder="  Email" keyboardType='email-address' onChangeText={(text) => this.setEmailAddress(text)} />
+          <TextInput style={styles.loginField} placeholder="  Password" secureTextEntry={true} onChangeText={(text) => this.setPassword(text)} />
 
           <TouchableOpacity
-            onPress={() => {navigate("Meetings")}}
+            onPress={() => {navigate('Meetings')}}
             style={{marginTop: '7%'}}
           >
             <View style={{
