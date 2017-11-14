@@ -4,7 +4,7 @@ const {check, validationResult} = require('express-validator/check');
 const {matchedData, sanitize} = require('express-validator/filter');
 const user = require('../../models/user');
 const mentee = require('../../models/mentee');
-const manager = require('../../models/user');
+const manager = require('../../models/manager');
 const config = require('../../config/config');
 const jwt = require('jwt-simple');
 const passport = require('passport');
@@ -118,12 +118,39 @@ router.post('/managers/add', passport.authenticate('jwt', {session: false}), isA
         check('phone').exists().isMobilePhone("en-GB").escape(),
     ],
     function (req, res) {
-
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        const newManager = new manager();
+        newManager.email = data.email;
+        newManager.firstName = data.firstName;
+        newManager.secondName = data.secondName;
+        newManager.phone = data.phone;
+        newManager.save(function (err, result) {
+            if (!err) {
+                res.json({success: true})
+            }
+        });
     }
 );
 
 
-router.post('/managers/delete', passport.authenticate('jwt', {session: false}), isAdmin,
+router.post('/managers/delete', passport.authenticate('jwt', {session: false}), isAdmin, [
+        check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail()
+            .custom(value => {
+                return api_utils.objectExistsByKey(manager, 'email', value).then(retVal => {
+                    if (!retVal) throw new Error();
+                    return true;
+                }).catch(() => {
+                    return false;
+                });
+            }).withMessage("This email is either in use, or a server error occurred.").escape(),
+        check('firstName').exists().isAlphanumeric().escape(),
+        check('secondName').exists().isAlphanumeric().escape(),
+        check('phone').exists().isMobilePhone("en-GB").escape(),
+    ],
     function (req, res) {
 
     }
@@ -135,6 +162,35 @@ router.post('/managers/edit', passport.authenticate('jwt', {session: false}), is
 
     }
 );
+
+router.post('/managers/assign', passport.authenticate('jwt', {session: false}), isAdmin, [
+        check('mentorEmail').isEmail().withMessage('Invalid email').trim().normalizeEmail().escape(),
+        check('managerEmail').isEmail().withMessage('Invalid email').trim().normalizeEmail().escape(),
+    ],
+    function (req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        api_utils.findObjectByKey(user, 'email', data.mentorEmail).then(result_user => {
+            api_utils.findObjectByKey(manager, 'email', data.managerEmail).then(result_manager => {
+                result_user.manager = result_manager;
+                result_user.save(function (err, result) {
+                    if (!err) {
+                        res.json({success: true})
+                    } else {
+                        res.json(err);
+                    }
+                });
+            }).catch((err) => {
+                console.log(err);
+            })
+        }).catch((err) => {
+            console.log(err);
+
+        });
+    });
 
 
 module.exports = router;

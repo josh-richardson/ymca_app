@@ -3,6 +3,7 @@ const twilio = require('twilio');
 const client = new twilio(config.twilio_sid, config.twilio_token);
 
 const sendSms = function (to, message) {
+    console.log(to);
     client.messages.create({
         body: message,
         to: to,

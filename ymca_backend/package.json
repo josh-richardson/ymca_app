@@ -23,6 +23,7 @@
     "bluebird": "3.5.1",
     "uuid": "3.1.0",
     "twilio": "3.9.2",
-    "sendgrid": "5.2.3"
+    "@sendgrid/mail": "6.1.4"
   }
+
 }

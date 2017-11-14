@@ -8,6 +8,9 @@ const jwt = require('jwt-simple');
 const passport = require('passport');
 const twilio = require('../../utils/twilio');
 const sendgrid = require('../../utils/sendgrid');
+const api_utils = require('../../utils/db_utils');
+const manager = require('../../models/manager');
+
 
 router.post('/profile', passport.authenticate('jwt', { session: false }),
     function(req, res) {
@@ -17,12 +20,14 @@ router.post('/profile', passport.authenticate('jwt', { session: false }),
 
 router.post('/emergency', passport.authenticate('jwt', { session: false }),
     function(req, res) {
-        const managerPhone = req.user.manager.phone;
-        const managerEmail = req.user.manager.email;
-        twilio.sendSms(managerPhone, "An emergency happened, send help!");
-        twilio.sendEmergencyCall(managerPhone);
-        sendgrid.sendEmail(managerEmail, "YMCA Emergency", "An enmergency happaned, send help!");
-        res.json({success: true});
+        api_utils.findObjectByKey(manager, '_id', req.user.manager).then(result_manager => {
+            twilio.sendSms(result_manager.phone, "An emergency happened, send help!");
+            // twilio.sendEmergencyCall(managerPhone);
+            sendgrid.sendEmail(result_manager.email, "YMCA Emergency", "An enmergency happaned, send help!");
+            res.json({success: true});
+        }).catch((err) => {
+            console.log(err);
+        })
     }
 );
 
