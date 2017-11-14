@@ -13,13 +13,25 @@ export default class MeetingsScreen extends React.Component {
     super(props)
 
     this.state = {
-      mentees: [
-        {key: 0, firstName: "John", secondName: "Smith", date: "22/11/2017", time:"13:00", place: "32 Fictituous Road", duration: "1 hour"},
-        {key: 1, firstName: "David", secondName: "Walker", date: "22/12/2017", time:"13:00", place: "64 Meeting Ave", duration: "2 hours"},
-        {key: 2, firstName: "Ellen", secondName: "Potter", date: "24/11/2017", time:"13:00", place: "128 Collision Place", duration: "3 hours"},
-        {key: 3, firstName: "Harry", secondName: "Weasley", date: "27/11/2017", time:"13:00", place: "256 Powers of Two", duration: "4 hours"},
-        {key: 4, firstName: "Dobbie", secondName: "HouseElfKin", date: "30/11/2017", time:"13:00", place: "512 Fun Town", duration: "543 hours"}]
+      isLoading: true
     }
+  }
+
+  componentDidMount() {
+    return fetch('https://api.myjson.com/bins/14xtdv')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson)
+        this.setState({
+          isLoading: false,
+          meetings: responseJson.meetings,
+        }, function() {
+          // do something with new state
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   showMeetingDetails(meeting) {
@@ -44,13 +56,19 @@ export default class MeetingsScreen extends React.Component {
   }
 
   render() {
-    const { navigate } = this.props.navigation;
+    if(this.state.isLoading) {
+      return(
+        <View style={[BaseStyles.container, BaseStyles.centerChildren]}>
+          <Text style={{marginLeft:'15%', marginRight:'15%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>Loading meetings data...</Text>
+        </View>
+      )
+    }
 
     return(
       <View>
         <List>
           <FlatList
-            data={this.state.mentees}
+            data={this.state.meetings}
             renderItem={({item}) => this.renderItem(item)}
           />
         </List>
