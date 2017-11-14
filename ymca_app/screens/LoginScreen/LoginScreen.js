@@ -8,20 +8,62 @@ import PropTypes from 'prop-types';
 export default class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {email: '', password: ''};
+
+    this.state = {
+      email: "",
+      password: "",
+      message: "",
+    };
+
+    /** UNCOMMENT THIS FOR QUICK LOGIN **/
+    // this.state = {
+    //   email: "WalterSmith@mail.com",
+    //   password: "WalterPass",
+    //   message: "",
+    // };
   }
 
   loginButtonPressed() {
-    const { navigate } = this.props.navigation;
+    this.setState({message: "Logging in..."})
 
-    navigate('Meetings')
+    fetch('http://ymca.pw/api/users/authenticate/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: this.state.email,
+        password: this.state.password,
+      })
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      if(responseJson.token) {
+        this.setState({
+          hasLoggedIn: true,
+          message: "Successfully logged in!",
+          token: responseJson.token,
+        });
+
+        const { navigate } = this.props.navigation;
+        navigate('Meetings', {token: this.state.token})
+      } else {
+        this.setState({
+          message: "Wrong username or password.",
+        })
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
   }
 
   setEmailAddress(email) {
-    this.setState({email: email, password: this.state.password})
+    this.setState({email: email})
   }
   setPassword(password) {
-    this.setState({email: this.state.email, password: password})
+    this.setState({password: password})
   }
 
   static navigationOptions = {
@@ -36,6 +78,9 @@ export default class LoginScreen extends React.Component {
             source={require('../../images/ymca_logo.png')}
             style={styles.logo}
           />
+
+          <Text>{this.state.message}</Text>
+
           <TextInput style={styles.loginField} placeholder="  Email" keyboardType='email-address' onChangeText={(text) => this.setEmailAddress(text)} />
           <TextInput style={styles.loginField} placeholder="  Password" secureTextEntry={true} onChangeText={(text) => this.setPassword(text)} />
 

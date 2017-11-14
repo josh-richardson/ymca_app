@@ -8,11 +8,34 @@ import PropTypes from 'prop-types';
 export default class EmergencyAlertSendScreen extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      token: props.navigation.state.params.token
+    }
   }
 
   static navigationOptions = {
 
   };
+
+  componentDidMount() {
+    return fetch('http://ymca.pw/api/methods/emergency', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        auth: this.state.token
+      })
+    })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
 
   backButtonPressed() {
     const { goBack } = this.props.navigation;

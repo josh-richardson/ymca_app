@@ -13,31 +13,29 @@ export default class MeetingsScreen extends React.Component {
     super(props)
 
     this.state = {
-      isLoading: true
+      isLoading: true,
+      token: props.navigation.state.params.token
     }
   }
 
   componentDidMount() {
-    return fetch('https://api.myjson.com/bins/14xtdv')
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log(responseJson)
-        this.setState({
-          isLoading: false,
-          meetings: responseJson.meetings,
-        }, function() {
-          // do something with new state
-        });
-      })
-      .catch((error) => {
-        console.error(error);
+    fetch('https://api.myjson.com/bins/14xtdv')
+    .then((response) => response.json())
+    .then((responseJson) => {
+      this.setState({
+        isLoading: false,
+        meetings: responseJson.meetings,
       });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
   }
 
   showMeetingDetails(meeting) {
     const { navigate } = this.props.navigation;
 
-    navigate('MeetingDetails', {meeting})
+    navigate('MeetingDetails', {meeting, token: this.state.token})
   }
 
   renderItem(item) {

@@ -14,8 +14,13 @@ export default class MeetingDetailsScreen extends React.Component {
     super(props)
 
     this.state = {
-      meeting: props.navigation.state.params.meeting
+      meeting: props.navigation.state.params.meeting,
+      token: props.navigation.state.params.token
     }
+  }
+
+  componentDidMount() {
+
   }
 
   extendMeeting() {
@@ -27,7 +32,7 @@ export default class MeetingDetailsScreen extends React.Component {
   emergency() {
     const {navigate} = this.props.navigation;
 
-    navigate('EmergencyAlertSent')
+    navigate('EmergencyAlertSent', {token: this.state.token})
   }
 
   render() {
