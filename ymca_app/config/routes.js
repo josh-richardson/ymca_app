@@ -4,6 +4,7 @@ import { StackNavigator } from 'react-navigation';
 import LoginScreen from '../screens/LoginScreen';
 import MeetingsScreen from '../screens/MeetingsScreen';
 import MeetingDetailsScreen from '../screens/MeetingDetailsScreen';
+import EmergencyAlertSentScreen from '../screens/EmergencyAlertSentScreen';
 
 export const Stack = StackNavigator({
   Login: {
@@ -14,5 +15,10 @@ export const Stack = StackNavigator({
   },
   MeetingDetails: {
     screen: MeetingDetailsScreen
+  },
+  EmergencyAlertSent: {
+    screen: EmergencyAlertSentScreen
   }
+}, {
+  mode: 'card',
 });

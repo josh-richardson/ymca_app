@@ -25,7 +25,9 @@ export default class MeetingDetailsScreen extends React.Component {
     Alert.alert("Ending meeting...")
   }
   emergency() {
-    Alert.alert("EMERGENCY")
+    const {navigate} = this.props.navigation;
+
+    navigate('EmergencyAlertSent')
   }
 
   render() {
