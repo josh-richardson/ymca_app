@@ -3,6 +3,7 @@ import { StackNavigator } from 'react-navigation';
 
 import LoginScreen from '../screens/LoginScreen';
 import MeetingsScreen from '../screens/MeetingsScreen';
+import MeetingDetailsScreen from '../screens/MeetingDetailsScreen';
 
 export const Stack = StackNavigator({
   Login: {
@@ -10,5 +11,8 @@ export const Stack = StackNavigator({
   },
   Meetings: {
     screen: MeetingsScreen
+  },
+  MeetingDetails: {
+    screen: MeetingDetailsScreen
   }
 });

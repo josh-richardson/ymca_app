@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Button, Image, TextInput, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Alert } from 'react-native';
 import { styles } from './styles';
 import { BaseStyles } from '../../BaseStyles';
+import FullWidthButton from '../../components/FullWidthButton';
 import PropTypes from 'prop-types';
 
 export default class LoginScreen extends React.Component {
@@ -11,6 +12,8 @@ export default class LoginScreen extends React.Component {
   }
 
   loginButtonPressed() {
+    const { navigate } = this.props.navigation;
+
     navigate('Meetings')
   }
 
@@ -24,11 +27,11 @@ export default class LoginScreen extends React.Component {
   static navigationOptions = {
     title: 'YMCA Mentor Login',
   };
+
   render() {
-    const { navigate } = this.props.navigation;
     return(
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={BaseStyles.container}>
+        <View style={[BaseStyles.container, BaseStyles.centerChildrenHorizontally]}>
           <Image
             source={require('../../images/ymca_logo.png')}
             style={styles.logo}
@@ -36,33 +39,16 @@ export default class LoginScreen extends React.Component {
           <TextInput style={styles.loginField} placeholder="  Email" keyboardType='email-address' onChangeText={(text) => this.setEmailAddress(text)} />
           <TextInput style={styles.loginField} placeholder="  Password" secureTextEntry={true} onChangeText={(text) => this.setPassword(text)} />
 
-          <TouchableOpacity
-            onPress={() => {navigate('Meetings')}}
+
+          <FullWidthButton
+            onPress={() => {this.loginButtonPressed()}}
             style={{marginTop: '7%'}}
-          >
-            <View style={{
-              flex: 0.25,
-              width: 350,
-              backgroundColor:'#0075ff',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 10,
-            }}>
-              <Text style={{
-              color:'white',
-              fontSize: 20,
-            }}>
-                Sign In
-              </Text>
-            </View>
-          </TouchableOpacity>
+            backgroundColor='#0075ff'
+            title="Sign In"
+          />
+
         </View>
       </TouchableWithoutFeedback>
     )
   }
-}
-
-LoginScreen.PropTypes = {
-  email: PropTypes.string,
-  password: PropTypes.string
 }

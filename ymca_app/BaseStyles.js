@@ -6,13 +6,20 @@ export const BaseStyles = StyleSheet.create({
     flexDirection: 'column',
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'flex-start',
   },
 
-  listContainer: {
-    backgroundColor: 'white',
-    height: '100%'
+  centerChildrenHorizontally: {
+    alignItems: 'center',
+  },
+
+  centerChildren: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  alignChildrenBottom: {
+    justifyContent: 'flex-end'
   }
 
 });
