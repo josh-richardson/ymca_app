@@ -30,7 +30,7 @@ export default class EmergencyAlertSendScreen extends React.Component {
       })
     })
     .then((response) => {
-      console.log(response);
+      console.log("EMERGENCY API RESPONSE: " + JSON.stringify(response));
     })
     .catch((error) => {
       console.error(error);

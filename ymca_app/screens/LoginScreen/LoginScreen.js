@@ -16,11 +16,11 @@ export default class LoginScreen extends React.Component {
     };
 
     /** UNCOMMENT THIS FOR QUICK LOGIN **/
-    // this.state = {
-    //   email: "WalterSmith@mail.com",
-    //   password: "WalterPass",
-    //   message: "",
-    // };
+    this.state = {
+      email: "WalterSmith@mail.com",
+      password: "WalterPass",
+      message: "",
+    };
   }
 
   loginButtonPressed() {
@@ -47,7 +47,7 @@ export default class LoginScreen extends React.Component {
         });
 
         const { navigate } = this.props.navigation;
-        navigate('Meetings', {token: this.state.token})
+        navigate('Main', {token: this.state.token})
       } else {
         this.setState({
           message: "Wrong username or password.",
