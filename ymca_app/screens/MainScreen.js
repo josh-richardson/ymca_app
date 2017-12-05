@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
-import FullWidthButton from '../components/FullWidthButton'
+import { FullWidthButton } from '../components'
 
 export default class MainScreen extends React.Component {
   static navigationOptions = {
