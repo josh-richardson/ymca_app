@@ -1,8 +1,8 @@
-import React from 'react';
-import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
+import React from 'react'
+import { StyleSheet, Text, View, Image, FlatList, Alert, Linking } from 'react-native'
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
-import { FullWidthButton } from '../components'
+import { FullWidthButton, Divider } from '../components'
 import { NavigationActions } from 'react-navigation'
 
 export default class MainScreen extends React.Component {
@@ -40,6 +40,10 @@ export default class MainScreen extends React.Component {
     this.props.navigation.dispatch(resetAction);
   }
 
+  resetPassword() {
+    Linking.openURL("https://ymca.pw/reset_password")
+  }
+
   showUpcomingAppointments() {
     const { navigate } = this.props.navigation;
 
@@ -61,11 +65,20 @@ export default class MainScreen extends React.Component {
           backgroundColor='#0075ff'
           title="Upcoming Appointments"
         />
+
+        <Divider style={{marginTop: 20}} />
         <FullWidthButton
           onPress={() => {this.signOut()}}
-          style={{marginTop: '2%'}}
+          style={{marginTop: '0%'}}
           backgroundColor='#ff0000'
           title="Sign Out"
+        />
+
+        <FullWidthButton
+          onPress={() => {this.resetPassword()}}
+          style={{marginTop: '2%'}}
+          backgroundColor='#ff0000'
+          title="Reset Password"
         />
       </View>
     )
