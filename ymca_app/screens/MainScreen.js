@@ -3,10 +3,12 @@ import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 import { FullWidthButton } from '../components'
+import { NavigationActions } from 'react-navigation'
 
 export default class MainScreen extends React.Component {
   static navigationOptions = {
     title: 'YMCA Mentors',
+    headerLeft: null,
   };
 
   constructor(props) {
@@ -24,6 +26,18 @@ export default class MainScreen extends React.Component {
 
   scheduleAppointment() {
 
+  }
+
+  signOut() {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({
+          routeName: 'Login',
+        }),
+      ],
+    });
+    this.props.navigation.dispatch(resetAction);
   }
 
   showUpcomingAppointments() {
@@ -46,6 +60,12 @@ export default class MainScreen extends React.Component {
           style={{marginTop: '2%'}}
           backgroundColor='#0075ff'
           title="Upcoming Appointments"
+        />
+        <FullWidthButton
+          onPress={() => {this.signOut()}}
+          style={{marginTop: '2%'}}
+          backgroundColor='#ff0000'
+          title="Sign Out"
         />
       </View>
     )

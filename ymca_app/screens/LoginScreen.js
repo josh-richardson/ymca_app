@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button, Image, TextInput, TouchableWithoutFeedb
 import { BaseStyles } from '../BaseStyles';
 import { FullWidthButton } from '../components';
 import PropTypes from 'prop-types';
+import { NavigationActions } from 'react-navigation';
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -45,8 +46,19 @@ export default class LoginScreen extends React.Component {
           token: responseJson.token,
         });
 
-        const { navigate } = this.props.navigation;
-        navigate('Main', {token: this.state.token})
+        const resetAction = NavigationActions.reset({
+          index: 0,
+          actions: [
+            NavigationActions.navigate({
+              routeName: 'Main',
+              params: {token: this.state.token}
+            }),
+          ],
+        });
+        this.props.navigation.dispatch(resetAction);
+
+        // const { navigate } = this.props.navigation;
+        // navigate('Main', {token: this.state.token})
       } else {
         this.setState({
           message: "Wrong username or password.",
