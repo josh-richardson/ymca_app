@@ -1,12 +1,7 @@
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
 
-import LoginScreen from '../screens/LoginScreen';
-import MeetingsScreen from '../screens/MeetingsScreen';
-import MeetingDetailsScreen from '../screens/MeetingDetailsScreen';
-import EmergencyAlertSentScreen from '../screens/EmergencyAlertSentScreen';
-import MainScreen from '../screens/MainScreen';
-import ScheduleAppointmentScreen from '../screens/ScheduleAppointmentScreen';
+import { LoginScreen, MainScreen, MeetingsScreen, MeetingDetailsScreen, ScheduleAppointmentScreen, EmergencyAlertSentScreen } from '../screens/';
 
 export const Stack = StackNavigator({
   Login: {

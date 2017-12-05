@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
-import { styles } from './styles'
-import { BaseStyles } from '../../BaseStyles'
+import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 
 export default class ScheduleAppointmentScreen extends React.Component {
@@ -46,7 +45,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
         subtitle={item.date}
         avatar={<Avatar
                 rounded
-                source={require('../../images/defaultAvatar.png')}
+                source={require('../images/defaultAvatar.png')}
               />}
         onPress={() => {this.showMeetingDetails(item)}}
       />
@@ -73,4 +72,13 @@ export default class ScheduleAppointmentScreen extends React.Component {
       </View>
     )
   }
+
+  styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });
 }

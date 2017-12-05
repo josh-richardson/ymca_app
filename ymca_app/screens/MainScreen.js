@@ -1,9 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
-import { styles } from './styles'
-import { BaseStyles } from '../../BaseStyles'
+import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
-import FullWidthButton from '../../components/FullWidthButton'
+import FullWidthButton from '../components/FullWidthButton'
 
 export default class MainScreen extends React.Component {
   static navigationOptions = {
@@ -51,4 +50,14 @@ export default class MainScreen extends React.Component {
       </View>
     )
   }
+
+  styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });
+
 }

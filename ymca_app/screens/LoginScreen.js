@@ -1,8 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, Image, TextInput, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Alert } from 'react-native';
-import { styles } from './styles';
-import { BaseStyles } from '../../BaseStyles';
-import FullWidthButton from '../../components/FullWidthButton';
+import { BaseStyles } from '../BaseStyles';
+import FullWidthButton from '../components/FullWidthButton';
 import PropTypes from 'prop-types';
 
 export default class LoginScreen extends React.Component {
@@ -71,11 +70,13 @@ export default class LoginScreen extends React.Component {
   };
 
   render() {
+    const styles = this.styles
+
     return(
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={[BaseStyles.container, BaseStyles.centerChildrenHorizontally]}>
           <Image
-            source={require('../../images/ymca_logo.png')}
+            source={require('../images/ymca_logo.png')}
             style={styles.logo}
           />
 
@@ -96,4 +97,21 @@ export default class LoginScreen extends React.Component {
       </TouchableWithoutFeedback>
     )
   }
+
+  styles = StyleSheet.create({
+    loginField: {
+      width: '60%',
+      height: 50,
+      borderBottomWidth: 2,
+      borderBottomColor: 'gray',
+      marginTop: '2.5%',
+      marginBottom: '2.5%',
+    },
+
+    logo: {
+      transform: [{scale: 0.6}],
+      marginTop: '10%'
+    },
+  });
+
 }

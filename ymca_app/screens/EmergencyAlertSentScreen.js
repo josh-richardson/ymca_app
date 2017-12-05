@@ -1,11 +1,10 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, Image, TextInput, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Alert } from 'react-native';
-import { styles } from './styles';
-import { BaseStyles } from '../../BaseStyles';
-import FullWidthButton from '../../components/FullWidthButton';
+import { BaseStyles } from '../BaseStyles';
+import FullWidthButton from '../components/FullWidthButton';
 import PropTypes from 'prop-types';
 
-export default class EmergencyAlertSendScreen extends React.Component {
+export default class EmergencyAlertSentScreen extends React.Component {
   constructor(props) {
     super(props);
 
@@ -61,4 +60,8 @@ export default class EmergencyAlertSendScreen extends React.Component {
       </View>
     )
   }
+
+  styles = StyleSheet.create({
+
+  });
 }

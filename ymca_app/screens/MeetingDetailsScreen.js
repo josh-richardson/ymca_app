@@ -1,9 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
-import { styles } from './styles'
-import { BaseStyles } from '../../BaseStyles'
+import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
-import FullWidthButton from '../../components/FullWidthButton'
+import FullWidthButton from '../components/FullWidthButton'
 
 export default class MeetingDetailsScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
@@ -40,7 +39,7 @@ export default class MeetingDetailsScreen extends React.Component {
       <View style={BaseStyles.container}>
         <View style={BaseStyles.centerChildren}>
           <Image
-            source={require('../../images/defaultAvatar.png')}
+            source={require('../images/defaultAvatar.png')}
             style={{
               marginTop: 10,
               width: 100,
@@ -81,4 +80,8 @@ export default class MeetingDetailsScreen extends React.Component {
       </View>
     )
   }
+
+  styles = StyleSheet.create({
+
+  });
 }
