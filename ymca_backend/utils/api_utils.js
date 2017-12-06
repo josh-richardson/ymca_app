@@ -12,6 +12,7 @@ const findObjectByKey = function (model, key, value) {
     return new Promise(function (resolve, reject) {
         model.findOne({[key]: value}, function (err, result) {
             if (err) return reject(err);
+            if (result === null) reject("Not found");
             resolve(result);
         });
     });

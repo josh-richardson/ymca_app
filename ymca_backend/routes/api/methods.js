@@ -8,7 +8,7 @@ const jwt = require('jwt-simple');
 const passport = require('passport');
 const twilio = require('../../utils/twilio');
 const sendgrid = require('../../utils/sendgrid');
-const api_utils = require('../../utils/db_utils');
+const api_utils = require('../../utils/api_utils');
 const manager = require('../../models/manager');
 
 

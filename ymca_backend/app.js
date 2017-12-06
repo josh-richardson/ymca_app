@@ -17,6 +17,7 @@ mongoose.connect(config.db_path, function (err) {
     }
 });
 
+
 require('./config/passport');
 
 const index = require('./routes/index');

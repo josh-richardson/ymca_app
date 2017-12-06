@@ -6,7 +6,7 @@ const user = require('../../models/user');
 const config = require('../../config/config');
 const jwt = require('jwt-simple');
 const passport = require('passport');
-const api_utils = require('../../utils/db_utils');
+const api_utils = require('../../utils/api_utils');
 
 
 const createUser = function (value) {

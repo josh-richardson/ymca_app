@@ -8,7 +8,7 @@ const manager = require('../../models/manager');
 const config = require('../../config/config');
 const jwt = require('jwt-simple');
 const passport = require('passport');
-const api_utils = require('../../utils/db_utils');
+const api_utils = require('../../utils/api_utils');
 
 
 function isAdmin(req, res, next) {

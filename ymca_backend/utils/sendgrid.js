@@ -5,7 +5,7 @@ const sendEmail = function (to, subject, message) {
     sgMail.setApiKey(config.sendgrid_api_key);
     const msg = {
         to: to,
-        from: 'test@example.com',
+        from: 'mailer@ymca.pw',
         subject: subject,
         text: message,
     };
