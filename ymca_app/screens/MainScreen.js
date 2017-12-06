@@ -25,7 +25,7 @@ export default class MainScreen extends React.Component {
   }
 
   scheduleAppointment() {
-
+    this.props.navigation.navigate("ScheduleAppointment", {token: this.state.token})
   }
 
   signOut() {
@@ -45,9 +45,7 @@ export default class MainScreen extends React.Component {
   }
 
   showUpcomingAppointments() {
-    const { navigate } = this.props.navigation;
-
-    navigate('Meetings', {token: this.state.token})
+    this.props.navigation.navigate('Meetings', {token: this.state.token})
   }
 
   render() {

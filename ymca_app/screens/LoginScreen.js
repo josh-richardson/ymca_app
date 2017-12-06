@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, TextInput, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TextInput, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles';
 import { FullWidthButton } from '../components';
 import PropTypes from 'prop-types';
