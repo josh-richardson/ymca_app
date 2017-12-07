@@ -41,7 +41,7 @@ export default class MainScreen extends React.Component {
   }
 
   resetPassword() {
-    Linking.openURL("https://ymca.pw/reset_password")
+    Linking.openURL("http://ymca.pw/reset_password")
   }
 
   showUpcomingAppointments() {
