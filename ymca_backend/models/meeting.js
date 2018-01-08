@@ -8,6 +8,8 @@ const meetingSchema = new Schema({
     meetingAddress: {type: String, required: true},
     startTime: {type: Date},
     endTime: {type: Date},
+    actualStartTime: {type: Date},
+    actualEndTime: {type: Date},
     mentor_notes: {type: String},
     mentor_rating: {type: Number},
     mentee_notes: {type: String},

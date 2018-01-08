@@ -75,17 +75,42 @@ router.post('/mentees/add', passport.authenticate('jwt', {session: false}), isAd
         check('phone').exists().isMobilePhone("en-GB").escape(),
     ],
     function (req, res) {
-
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        const newMentee = new mentee();
+        newMentee.email = data.email;
+        newMentee.firstName = data.firstName;
+        newMentee.secondName = data.secondName;
+        newMentee.phone = data.phone;
+        newMentee.meetingAddress = data.meetingAddress;
+        newMentee.save(function (err, result) {
+            if (!err) {
+                res.json({success: true})
+            }
+        });
     }
 );
 
 
-router.post('/mentees/delete', passport.authenticate('jwt', {session: false}), isAdmin,
+
+router.post('/mentees/delete', passport.authenticate('jwt', {session: false}), isAdmin, [
+        check('id').exists().escape(),
+    ],
     function (req, res) {
-
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        mentee.findByIdAndRemove(data.id, function (err, user) {
+            if (err) res.json(err);
+            res.json({success: true});
+        });
     }
-);
-
+)
 
 router.post('/mentees/edit', passport.authenticate('jwt', {session: false}), isAdmin,
     function (req, res) {
@@ -136,25 +161,21 @@ router.post('/managers/add', passport.authenticate('jwt', {session: false}), isA
     }
 );
 
-
 router.post('/managers/delete', passport.authenticate('jwt', {session: false}), isAdmin, [
-        check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail()
-            .custom(value => {
-                return api_utils.objectExistsByKey(manager, 'email', value).then(retVal => {
-                    if (!retVal) throw new Error();
-                    return true;
-                }).catch(() => {
-                    return false;
-                });
-            }).withMessage("This email is either in use, or a server error occurred.").escape(),
-        check('firstName').exists().isAlphanumeric().escape(),
-        check('secondName').exists().isAlphanumeric().escape(),
-        check('phone').exists().isMobilePhone("en-GB").escape(),
+        check('id').exists().escape(),
     ],
     function (req, res) {
-
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        manager.findByIdAndRemove(data.id, function (err, user) {
+            if (err) res.json(err);
+            res.json({success: true});
+        });
     }
-);
+)
 
 
 router.post('/managers/edit', passport.authenticate('jwt', {session: false}), isAdmin,
