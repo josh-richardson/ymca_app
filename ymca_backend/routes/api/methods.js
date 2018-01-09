@@ -10,7 +10,8 @@ const twilio = require('../../utils/twilio');
 const sendgrid = require('../../utils/sendgrid');
 const api_utils = require('../../utils/api_utils');
 const manager = require('../../models/manager');
-
+const mentee = require('../../models/mentee');
+const meeting = require('../../models/meeting');
 
 router.post('/profile', passport.authenticate('jwt', {session: false}),
     function (req, res) {
@@ -32,8 +33,33 @@ router.post('/emergency', passport.authenticate('jwt', {session: false}),
 );
 
 
-router.post('/meetings/create', passport.authenticate('jwt', {session: false}),
+router.post('/meetings/create', passport.authenticate('jwt', {session: false}), [
+        check('mentor').escape(),
+        check('mentee').escape(),
+        check('meetingAddress').exists().escape(),
+        check('startTime').isNumeric().escape(),
+        check('endTime').isNumeric().escape(),
+    ],
     function (req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        api_utils.findObjectByKey(mentee, '_id', data.mentee).then(result_mentee => {
+            const newMeeting = new meeting();
+            newMeeting.mentor = req.user;
+            newMeeting.mentee = result_mentee;
+            newMeeting.meetingAddress = data.meetingAddress;
+            newMeeting.startTime = new Date(data.startTime * 1000);
+            newMeeting.endTime = new Date(data.endTime * 1000);
+            newMeeting.save(function (err, result) {
+                if (!err) {
+                    res.json({success: true})
+                }
+            });
+        });
+
 
     }
 );
@@ -54,14 +80,18 @@ router.post('/meetings/delete', passport.authenticate('jwt', {session: false}),
 
 router.post('/meetings/', passport.authenticate('jwt', {session: false}),
     function (req, res) {
-
+        meeting.find({mentor: req.user}).then(result_meetings => {
+            res.json(result_meetings);
+        });
     }
 );
 
 
 router.post('/mentees/', passport.authenticate('jwt', {session: false}),
     function (req, res) {
-
+        mentee.find({mentor: req.user}).then(result_mentees => {
+            res.json(result_mentees);
+        });
     }
 );
 

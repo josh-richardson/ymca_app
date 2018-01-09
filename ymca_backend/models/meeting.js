@@ -14,7 +14,6 @@ const meetingSchema = new Schema({
     mentor_rating: {type: Number},
     mentee_notes: {type: String},
     mentee_rating: {type: Number},
-
 });
 
 module.exports = mongoose.model('Meeting', meetingSchema);

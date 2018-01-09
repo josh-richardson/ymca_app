@@ -19,6 +19,9 @@ const findObjectByKey = function (model, key, value) {
 };
 
 
+
+
+
 const deleteObjectByKey = function (model, key, value) {
     return new Promise(function (resolve, reject) {
         model.findOne({key: value}, function (err, result) {
@@ -26,5 +29,6 @@ const deleteObjectByKey = function (model, key, value) {
         });
     });
 };
+
 
 module.exports = {objectExistsByKey, deleteObjectByKey, findObjectByKey};
