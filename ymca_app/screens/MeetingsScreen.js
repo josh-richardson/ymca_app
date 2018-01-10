@@ -38,14 +38,17 @@ export default class MeetingsScreen extends React.Component {
   }
 
   renderItem(item) {
+
+    const initials = `${item.firstName.charAt(0)}${item.secondName.charAt(0)}`
+
     return (
       <ListItem
         button
         title={`${item.firstName} ${item.secondName}`}
         subtitle={item.date}
         avatar={<Avatar
+                title={initials}
                 rounded
-                source={require('../images/defaultAvatar.png')}
               />}
         onPress={() => {this.showMeetingDetails(item)}}
       />

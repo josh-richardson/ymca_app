@@ -55,6 +55,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
       <View style={[BaseStyles.container, BaseStyles.centerChildrenHorizontally]}>
         <DatePicker
           style={{width: '85%', marginTop: 30}}
+          date={this.state.date}
           mode="date"
           placeholder="Select Appointment Date"
           format="YYYY-MM-DD"
