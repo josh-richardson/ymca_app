@@ -1,7 +1,7 @@
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
 
-import { LoginScreen, MainScreen, MeetingsScreen, MeetingDetailsScreen, ScheduleAppointmentScreen, EmergencyAlertSentScreen } from '../screens/';
+import { LoginScreen, MainScreen, MeetingsScreen, MeetingDetailsScreen, ScheduleAppointmentScreen, EmergencyAlertSentScreen, MentorFeedbackScreen } from '../screens/';
 
 const MainStackNavigator = StackNavigator({
   Login: { screen: LoginScreen },
@@ -9,6 +9,7 @@ const MainStackNavigator = StackNavigator({
   Meetings: { screen: MeetingsScreen },
   MeetingDetails: { screen: MeetingDetailsScreen },
   ScheduleAppointment: { screen: ScheduleAppointmentScreen },
+  MentorFeedback: { screen: MentorFeedbackScreen }
 })
 
 export default Root = StackNavigator({

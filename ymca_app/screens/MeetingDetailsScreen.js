@@ -26,7 +26,7 @@ export default class MeetingDetailsScreen extends React.Component {
     Alert.alert("Extending meeting...")
   }
   endMeeting() {
-    Alert.alert("Ending meeting...")
+    this.props.navigation.navigate('MentorFeedback', {token: this.state.token, meeting: this.state.meeting})
   }
   emergency() {
     const {navigate} = this.props.navigation;
