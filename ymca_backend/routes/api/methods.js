@@ -59,8 +59,6 @@ router.post('/meetings/create', passport.authenticate('jwt', {session: false}), 
                 }
             });
         });
-
-
     }
 );
 
