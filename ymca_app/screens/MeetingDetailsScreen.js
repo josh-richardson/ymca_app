@@ -35,16 +35,16 @@ export default class MeetingDetailsScreen extends React.Component {
   }
 
   render() {
+    const initials = `${this.state.meeting.firstName.charAt(0)}${this.state.meeting.secondName.charAt(0)}`
+
     return(
       <View style={BaseStyles.container}>
-        <View style={BaseStyles.centerChildren}>
-          <Image
-            source={require('../images/defaultAvatar.png')}
-            style={{
-              marginTop: 10,
-              width: 100,
-              height: 100,
-            }}
+
+        <View style={[BaseStyles.centerChildren, { marginTop: 10 }]}>
+          <Avatar
+            title={initials}
+            large
+            rounded
           />
         </View>
 
