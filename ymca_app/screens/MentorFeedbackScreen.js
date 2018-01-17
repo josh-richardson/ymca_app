@@ -28,6 +28,13 @@ export default class MentorFeedbackScreen extends React.Component {
 
   }
 
+  doneButtonPressed() {
+    // TODO: Send response to server
+    // Possibly validate that all questions are answered
+
+    // TODO: Move to MENTEE feedback screen
+  }
+
   render() {
     return(
       <View style={BaseStyles.container}>
@@ -58,19 +65,20 @@ export default class MentorFeedbackScreen extends React.Component {
             onChangeText={(text) => {this.setState({response5: text})}}
           />
 
-          <FullWidthButton
-            onPress={() => {Alert.alert(`${this.state.response1} ${this.state.response2} ${this.state.response3} ${this.state.response4} ${this.state.response5} `)}}
-            style={{marginTop: '2%'}}
-            backgroundColor='#0075ff'
-            title="Done"
-          />
+          <View style={BaseStyles.centerChildren}>
+            <FullWidthButton
+              onPress={() => this.doneButtonPressed()}
+              style={{marginTop: '2%', marginBottom: '2%'}}
+              backgroundColor='#0075ff'
+              title="Done"
+            />
+          </View>
         </ScrollView>
       </View>
     )
   }
 
   styles = StyleSheet.create({
-    question: {
-    }
+
   });
 }
