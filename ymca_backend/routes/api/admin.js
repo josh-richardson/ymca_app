@@ -73,6 +73,7 @@ router.post('/mentees/add', passport.authenticate('jwt', {session: false}), isAd
         check('firstName').exists().isAlphanumeric().escape(),
         check('secondName').exists().isAlphanumeric().escape(),
         check('phone').exists().isMobilePhone("en-GB").escape(),
+        check('mentorEmail').exists().isEmail(),
     ],
     function (req, res) {
         const errors = validationResult(req);
@@ -86,14 +87,16 @@ router.post('/mentees/add', passport.authenticate('jwt', {session: false}), isAd
         newMentee.secondName = data.secondName;
         newMentee.phone = data.phone;
         newMentee.meetingAddress = data.meetingAddress;
-        newMentee.save(function (err, result) {
-            if (!err) {
-                res.json({success: true})
-            }
+        api_utils.findObjectByKey(user, 'email', data.mentorEmail).then(result_user => {
+            newMentee.mentor = result_user;
+            newMentee.save(function (err, result) {
+                if (!err) {
+                    res.json({success: true})
+                }
+            });
         });
     }
 );
-
 
 
 router.post('/mentees/delete', passport.authenticate('jwt', {session: false}), isAdmin, [

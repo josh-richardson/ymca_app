@@ -62,15 +62,16 @@ router.post('/authenticate', [
     }
     const authReq = matchedData(req);
     user.findOne({email: authReq.email}).then(foundUser => {
+
         if (!foundUser || !foundUser.validPassword(authReq.password)) {
             res.status(403).json({error: "Invalid username or password"});
         } else {
-            const token = jwt.encode(foundUser, config.jwt_secret);
-            res.json({token: token});
+            var encodedToken = jwt.encode(foundUser, config.jwt_secret);
+            res.json({token: encodedToken});
         }
     }).catch(err => {
         res.status(500).json(config.debug ? err : {error: 'Server error occurred'});
-    }); 
+    });
 });
 
 

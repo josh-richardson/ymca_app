@@ -9,7 +9,6 @@ const menteeSchema = new Schema({
     phone: {type: String, required: true},
     meetingAddress: {type: String, required: true},
     mentor: {type: Schema.Types.ObjectId, ref: 'Mentor', required: false},
-
 });
 
 module.exports = mongoose.model('Mentee', menteeSchema);

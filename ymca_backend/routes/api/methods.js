@@ -34,7 +34,6 @@ router.post('/emergency', passport.authenticate('jwt', {session: false}),
 
 
 router.post('/meetings/create', passport.authenticate('jwt', {session: false}), [
-        check('mentor').escape(),
         check('mentee').escape(),
         check('meetingAddress').exists().escape(),
         check('startTime').isNumeric().escape(),
@@ -79,6 +78,7 @@ router.post('/meetings/delete', passport.authenticate('jwt', {session: false}),
 router.post('/meetings/', passport.authenticate('jwt', {session: false}),
     function (req, res) {
         meeting.find({mentor: req.user}).then(result_meetings => {
+            console.log(result_meetings.paths);
             res.json(result_meetings);
         });
     }
@@ -87,6 +87,7 @@ router.post('/meetings/', passport.authenticate('jwt', {session: false}),
 
 router.post('/mentees/', passport.authenticate('jwt', {session: false}),
     function (req, res) {
+        console.log(req.user);
         mentee.find({mentor: req.user}).then(result_mentees => {
             res.json(result_mentees);
         });

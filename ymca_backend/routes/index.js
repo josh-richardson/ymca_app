@@ -8,19 +8,18 @@ const api_utils = require('../utils/api_utils');
 const user = require('../models/user');
 const resetcode = require('../models/reset_code');
 const crypto = require('crypto');
-// const csrf = require('csurf');
-// const csrfProtection = csrf();
-// router.use(csrfProtection);
+const Memcached = require('memcached');
 
+const memcached = new Memcached('127.0.0.1:11211');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.json({message: 'Welcome to our API'});
 });
 
-router.get('/reset_password', function (req, res, next) {
-    res.render("reset_password", {})
-});
+// router.get('/reset_password', function (req, res, next) {
+//     res.render("reset_password", {})
+// });
 
 router.post('/send_reset_email', [check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail().escape()], function (req, res, next) {
     const errors = validationResult(req);
@@ -30,17 +29,12 @@ router.post('/send_reset_email', [check('email').isEmail().withMessage('Invalid 
     const data = matchedData(req);
     api_utils.findObjectByKey(user, 'email', data.email).then(result_user => {
         var actualCode = crypto.randomBytes(16).toString('hex').substring(0, 8);
-        const reset_code = new resetcode();
-        reset_code.user = result_user;
-        reset_code.created = new Date();
-        reset_code.code = actualCode;
-        reset_code.save(function (err, result) {
-            if (err) {
-                console.log(err);
-            } else {
+        memcached.add(result_user.email, actualCode, 1800, function (err) {
+            if (err === null) {
                 sendgrid.sendEmail(data.email, "YMCA Password Reset", "Your YMCA password reset code is: " + actualCode + ". It will be valid for the next 30 minutes.");
             }
         });
+
     }).catch(ex => {
         console.log(ex);
     });
@@ -58,16 +52,20 @@ router.post('/reset_password', [
     }
     const data = matchedData(req);
     api_utils.findObjectByKey(user, 'email', data.email).then(result_user => {
-        api_utils.findObjectByKey(resetcode, 'code', data.code).then(reset_code => {
-            if (reset_code.user.equals(result_user._id)) {
-                result_user.password = result_user.hashPassword(data.password);
-                res.json({success: true})
+        memcached.get(result_user.email, function (err, memcached_data) {
+            if (err) {
+                res.json({success: false});
             } else {
-                res.json({success: false})
+                if (data.code === memcached_data) {
+                    result_user.password = result_user.hashPassword(data.password);
+                    res.json({success: true})
+                } else {
+                    res.json({success: false})
+                }
             }
-        }).catch(() => {
-            res.json({success: false})
+
         });
+
     }).catch(() => {
         res.json({success: false})
     });

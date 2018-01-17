@@ -15,7 +15,6 @@ $(document).ready(function () {
                 code: $("#reset_code").val(),
                 password: $("#password").val()
             }).done(function (data) {
-                console.log(data);
                 if (data.success) {
                     alert("Password reset was successful. You may now open the app and sign in.");
                 } else {
