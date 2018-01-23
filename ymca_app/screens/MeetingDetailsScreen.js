@@ -22,6 +22,9 @@ export default class MeetingDetailsScreen extends React.Component {
 
   }
 
+  changeMeeting() {
+    this.props.navigation.navigate("ScheduleAppointment", {token: this.state.token, meeting: this.state.meeting})
+  }
   extendMeeting() {
     Alert.alert("Extending meeting...")
   }
@@ -58,8 +61,14 @@ export default class MeetingDetailsScreen extends React.Component {
         <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom]}>
 
           <FullWidthButton
-            onPress={() => {this.extendMeeting()}}
+            onPress={() => {this.changeMeeting()}}
             style={{marginTop: '7%'}}
+            backgroundColor='#0075ff'
+            title="Change Meeting"
+          />
+          <FullWidthButton
+            onPress={() => {this.extendMeeting()}}
+            style={{marginTop: '2%'}}
             backgroundColor='#0075ff'
             title="Extend Meeting"
           />

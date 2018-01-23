@@ -17,7 +17,14 @@ export default class ScheduleAppointmentScreen extends React.Component {
     this.state = {
       token: props.navigation.state.params.token,
       date: currentDate(),
+      time: "12:00",
       isLoading: true
+    }
+
+    if(props.navigation.state.params.hasOwnProperty("meeting")) {
+      this.state.date = props.navigation.state.params.meeting.date
+      this.state.time = props.navigation.state.params.meeting.time
+      this.state.selectedMentee = `${props.navigation.state.params.meeting.firstName} ${props.navigation.state.params.meeting.secondName}`
     }
   }
 
@@ -25,7 +32,6 @@ export default class ScheduleAppointmentScreen extends React.Component {
     fetch("https://api.myjson.com/bins/k30an")
     .then((response) => response.json())
     .then((responseJson) => {
-      console.log(responseJson)
       this.setState({
         isLoading: false,
         mentees: responseJson.mentees,
