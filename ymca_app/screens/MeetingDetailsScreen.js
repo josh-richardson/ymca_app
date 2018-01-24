@@ -31,6 +31,9 @@ export default class MeetingDetailsScreen extends React.Component {
   endMeeting() {
     this.props.navigation.navigate('MentorFeedback', {token: this.state.token, meeting: this.state.meeting})
   }
+  cancelMeeting() {
+    Alert.alert("Canceling meeting...")
+  }
   emergency() {
     const {navigate} = this.props.navigation;
 
@@ -77,6 +80,12 @@ export default class MeetingDetailsScreen extends React.Component {
             style={{marginTop: '2%'}}
             backgroundColor='#0075ff'
             title="End Meeting"
+          />
+          <FullWidthButton
+            onPress={() => {this.cancelMeeting()}}
+            style={{marginTop: '2%'}}
+            backgroundColor='#ff0f00'
+            title="Cancel Meeting"
           />
           <FullWidthButton
             onPress={() => {this.emergency()}}
