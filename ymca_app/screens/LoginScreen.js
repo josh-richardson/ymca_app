@@ -5,6 +5,8 @@ import { FullWidthButton } from '../components';
 import PropTypes from 'prop-types';
 import { NavigationActions } from 'react-navigation';
 
+import { store, setMentees } from '../model'
+
 export default class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -46,6 +48,15 @@ export default class LoginScreen extends React.Component {
           token: responseJson.token,
         });
 
+        fetch('https://api.myjson.com/bins/k30an')
+          .then((response) => response.json())
+          .then((responseJson) => {
+            store.dispatch(setMentees(responseJson.mentees))
+          })
+          .catch((error) => {
+            console.error(error);
+        });
+
         const resetAction = NavigationActions.reset({
           index: 0,
           actions: [
@@ -57,8 +68,6 @@ export default class LoginScreen extends React.Component {
         });
         this.props.navigation.dispatch(resetAction);
 
-        // const { navigate } = this.props.navigation;
-        // navigate('Main', {token: this.state.token})
       } else {
         this.setState({
           message: "Wrong username or password.",

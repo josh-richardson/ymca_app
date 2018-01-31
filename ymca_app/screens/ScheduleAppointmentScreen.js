@@ -6,6 +6,8 @@ import DatePicker from 'react-native-datepicker'
 import { currentDate, currentDatePlus } from '../utils'
 import { Divider, FullWidthButton } from '../components'
 
+import { store } from '../model'
+
 export default class ScheduleAppointmentScreen extends React.Component {
   static navigationOptions = {
     title: 'Schedule New Appointment',
@@ -29,17 +31,22 @@ export default class ScheduleAppointmentScreen extends React.Component {
   }
 
   componentDidMount() {
-    fetch("https://api.myjson.com/bins/k30an")
-    .then((response) => response.json())
-    .then((responseJson) => {
-      this.setState({
-        isLoading: false,
-        mentees: responseJson.mentees,
-      });
+    // fetch("https://api.myjson.com/bins/k30an")
+    // .then((response) => response.json())
+    // .then((responseJson) => {
+    //   this.setState({
+    //     isLoading: false,
+    //     mentees: responseJson.mentees,
+    //   });
+    // })
+    // .catch((error) => {
+    //   console.error(error);
+    // });
+
+    this.setState({
+      isLoading: false,
+      mentees: store.getState().mentees
     })
-    .catch((error) => {
-      console.error(error);
-    });
   }
 
   scheduleAppointment() {
