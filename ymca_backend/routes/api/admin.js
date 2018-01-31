@@ -115,9 +115,27 @@ router.post('/mentees/delete', passport.authenticate('jwt', {session: false}), i
     }
 )
 
-router.post('/mentees/edit', passport.authenticate('jwt', {session: false}), isAdmin,
+router.post('/mentees/edit', passport.authenticate('jwt', {session: false}), isAdmin, [
+        check('mentee').escape(),
+        check('json').exists(),
+    ],
     function (req, res) {
-
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        const newMentee = JSON.parse(data.json);
+        api_utils.findObjectByKey(mentee, '_id', data.mentee).then(result_mentee => {
+            for (const prop in newMentee) {
+                api_utils.updateSchemaField(result_mentee, prop, newMentee[prop]);
+            }
+            result_mentee.save(function (err, result) {
+                if (!err) {
+                    res.json({success: true})
+                }
+            });
+        });
     }
 );
 
