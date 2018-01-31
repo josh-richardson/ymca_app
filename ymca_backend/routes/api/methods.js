@@ -62,9 +62,30 @@ router.post('/meetings/create', passport.authenticate('jwt', {session: false}), 
 );
 
 
-router.post('/meetings/edit', passport.authenticate('jwt', {session: false}),
+router.post('/meetings/edit', passport.authenticate('jwt', {session: false}), [
+        check('meeting').escape(),
+        check('json').exists(),
+    ],
     function (req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
 
+        const data = matchedData(req);
+        const newMeeting = JSON.parse(data.json);
+        api_utils.findObjectByKey(meeting, '_id', data.meeting).then(result_meeting => {
+            for (const prop in newMeeting) {
+                console.log(prop);
+                result_meeting[prop] = newMeeting[prop];
+                console.log(result_meeting);
+            }
+            result_meeting.save(function (err, result) {
+                if (!err) {
+                    res.json({success: true})
+                }
+            });
+        });
     }
 );
 
