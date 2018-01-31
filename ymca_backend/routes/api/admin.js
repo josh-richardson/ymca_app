@@ -181,9 +181,27 @@ router.post('/managers/delete', passport.authenticate('jwt', {session: false}), 
 )
 
 
-router.post('/managers/edit', passport.authenticate('jwt', {session: false}), isAdmin,
+router.post('/managers/edit', passport.authenticate('jwt', {session: false}), isAdmin, [
+        check('maanger').escape(),
+        check('json').exists(),
+    ],
     function (req, res) {
-
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        const newManager = JSON.parse(data.json);
+        api_utils.findObjectByKey(manager, '_id', data.manager).then(result_manager => {
+            for (const prop in newManager) {
+                api_utils.updateSchemaField(result_manager, prop, newManager[prop]);
+            }
+            result_manager.save(function (err, result) {
+                if (!err) {
+                    res.json({success: true})
+                }
+            });
+        });
     }
 );
 

@@ -11,4 +11,6 @@ const menteeSchema = new Schema({
     mentor: {type: Schema.Types.ObjectId, ref: 'Mentor', required: false},
 });
 
+
+
 module.exports = mongoose.model('Mentee', menteeSchema);
