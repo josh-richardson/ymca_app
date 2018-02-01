@@ -3,7 +3,6 @@
 /**
  * Module dependencies.
  */
-some breaking change to prevent this from running properly
 
 var fs = require('fs');
 global.development = fs.existsSync("development");
