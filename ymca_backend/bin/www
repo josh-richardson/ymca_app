@@ -4,6 +4,10 @@
  * Module dependencies.
  */
 
+
+var fs = require('fs');
+global.development = fs.existsSync("development");
+
 var app = require('../app');
 var debug = require('debug')('ymca-backend:server');
 var http = require('http');
