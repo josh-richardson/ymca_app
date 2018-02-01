@@ -120,22 +120,7 @@ router.post('/mentees/edit', passport.authenticate('jwt', {session: false}), isA
         check('json').exists(),
     ],
     function (req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(422).json({errors: errors.mapped()});
-        }
-        const data = matchedData(req);
-        const newMentee = JSON.parse(data.json);
-        api_utils.findObjectByKey(mentee, '_id', data.mentee).then(result_mentee => {
-            for (const prop in newMentee) {
-                api_utils.updateSchemaField(result_mentee, prop, newMentee[prop]);
-            }
-            result_mentee.save(function (err, result) {
-                if (!err) {
-                    res.json({success: true})
-                }
-            });
-        });
+        api_utils.updateObject(mentee, "mentee", req, res);
     }
 );
 
@@ -200,26 +185,11 @@ router.post('/managers/delete', passport.authenticate('jwt', {session: false}), 
 
 
 router.post('/managers/edit', passport.authenticate('jwt', {session: false}), isAdmin, [
-        check('maanger').escape(),
+        check('manager').escape(),
         check('json').exists(),
     ],
     function (req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(422).json({errors: errors.mapped()});
-        }
-        const data = matchedData(req);
-        const newManager = JSON.parse(data.json);
-        api_utils.findObjectByKey(manager, '_id', data.manager).then(result_manager => {
-            for (const prop in newManager) {
-                api_utils.updateSchemaField(result_manager, prop, newManager[prop]);
-            }
-            result_manager.save(function (err, result) {
-                if (!err) {
-                    res.json({success: true})
-                }
-            });
-        });
+        api_utils.updateObject(manager, "manager", req, res);
     }
 );
 

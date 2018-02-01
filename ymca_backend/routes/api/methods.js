@@ -23,7 +23,6 @@ router.post('/emergency', passport.authenticate('jwt', {session: false}),
     function (req, res) {
         api_utils.findObjectByKey(manager, '_id', req.user.manager).then(result_manager => {
             twilio.sendSms(result_manager.phone, "An emergency happened, send help!");
-            // twilio.sendEmergencyCall(managerPhone);
             sendgrid.sendEmail(result_manager.email, "YMCA Emergency", "An enmergency happaned, send help!");
             res.json({success: true});
         }).catch((err) => {
@@ -31,7 +30,6 @@ router.post('/emergency', passport.authenticate('jwt', {session: false}),
         })
     }
 );
-
 
 router.post('/meetings/create', passport.authenticate('jwt', {session: false}), [
         check('mentee').escape(),
@@ -67,36 +65,30 @@ router.post('/meetings/edit', passport.authenticate('jwt', {session: false}), [
         check('json').exists(),
     ],
     function (req, res) {
+        api_utils.updateObject(meeting, "meeting", req, res);
+    }
+);
+
+
+router.post('/meetings/delete', passport.authenticate('jwt', {session: false}), [
+        check('meeting').escape(),
+    ],
+    function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({errors: errors.mapped()});
         }
         const data = matchedData(req);
-        const newMeeting = JSON.parse(data.json);
-        api_utils.findObjectByKey(meeting, '_id', data.meeting).then(result_meeting => {
-            for (const prop in newMeeting) {
-                api_utils.updateSchemaField(result_meeting, prop, newMeeting[prop]);
-            }
-            result_meeting.save(function (err, result) {
-                if (!err) {
-                    res.json({success: true})
-                }
-            });
+        meeting.deleteOne({ _id: data.id, mentor: req.user }, function (err, user) {
+            if (err) res.json(err);
+            res.json({success: true});
         });
-    }
-);
-
-
-router.post('/meetings/delete', passport.authenticate('jwt', {session: false}),
-    function (req, res) {
-
     }
 );
 
 router.post('/meetings/', passport.authenticate('jwt', {session: false}),
     function (req, res) {
         meeting.find({mentor: req.user}).then(result_meetings => {
-            console.log(result_meetings.paths);
             res.json(result_meetings);
         });
     }
@@ -105,7 +97,6 @@ router.post('/meetings/', passport.authenticate('jwt', {session: false}),
 
 router.post('/mentees/', passport.authenticate('jwt', {session: false}),
     function (req, res) {
-        console.log(req.user);
         mentee.find({mentor: req.user}).then(result_mentees => {
             res.json(result_mentees);
         });

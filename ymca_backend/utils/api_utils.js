@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const {check, validationResult} = require('express-validator/check');
+const {matchedData, sanitize} = require('express-validator/filter');
+
 
 const objectExistsByKey = function (model, key, value) {
     return new Promise(function (resolve, reject) {
@@ -40,5 +43,25 @@ const updateSchemaField = function (schema, fieldName, fieldValue) {
 };
 
 
+const updateObject = function (model, paramName, req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.mapped()});
+    }
+    const data = matchedData(req);
+    const newObject = JSON.parse(data.json);
+    findObjectByKey(model, '_id', data[paramName]).then(result_object => {
+        for (const prop in newObject) {
+            updateSchemaField(result_object, prop, newObject[prop]);
+        }
+        result_object.save(function (err, result) {
+            if (!err) {
+                res.json({success: true})
+            }
+        });
+    });
+}
 
-module.exports = {objectExistsByKey, deleteObjectByKey, findObjectByKey, updateSchemaField};
+
+
+module.exports = {objectExistsByKey, deleteObjectByKey, updateObject, findObjectByKey, updateSchemaField};
