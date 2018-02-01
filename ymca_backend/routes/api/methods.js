@@ -13,11 +13,13 @@ const manager = require('../../models/manager');
 const mentee = require('../../models/mentee');
 const meeting = require('../../models/meeting');
 
+
 router.post('/profile', passport.authenticate('jwt', {session: false}),
     function (req, res) {
-        res.send(req.user);
+        res.json(req.user);
     }
 );
+
 
 router.post('/emergency', passport.authenticate('jwt', {session: false}),
     function (req, res) {
@@ -26,10 +28,11 @@ router.post('/emergency', passport.authenticate('jwt', {session: false}),
             sendgrid.sendEmail(result_manager.email, "YMCA Emergency", "An enmergency happaned, send help!");
             res.json({success: true});
         }).catch((err) => {
-            console.log(err);
+            res.json(err);
         })
     }
 );
+
 
 router.post('/meetings/create', passport.authenticate('jwt', {session: false}), [
         check('mentee').escape(),
@@ -51,10 +54,11 @@ router.post('/meetings/create', passport.authenticate('jwt', {session: false}), 
             newMeeting.startTime = new Date(data.startTime * 1000);
             newMeeting.endTime = new Date(data.endTime * 1000);
             newMeeting.save(function (err, result) {
-                if (!err) {
-                    res.json({success: true})
-                }
+                if (err) res.json(err);
+                res.json({success: true, result: result})
             });
+        }).catch((err) => {
+            res.json(err);
         });
     }
 );
@@ -65,7 +69,11 @@ router.post('/meetings/edit', passport.authenticate('jwt', {session: false}), [
         check('json').exists(),
     ],
     function (req, res) {
-        api_utils.updateObject(meeting, "meeting", req, res);
+        api_utils.findObjectByKey(meeting, 'mentor', req.user).then(() => {
+            api_utils.updateObject(meeting, "meeting", req, res);
+        }).catch((err) => {
+            res.json(err);
+        })
     }
 );
 
@@ -79,18 +87,21 @@ router.post('/meetings/delete', passport.authenticate('jwt', {session: false}), 
             return res.status(422).json({errors: errors.mapped()});
         }
         const data = matchedData(req);
-        meeting.deleteOne({ _id: data.id, mentor: req.user }, function (err, user) {
+        meeting.deleteOne({_id: data.id, mentor: req.user}, function (err, user) {
             if (err) res.json(err);
             res.json({success: true});
         });
     }
 );
 
+
 router.post('/meetings/', passport.authenticate('jwt', {session: false}),
     function (req, res) {
         meeting.find({mentor: req.user}).then(result_meetings => {
             res.json(result_meetings);
-        });
+        }).catch((err) => {
+            res.json(err);
+        })
     }
 );
 
@@ -99,7 +110,9 @@ router.post('/mentees/', passport.authenticate('jwt', {session: false}),
     function (req, res) {
         mentee.find({mentor: req.user}).then(result_mentees => {
             res.json(result_mentees);
-        });
+        }).catch((err) => {
+            res.json(err);
+        })
     }
 );
 

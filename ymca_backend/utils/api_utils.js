@@ -23,14 +23,6 @@ const findObjectByKey = function (model, key, value) {
     });
 };
 
-const deleteObjectByKey = function (model, key, value) {
-    return new Promise(function (resolve, reject) {
-        model.findOne({key: value}, function (err, result) {
-
-        });
-    });
-};
-
 const updateSchemaField = function (schema, fieldName, fieldValue) {
     const obj = schema[fieldName];
     if (typeof(obj) === "string" || obj instanceof String) {
@@ -55,13 +47,12 @@ const updateObject = function (model, paramName, req, res) {
             updateSchemaField(result_object, prop, newObject[prop]);
         }
         result_object.save(function (err, result) {
-            if (!err) {
-                res.json({success: true})
-            }
+            if (!err) res.json(err);
+            res.json({success: true, result: result})
         });
     });
-}
+};
 
 
 
-module.exports = {objectExistsByKey, deleteObjectByKey, updateObject, findObjectByKey, updateSchemaField};
+module.exports = {objectExistsByKey, updateObject, findObjectByKey, updateSchemaField};
