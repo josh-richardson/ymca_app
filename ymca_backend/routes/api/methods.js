@@ -87,7 +87,7 @@ router.post('/meetings/delete', passport.authenticate('jwt', {session: false}), 
             return res.status(422).json({errors: errors.mapped()});
         }
         const data = matchedData(req);
-        meeting.deleteOne({_id: data.id, mentor: req.user}, function (err, user) {
+        meeting.deleteOne({_id: data.meeting, mentor: req.user}, function (err, user) {
             if (err) res.json(err);
             res.json({success: true});
         });

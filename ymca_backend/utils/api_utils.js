@@ -47,7 +47,7 @@ const updateObject = function (model, paramName, req, res) {
             updateSchemaField(result_object, prop, newObject[prop]);
         }
         result_object.save(function (err, result) {
-            if (!err) res.json(err);
+            if (err) res.json(err);
             res.json({success: true, result: result})
         });
     });
