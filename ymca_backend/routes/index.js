@@ -73,6 +73,7 @@ router.post('/reset_password', [
 
 router.get('/shutdown', function(req, res) {
     if (global.development) {
+        res.send("ok");
         process.exit();
     }
     res.status(403).json({error: "Access Denied"});
