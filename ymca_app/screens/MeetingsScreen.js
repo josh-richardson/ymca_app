@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 
+import { store } from '../model'
+
 export default class MeetingsScreen extends React.Component {
   static navigationOptions = {
     title: 'Upcoming Meetings',
@@ -18,17 +20,24 @@ export default class MeetingsScreen extends React.Component {
   }
 
   componentDidMount() {
-    fetch('https://api.myjson.com/bins/14xtdv')
-    .then((response) => response.json())
-    .then((responseJson) => {
-      this.setState({
-        isLoading: false,
-        meetings: responseJson.meetings,
-      });
+    // fetch('https://api.myjson.com/bins/14xtdv')
+    // .then((response) => response.json())
+    // .then((responseJson) => {
+    //   this.setState({
+    //     isLoading: false,
+    //     meetings: responseJson.meetings,
+    //   });
+    // })
+    // .catch((error) => {
+    //   console.error(error);
+    // });
+
+    console.log(store.getState())
+
+    this.setState({
+      isLoading: false,
+      meetings: store.getState().appointments
     })
-    .catch((error) => {
-      console.error(error);
-    });
   }
 
   showMeetingDetails(meeting) {
