@@ -108,6 +108,7 @@ router.post('/meetings/', passport.authenticate('jwt', {session: false}),
 
 router.post('/mentees/', passport.authenticate('jwt', {session: false}),
     function (req, res) {
+        console.log(req.user);
         mentee.find({mentor: req.user}).then(result_mentees => {
             res.json(result_mentees);
         }).catch((err) => {

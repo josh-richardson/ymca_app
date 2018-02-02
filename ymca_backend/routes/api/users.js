@@ -62,7 +62,6 @@ router.post('/authenticate', [
     }
     const authReq = matchedData(req);
     user.findOne({email: authReq.email}).then(foundUser => {
-
         if (!foundUser || !foundUser.validPassword(authReq.password)) {
             res.status(403).json({error: "Invalid username or password"});
         } else {
