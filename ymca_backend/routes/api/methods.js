@@ -34,8 +34,8 @@ router.post('/emergency', passport.authenticate('jwt', {session: false}),
 );
 
 
-router.post('/meetings/create', passport.authenticate('jwt', {session: false}), [
-        check('mentee').escape(),
+router.post('/meetings/add', passport.authenticate('jwt', {session: false}), [
+        check('id').escape(),
         check('meetingAddress').exists().escape(),
         check('startTime').isNumeric().escape(),
         check('endTime').isNumeric().escape(),
@@ -46,7 +46,7 @@ router.post('/meetings/create', passport.authenticate('jwt', {session: false}), 
             return res.status(422).json({errors: errors.mapped()});
         }
         const data = matchedData(req);
-        api_utils.findObjectByKey(mentee, '_id', data.mentee).then(result_mentee => {
+        api_utils.findObjectByKey(mentee, '_id', data.id).then(result_mentee => {
             const newMeeting = new meeting();
             newMeeting.mentor = req.user;
             newMeeting.mentee = result_mentee;
@@ -65,12 +65,12 @@ router.post('/meetings/create', passport.authenticate('jwt', {session: false}), 
 
 
 router.post('/meetings/edit', passport.authenticate('jwt', {session: false}), [
-        check('meeting').escape(),
-        check('json').exists(),
+        check('id').exists().escape(),
+        check('json').exists().isJSON(),
     ],
     function (req, res) {
         api_utils.findObjectByKey(meeting, 'mentor', req.user).then(() => {
-            api_utils.updateObject(meeting, "meeting", req, res);
+            api_utils.updateObject(meeting, "id", req, res);
         }).catch((err) => {
             res.json(err);
         })
@@ -79,7 +79,7 @@ router.post('/meetings/edit', passport.authenticate('jwt', {session: false}), [
 
 
 router.post('/meetings/delete', passport.authenticate('jwt', {session: false}), [
-        check('meeting').escape(),
+        check('id').exists().escape(),
     ],
     function (req, res) {
         const errors = validationResult(req);
@@ -87,7 +87,7 @@ router.post('/meetings/delete', passport.authenticate('jwt', {session: false}), 
             return res.status(422).json({errors: errors.mapped()});
         }
         const data = matchedData(req);
-        meeting.deleteOne({_id: data.meeting, mentor: req.user}, function (err, user) {
+        meeting.deleteOne({_id: data.id, mentor: req.user}, function (err, user) {
             if (err) res.json(err);
             res.json({success: true});
         });

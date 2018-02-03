@@ -1,3 +1,6 @@
+// Basic tests test barebones functionality as well as input validation/sanitization
+// Advanced tests test more contrived situations which are likely to cause trouble
+
 process.env.NODE_ENV = 'test';
 
 let mongoose = require('mongoose');
@@ -24,7 +27,7 @@ mongoose.connect(config.db_path, {
     });
 
 
-//region Declarations
+//region Declarations for basic tests
 let initialUserDetails = {
     'email': 'joshua@richardson.tech',
     'password': 'password',
@@ -85,9 +88,11 @@ let authToken = '';
 let initialUserId = '';
 let initialMenteeId = '';
 let initialManagerId = '';
+let initialMeetingId = '';
 let deletedUserId = '';
 let deletedMenteeId = '';
 let deletedManagerId = '';
+let deletedMeetingId = '';
 
 //endregion
 
@@ -106,7 +111,7 @@ describe('Base test suite', () => {
 });
 
 
-describe('Users test suite', () => {
+describe('Basic users test suite', () => {
 
 
     it('should return a user object', (done) => {
@@ -143,20 +148,6 @@ describe('Users test suite', () => {
     });
 
 
-    it('should return an error due to the duplicate email', (done) => {
-        request(www)
-            .post('/api/users/register')
-            .set('content-type', 'application/x-www-form-urlencoded')
-            .send(initialUserDetails)
-            .expect(422)
-            .end((err, res) => {
-                res.body.should.have.property('errors');
-                res.body.errors.email.msg.should.be.eql('This email is either in use, or a server error occurred.');
-                done();
-            });
-    });
-
-
     it('should return an auth token', (done) => {
         request(www)
             .post('/api/users/authenticate')
@@ -171,23 +162,10 @@ describe('Users test suite', () => {
     });
 
 
-    it('should return an invalid username/password error', (done) => {
-        userAuth.password += '1';
-        request(www)
-            .post('/api/users/authenticate')
-            .set('content-type', 'application/x-www-form-urlencoded')
-            .send(userAuth)
-            .expect(403)
-            .end((err, res) => {
-                res.body.should.have.property('error');
-                userAuth.password = userAuth.password.replace('1', '');
-                done();
-            });
-    });
 });
 
 
-describe('Admin test suite', () => {
+describe('Basic admin test suite', () => {
 
 
     //region Testing user functions
@@ -229,6 +207,20 @@ describe('Admin test suite', () => {
     });
 
 
+    it('Should return an array of users', (done) => {
+        request(www)
+            .post('/api/admin/mentors')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({'auth': authToken})
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.be.instanceOf(Array);
+                res.body.length.should.be.eql(1);
+                done();
+            });
+    });
+
+
     it('should return success and result with user modified', (done) => {
         request(www)
             .post('/api/admin/mentors/edit')
@@ -248,6 +240,21 @@ describe('Admin test suite', () => {
                 done();
             });
     });
+
+
+    it('Should return an array of users', (done) => {
+        request(www)
+            .post('/api/admin/mentors')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({'auth': authToken})
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.be.instanceOf(Array);
+                res.body.length.should.be.eql(1);
+                done();
+            });
+    });
+
     //endregion
 
 
@@ -287,22 +294,16 @@ describe('Admin test suite', () => {
 
 
     it('should return an array of mentees', (done) => {
-        api_utils.findObjectByKey(users, 'email', userAuth.email).then(result_mentor => {
-            result_mentor.admin = true;
-            result_mentor.save(function (err, result) {
-                if (err) throw (err);
-                request(www)
-                    .post('/api/admin/mentees')
-                    .set('content-type', 'application/x-www-form-urlencoded')
-                    .send({'auth': authToken})
-                    .expect(200)
-                    .end((err, res) => {
-                        res.body.should.be.instanceOf(Array);
-                        res.body.length.should.be.eql(2);
-                        done();
-                    });
+        request(www)
+            .post('/api/admin/mentees')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({'auth': authToken})
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.be.instanceOf(Array);
+                res.body.length.should.be.eql(2);
+                done();
             });
-        });
     });
 
 
@@ -319,6 +320,20 @@ describe('Admin test suite', () => {
             .end((err, res) => {
                 res.body.should.have.property('success');
                 res.body.success.should.be.eql(true);
+                done();
+            });
+    });
+
+
+    it('should return an array of mentees', (done) => {
+        request(www)
+            .post('/api/admin/mentees')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({'auth': authToken})
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.be.instanceOf(Array);
+                res.body.length.should.be.eql(1);
                 done();
             });
     });
@@ -346,7 +361,7 @@ describe('Admin test suite', () => {
     //endregion
 
 
-
+    //region Testing manager functions
     it('should return the new manager object', (done) => {
         request(www)
             .post('/api/admin/managers/add')
@@ -382,22 +397,16 @@ describe('Admin test suite', () => {
 
 
     it('should return an array of managers', (done) => {
-        api_utils.findObjectByKey(users, 'email', userAuth.email).then(result_mentor => {
-            result_mentor.admin = true;
-            result_mentor.save(function (err, result) {
-                if (err) throw (err);
-                request(www)
-                    .post('/api/admin/managers')
-                    .set('content-type', 'application/x-www-form-urlencoded')
-                    .send({'auth': authToken})
-                    .expect(200)
-                    .end((err, res) => {
-                        res.body.should.be.instanceOf(Array);
-                        res.body.length.should.be.eql(2);
-                        done();
-                    });
+        request(www)
+            .post('/api/admin/managers')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({'auth': authToken})
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.be.instanceOf(Array);
+                res.body.length.should.be.eql(2);
+                done();
             });
-        });
     });
 
 
@@ -414,6 +423,20 @@ describe('Admin test suite', () => {
             .end((err, res) => {
                 res.body.should.have.property('success');
                 res.body.success.should.be.eql(true);
+                done();
+            });
+    });
+
+
+    it('should return an array of managers', (done) => {
+        request(www)
+            .post('/api/admin/managers')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({'auth': authToken})
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.be.instanceOf(Array);
+                res.body.length.should.be.eql(1);
                 done();
             });
     });
@@ -441,7 +464,7 @@ describe('Admin test suite', () => {
     });
 
 
-    it('should return success and result with manager modified', (done) => {
+    it('should return success and result with mentee linked to manager', (done) => {
         request(www)
             .post('/api/admin/managers/assign')
             .set('content-type', 'application/x-www-form-urlencoded')
@@ -461,5 +484,192 @@ describe('Admin test suite', () => {
                 done();
             });
     });
+    //endregion
+
+});
+
+
+describe('Basic user methods test suite', () => {
+
+
+    it('should return a user object', (done) => {
+        request(www)
+            .post('/api/methods/profile')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({auth: authToken})
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.be.instanceOf(Object);
+                res.body.should.have.properties('_id', 'phone', 'firstName', 'secondName', 'email', 'admin');
+                res.body.email.should.be.eql(initialUserDetails.email);
+                res.body.admin.should.be.eql(true);
+                initialUserId = res.body._id;
+                done();
+            });
+    });
+
+
+    // We're not going to test /emergency here because that costs money so nah
+
+
+    it('should return the new meeting object', (done) => {
+        request(www)
+            .post('/api/methods/meetings/add')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send(({
+                'auth': authToken,
+                'id': initialMenteeId,
+                'meetingAddress': initialMenteeDetails.meetingAddress,
+                'startTime': Date.now() - 5000000,
+                'endTime': Date.now() - 4997000,
+            }))
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.have.properties('success', 'result');
+                res.body.success.should.be.eql(true);
+                res.body.result.should.have.properties('_id', 'meetingAddress', 'startTime', 'endTime');
+                initialMeetingId = res.body.result._id;
+                done();
+            });
+    });
+
+
+    it('should return the new meeting object', (done) => {
+        request(www)
+            .post('/api/methods/meetings/add')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send(({
+                'auth': authToken,
+                'id': initialMenteeId,
+                'meetingAddress': initialMenteeDetails.meetingAddress,
+                'startTime': Date.now() - 5000000,
+                'endTime': Date.now() - 4000000,
+            }))
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.have.properties('success', 'result');
+                res.body.success.should.be.eql(true);
+                res.body.result.should.have.properties('_id', 'meetingAddress', 'startTime', 'endTime');
+                deletedMeetingId = res.body.result._id;
+                done();
+            });
+    });
+
+
+    it('should return an array of meetings', (done) => {
+        request(www)
+            .post('/api/methods/meetings')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({'auth': authToken})
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.be.instanceOf(Array);
+                res.body.length.should.be.eql(2);
+                done();
+            });
+    });
+
+
+    it('should return success with meeting deleted', (done) => {
+        request(www)
+            .post('/api/methods/meetings/delete')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send(
+                {
+                    'auth': authToken,
+                    'id': deletedMeetingId
+                })
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.have.property('success');
+                res.body.success.should.be.eql(true);
+                done();
+            });
+    });
+
+
+    it('should return an array of meetings', (done) => {
+        request(www)
+            .post('/api/methods/meetings')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({'auth': authToken})
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.be.instanceOf(Array);
+                res.body.length.should.be.eql(1);
+                done();
+            });
+    });
+
+
+    it('should return success and result with meeting modified', (done) => {
+        request(www)
+            .post('/api/methods/meetings/edit')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send(
+                {
+                    'auth': authToken,
+                    'id': initialMeetingId,
+                    'json': '{"actualStartTime": "'+ (Date.now() - 4999500).toString() + '", "meetingAddress": "Some changed meeting address"}'
+                })
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.have.properties('success', 'result');
+                res.body.success.should.be.eql(true);
+                res.body.result.should.have.properties('actualStartTime', 'meetingAddress');
+                done();
+            });
+    });
+
+
+
+    it('should return an array of mentees', (done) => {
+        request(www)
+            .post('/api/methods/mentees')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send({'auth': authToken})
+            .expect(200)
+            .end((err, res) => {
+                res.body.should.be.instanceOf(Array);
+                res.body.length.should.be.eql(1);
+                done();
+            });
+    });
+
+
+});
+
+
+describe('More advanced tests (global)', () => {
+
+
+    it('should return an error due to the duplicate email', (done) => {
+        request(www)
+            .post('/api/users/register')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send(initialUserDetails)
+            .expect(422)
+            .end((err, res) => {
+                res.body.should.have.property('errors');
+                res.body.errors.email.msg.should.be.eql('This email is either in use, or a server error occurred.');
+                done();
+            });
+    });
+
+
+    it('should return an invalid username/password error', (done) => {
+        userAuth.password += '1';
+        request(www)
+            .post('/api/users/authenticate')
+            .set('content-type', 'application/x-www-form-urlencoded')
+            .send(userAuth)
+            .expect(403)
+            .end((err, res) => {
+                res.body.should.have.property('error');
+                userAuth.password = userAuth.password.replace('1', '');
+                done();
+            });
+    });
+
 
 });

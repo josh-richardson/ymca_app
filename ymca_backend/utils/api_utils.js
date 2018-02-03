@@ -23,28 +23,35 @@ const findObjectByKey = function (model, key, value) {
     });
 };
 
-const updateSchemaField = function (schema, fieldName, fieldValue) {
-    const obj = schema[fieldName];
-    if (typeof(obj) === "string" || obj instanceof String) {
-        schema[fieldName] = fieldValue;
-    } else if (obj instanceof Date) {
-        schema[fieldName] = new Date(fieldValue * 1000)
-    } else if (obj instanceof mongoose.Types.ObjectId) {
-        schema[fieldName] = fieldValue;
+const updateSchemaField = function (schema, object, fieldName, fieldValue) {
+    const obj = schema['schema']['paths'][fieldName]['instance'];
+    // console.log(obj);
+    if (obj === "String") {
+        object[fieldName] = fieldValue;
+    } else if (obj === "Date") {
+        object[fieldName] = new Date(parseInt(fieldValue))
+    } else if (obj === "ObjectID") {
+        object[fieldName] = fieldValue;
+    } else {
+        // console.log("---------------------------");
+        console.log(obj);
+        // console.log(fieldName);
+        // // console.log(schema);
+        // console.log("---------------------------")
     }
 };
 
 
-const updateObject = function (model, paramName, req, res) {
+const updateObject = function (schema, paramName, req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({errors: errors.mapped()});
     }
     const data = matchedData(req);
     const newObject = JSON.parse(data.json);
-    findObjectByKey(model, '_id', data[paramName]).then(result_object => {
+    findObjectByKey(schema, '_id', data[paramName]).then(result_object => {
         for (const prop in newObject) {
-            updateSchemaField(result_object, prop, newObject[prop]);
+            updateSchemaField(schema, result_object, prop, newObject[prop]);
         }
         result_object.save(function (err, result) {
             if (err) res.json(err);
@@ -52,7 +59,6 @@ const updateObject = function (model, paramName, req, res) {
         });
     });
 };
-
 
 
 module.exports = {objectExistsByKey, updateObject, findObjectByKey, updateSchemaField};
