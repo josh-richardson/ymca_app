@@ -43,14 +43,15 @@ router.post('/mentors/delete', passport.authenticate('jwt', {session: false}), i
     }
 );
 
-router.post('/mentors/edit', passport.authenticate('jwt', {session: false}), isAdmin,
-      [check('user').escape(),
-      check('json').exists(),],
+
+router.post('/mentors/edit', passport.authenticate('jwt', {session: false}), isAdmin, [
+        check('user').escape(),
+        check('json').exists(),
+    ],
     function (req, res) {
         api_utils.updateObject(user, "user", req, res);
     }
 );
-
 
 
 router.post('/mentees', passport.authenticate('jwt', {session: false}), isAdmin,
