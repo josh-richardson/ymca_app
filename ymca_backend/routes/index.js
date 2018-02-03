@@ -72,7 +72,7 @@ router.post('/reset_password', [
 });
 
 router.get('/shutdown', function(req, res) {
-    if (global.development) {
+    if (global.testing) {
         res.send("ok");
         process.exit();
     }

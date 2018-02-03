@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const validator = require('express-validator');
 const config = require('./config/config');
+const morgan = require('morgan');
 
 mongoose.connect(config.db_path, function (err) {
     if (err) {
@@ -16,7 +17,6 @@ mongoose.connect(config.db_path, function (err) {
         console.log('Connected to mongodb.');
     }
 });
-
 
 require('./config/passport');
 
@@ -27,6 +27,8 @@ const api_admin = require('./routes/api/admin');
 
 
 const app = express();
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
