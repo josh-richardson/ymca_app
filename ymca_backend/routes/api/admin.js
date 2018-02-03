@@ -45,11 +45,11 @@ router.post('/mentors/delete', passport.authenticate('jwt', {session: false}), i
 
 
 router.post('/mentors/edit', passport.authenticate('jwt', {session: false}), isAdmin, [
-        check('user').escape(),
+        check('id').escape(),
         check('json').exists(),
     ],
     function (req, res) {
-        api_utils.updateObject(user, "user", req, res);
+        api_utils.updateObject(user, "id", req, res);
     }
 );
 
@@ -95,7 +95,7 @@ router.post('/mentees/add', passport.authenticate('jwt', {session: false}), isAd
             newMentee.mentor = result_user;
             newMentee.save(function (err, result) {
                 if (!err) {
-                    res.json({success: true})
+                    res.json({"success": true, "result": newMentee})
                 }
             });
         });
@@ -120,11 +120,11 @@ router.post('/mentees/delete', passport.authenticate('jwt', {session: false}), i
 )
 
 router.post('/mentees/edit', passport.authenticate('jwt', {session: false}), isAdmin, [
-        check('mentee').escape(),
+        check('id').escape(),
         check('json').exists(),
     ],
     function (req, res) {
-        api_utils.updateObject(mentee, "mentee", req, res);
+        api_utils.updateObject(mentee, "id", req, res);
     }
 );
 
@@ -165,7 +165,7 @@ router.post('/managers/add', passport.authenticate('jwt', {session: false}), isA
         newManager.phone = data.phone;
         newManager.save(function (err, result) {
             if (!err) {
-                res.json({success: true})
+                res.json({success: true, result: newManager})
             }
         });
     }
@@ -189,11 +189,11 @@ router.post('/managers/delete', passport.authenticate('jwt', {session: false}), 
 
 
 router.post('/managers/edit', passport.authenticate('jwt', {session: false}), isAdmin, [
-        check('manager').escape(),
+        check('id').escape(),
         check('json').exists(),
     ],
     function (req, res) {
-        api_utils.updateObject(manager, "manager", req, res);
+        api_utils.updateObject(manager, "id", req, res);
     }
 );
 
@@ -212,7 +212,7 @@ router.post('/managers/assign', passport.authenticate('jwt', {session: false}), 
                 result_user.manager = result_manager;
                 result_user.save(function (err, result) {
                     if (!err) {
-                        res.json({success: true})
+                        res.json({success: true, result: result_user})
                     } else {
                         res.json(err);
                     }

@@ -5,32 +5,32 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mongo ymca-test --eval \"db.dropDatabase()\" && export NODE_ENV=test && mocha --timeout 10000 --exit"
+    "test": "mocha --timeout 10000 --exit"
   },
   "dependencies": {
+    "@sendgrid/mail": "6.1.4",
+    "bcrypt-nodejs": "0.0.3",
+    "bluebird": "3.5.1",
     "body-parser": "~1.18.2",
+    "chai-properties": "^1.3.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.15.5",
+    "express-validator": "4.3.0",
+    "jwt-simple": "0.5.1",
+    "memcached": "2.2.2",
+    "mongoose": "4.13.0",
     "morgan": "~1.9.0",
+    "passport": "0.4.0",
+    "passport-jwt": "3.0.1",
     "pug": "2.0.0-beta11",
     "serve-favicon": "~2.4.5",
-    "mongoose": "4.13.0",
-    "passport": "0.4.0",
-    "bcrypt-nodejs": "0.0.3",
-    "passport-jwt": "3.0.1",
-    "jwt-simple": "0.5.1",
-    "express-validator": "4.3.0",
-    "bluebird": "3.5.1",
-    "uuid": "3.1.0",
     "twilio": "3.9.2",
-    "@sendgrid/mail": "6.1.4",
-    "memcached": "2.2.2"
+    "uuid": "3.1.0"
   },
   "devDependencies": {
-    "chai": "~4.1.2",
-    "chai-http": "~3.0.0",
+    "should": "~13.2.1",
+    "supertest": "~3.0.0",
     "mocha": "~5.0.0"
   }
-
 }

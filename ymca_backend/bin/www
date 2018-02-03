@@ -4,8 +4,6 @@
  * Module dependencies.
  */
 
-global.testing = (process.env.NODE_ENV === "test");
-
 var app = require('../app');
 var debug = require('debug')('ymca-backend:server');
 var http = require('http');

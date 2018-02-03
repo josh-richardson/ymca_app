@@ -10,13 +10,20 @@ const validator = require('express-validator');
 const config = require('./config/config');
 const morgan = require('morgan');
 
-mongoose.connect(config.db_path, function (err) {
-    if (err) {
-        console.log("Failed to connect to mongo: " + err);
-    } else {
-        console.log('Connected to mongodb.');
-    }
-});
+mongoose.Promise = Promise;
+
+mongoose.connect(config.db_path, {
+        keepAlive: true,
+        reconnectTries: Number.MAX_VALUE,
+        useMongoClient: true
+    },
+    function (err) {
+        if (err) {
+            console.log("Failed to connect to mongo: " + err);
+        } else {
+            console.log('Connected to mongodb.');
+        }
+    });
 
 require('./config/passport');
 
@@ -27,7 +34,6 @@ const api_admin = require('./routes/api/admin');
 
 
 const app = express();
-
 
 
 // view engine setup
