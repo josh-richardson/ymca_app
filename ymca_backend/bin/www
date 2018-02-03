@@ -5,7 +5,6 @@
  */
 
 global.testing = (process.env.NODE_ENV === "test");
-console.log(global.testing);
 
 var app = require('../app');
 var debug = require('debug')('ymca-backend:server');
