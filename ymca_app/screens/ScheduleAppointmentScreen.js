@@ -6,7 +6,7 @@ import DatePicker from 'react-native-datepicker'
 import { currentDate, currentDatePlus } from '../utils'
 import { Divider, FullWidthButton } from '../components'
 
-import { store, Requests } from '../model'
+import { store, Requests, addAppointment } from '../model'
 
 export default class ScheduleAppointmentScreen extends React.Component {
   static navigationOptions = {
@@ -35,14 +35,17 @@ export default class ScheduleAppointmentScreen extends React.Component {
   }
 
   scheduleAppointment() {
-    Alert.alert("Scheduling appointment...")
-
-    console.log(this.state.selectedMentee)
-
     // TODO: Implement place form
-    Requests.addMeeting(store.getState().mentorInfo.jwt, this.state.selectedMentee, "Some place", Date.parse(this.state.datetime), Date.parse(this.state.datetime)+30000)
+    Requests.addMeeting(store.getState().mentorInfo.jwt, this.state.selectedMentee, "Some place", Date.parse(this.state.datetime), Date.parse(this.state.datetime)+30000).then(response => {
+        if(response.success) {
+          Alert.alert("Appointment scheduled!")
 
-    this.props.navigation.goBack()
+          let newAppointment = {...response.result, mentee: response.result.mentee._id}
+          store.dispatch(addAppointment(newAppointment))
+
+          this.props.navigation.goBack()
+        }
+    })
   }
 
   render() {
