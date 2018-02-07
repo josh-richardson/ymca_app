@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const user = require('../models/user');
 const mentee = require('../models/mentee');
 const manager = require('../models/manager');
+const meeting = require('../models/meeting');
+
 const config = require('../config/config');
 process.env.NODE_ENV = 'test';
 
@@ -62,7 +64,20 @@ newUser.save(function (err, result) {
         newMentee.save(function (err, result) {
             if (!err) {
                 console.log("Created new mentee");
-                process.exit();
+                const newMeeting = new meeting();
+                newMeeting.mentor = newUser;
+                newMeeting.mentee = newMentee;
+                newMeeting.meetingAddress = newMentee.meetingAddress;
+                newMeeting.startTime = new Date();
+                newMeeting.endTime = new Date();
+                newMeeting.save(function (err, result) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log("Created new meeting");
+                        process.exit();
+                    }
+                });
             }
         });
     }
