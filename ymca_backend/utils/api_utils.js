@@ -25,7 +25,6 @@ const findObjectByKey = function (model, key, value) {
 
 const updateSchemaField = function (schema, object, fieldName, fieldValue) {
     const obj = schema['schema']['paths'][fieldName]['instance'];
-    // console.log(obj);
     if (obj === "String") {
         object[fieldName] = fieldValue;
     } else if (obj === "Date") {
@@ -33,11 +32,7 @@ const updateSchemaField = function (schema, object, fieldName, fieldValue) {
     } else if (obj === "ObjectID") {
         object[fieldName] = fieldValue;
     } else {
-        // console.log("---------------------------");
         console.log(obj);
-        // console.log(fieldName);
-        // // console.log(schema);
-        // console.log("---------------------------")
     }
 };
 

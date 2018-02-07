@@ -27,6 +27,7 @@ const createUser = function (value) {
     })
 };
 
+
 router.post('/register', [
     check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail()
         .custom(value => {
@@ -52,6 +53,7 @@ router.post('/register', [
     });
 });
 
+
 router.post('/authenticate', [
     check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail().escape(),
     check('password', 'Invalid password').isLength({min: 5}),
@@ -65,7 +67,7 @@ router.post('/authenticate', [
         if (!foundUser || !foundUser.validPassword(authReq.password)) {
             res.status(403).json({error: "Invalid username or password"});
         } else {
-            var encodedToken = jwt.encode(foundUser, config.jwt_secret);
+            const encodedToken = jwt.encode(foundUser, config.jwt_secret);
             res.json({token: encodedToken});
         }
     }).catch(err => {

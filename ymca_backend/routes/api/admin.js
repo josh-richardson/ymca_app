@@ -185,7 +185,7 @@ router.post('/managers/delete', passport.authenticate('jwt', {session: false}), 
             res.json({success: true});
         });
     }
-)
+);
 
 
 router.post('/managers/edit', passport.authenticate('jwt', {session: false}), isAdmin, [
@@ -196,6 +196,7 @@ router.post('/managers/edit', passport.authenticate('jwt', {session: false}), is
         api_utils.updateObject(manager, "id", req, res);
     }
 );
+
 
 router.post('/managers/assign', passport.authenticate('jwt', {session: false}), isAdmin, [
         check('mentorEmail').isEmail().withMessage('Invalid email').trim().normalizeEmail().escape(),
@@ -224,7 +225,8 @@ router.post('/managers/assign', passport.authenticate('jwt', {session: false}), 
             console.log(err);
 
         });
-    });
+    }
+);
 
 
 module.exports = router;
