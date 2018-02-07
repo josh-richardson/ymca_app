@@ -6,7 +6,7 @@ import DatePicker from 'react-native-datepicker'
 import { currentDate, currentDatePlus } from '../utils'
 import { Divider, FullWidthButton } from '../components'
 
-import { store } from '../model'
+import { store, Requests } from '../model'
 
 export default class ScheduleAppointmentScreen extends React.Component {
   static navigationOptions = {
@@ -17,16 +17,17 @@ export default class ScheduleAppointmentScreen extends React.Component {
     super(props)
 
     this.state = {
-      date: currentDate(),
-      time: "12:00",
-      mentees: store.getState().mentees
+      datetime: new Date(),
+      mentees: store.getState().mentees,
+      selectedMentee: store.getState().mentees[0]._id
     }
 
-    if(props.navigation.state.params.hasOwnProperty("meeting")) {
-      this.state.date = props.navigation.state.params.meeting.date
-      this.state.time = props.navigation.state.params.meeting.time
-      this.state.selectedMentee = `${props.navigation.state.params.meeting.firstName} ${props.navigation.state.params.meeting.secondName}`
-    }
+    // TODO: Fix this when implementing update meeting
+    // if(props.navigation.state.params.hasOwnProperty("meeting")) {
+    //   this.state.date = props.navigation.state.params.meeting.date
+    //   this.state.time = props.navigation.state.params.meeting.time
+    //   this.state.selectedMentee = `${props.navigation.state.params.meeting.firstName} ${props.navigation.state.params.meeting.secondName}`
+    // }
   }
 
   componentDidMount() {
@@ -35,6 +36,12 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
   scheduleAppointment() {
     Alert.alert("Scheduling appointment...")
+
+    console.log(this.state.selectedMentee)
+
+    // TODO: Implement place form
+    Requests.addMeeting(store.getState().mentorInfo.jwt, this.state.selectedMentee, "Some place", Date.parse(this.state.datetime), Date.parse(this.state.datetime)+30000)
+
     this.props.navigation.goBack()
   }
 
@@ -43,25 +50,15 @@ export default class ScheduleAppointmentScreen extends React.Component {
       <View style={[BaseStyles.container, BaseStyles.centerChildrenHorizontally]}>
         <DatePicker
           style={{width: '85%', marginTop: 30}}
-          date={this.state.date}
-          mode="date"
+          date={this.state.datetime}
+          mode="datetime"
           placeholder="Select Appointment Date"
-          format="YYYY-MM-DD"
-          minDate={currentDate()}
+          format="DD MMM YYYY hh:mm"
+          minDate={new Date()}
           maxDate={currentDatePlus(90)}
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
-          onDateChange={(date) => {this.setState({date: date})}}
-        />
-
-        <DatePicker
-          style={{width: '85%', marginTop: 10}}
-          date={this.state.time}
-          mode="time"
-          placeholder="Select Appointment Time"
-          confirmBtnText="Confirm"
-          cancelBtnText="Cancel"
-          onDateChange={(time) => {this.setState({time: time})}}
+          onDateChange={(datetime) => {this.setState({datetime: datetime})}}
         />
 
         <Text style={{width: '85%', marginTop: 30, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select Mentee</Text>

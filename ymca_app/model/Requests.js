@@ -25,6 +25,11 @@ export default class Requests {
     return response
   }
 
+  static async addMeeting(jwt, id, meetingAddress, startTime, endTime) {
+    let response = await Requests.makeRequest('methods/meetings/add', { auth: jwt, id, meetingAddress, startTime, endTime })
+    return response
+  }
+
   static async makeRequest(url, bodyObject) {
     let response = await fetch(`http://ymca.pw/api/${url}`, {
       method: 'POST',
@@ -40,6 +45,7 @@ export default class Requests {
       return responseJson
     } else {
       console.log(`Response status is ${response.status}.`)
+      console.log(`Response is ${response}.`)
     }
   }
 }
