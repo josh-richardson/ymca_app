@@ -20,20 +20,6 @@ export default class MeetingsScreen extends React.Component {
   }
 
   componentDidMount() {
-    // fetch('https://api.myjson.com/bins/14xtdv')
-    // .then((response) => response.json())
-    // .then((responseJson) => {
-    //   this.setState({
-    //     isLoading: false,
-    //     meetings: responseJson.meetings,
-    //   });
-    // })
-    // .catch((error) => {
-    //   console.error(error);
-    // });
-
-    console.log(store.getState())
-
     this.setState({
       isLoading: false,
       meetings: store.getState().appointments

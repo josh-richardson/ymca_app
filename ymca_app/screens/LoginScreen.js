@@ -48,25 +48,9 @@ export default class LoginScreen extends React.Component {
           token: responseJson.token,
         });
 
-        // FETCH AND STORE USER MENTEES HERE
-        fetch('https://api.myjson.com/bins/k30an')
-          .then((response) => response.json())
-          .then((responseJson) => {
-            store.dispatch(setMentees(responseJson.mentees))
-          })
-          .catch((error) => {
-            console.error(error);
-        });
+        // TODO: FETCH AND STORE USER MENTEES HERE
 
-        // FETCH AND STORE USER APPOINTMENTS HERE
-        fetch('https://api.myjson.com/bins/14xtdv')
-          .then((response) => response.json())
-          .then((responseJson) => {
-            store.dispatch(setAppointments(responseJson.meetings))
-          })
-          .catch((error) => {
-            console.error(error);
-        });
+        // TODO: FETCH AND STORE USER APPOINTMENTS HERE
 
         const resetAction = NavigationActions.reset({
           index: 0,
