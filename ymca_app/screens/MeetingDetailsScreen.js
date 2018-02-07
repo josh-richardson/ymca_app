@@ -4,6 +4,8 @@ import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton } from '../components'
 
+import { Accessors } from '../model'
+
 export default class MeetingDetailsScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
       title: `Meeting with ${navigation.state.params.meeting.firstName}`
@@ -14,7 +16,6 @@ export default class MeetingDetailsScreen extends React.Component {
 
     this.state = {
       meeting: props.navigation.state.params.meeting,
-      token: props.navigation.state.params.token
     }
   }
 
@@ -23,13 +24,13 @@ export default class MeetingDetailsScreen extends React.Component {
   }
 
   changeMeeting() {
-    this.props.navigation.navigate("ScheduleAppointment", {token: this.state.token, meeting: this.state.meeting})
+    this.props.navigation.navigate("ScheduleAppointment", {meeting: this.state.meeting})
   }
   extendMeeting() {
     Alert.alert("Extending meeting...")
   }
   endMeeting() {
-    this.props.navigation.navigate('MentorFeedback', {token: this.state.token, meeting: this.state.meeting})
+    this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
   }
   cancelMeeting() {
     Alert.alert("Canceling meeting...")
@@ -37,11 +38,14 @@ export default class MeetingDetailsScreen extends React.Component {
   emergency() {
     const {navigate} = this.props.navigation;
 
-    navigate('EmergencyAlertSent', {token: this.state.token})
+    navigate('EmergencyAlertSent')
   }
 
   render() {
-    const initials = `${this.state.meeting.firstName.charAt(0)}${this.state.meeting.secondName.charAt(0)}`
+    const appointment = this.state.meeting
+
+    const mentee = Accessors.getMentee(appointment.mentee)
+    const initials = `${mentee.firstName.charAt(0)}${mentee.secondName.charAt(0)}`
 
     return(
       <View style={BaseStyles.container}>
@@ -55,10 +59,10 @@ export default class MeetingDetailsScreen extends React.Component {
         </View>
 
         <List>
-          <ListItem title="Name" rightTitle={`${this.state.meeting.firstName} ${this.state.meeting.secondName}`} hideChevron/>
-          <ListItem title="Date and Time" rightTitle={`${this.state.meeting.date} ${this.state.meeting.time}`} hideChevron/>
-          <ListItem title="Place" rightTitle={this.state.meeting.place} hideChevron/>
-          <ListItem title="Duration" rightTitle={this.state.meeting.duration} hideChevron/>
+          <ListItem title="Name" rightTitle={`${mentee.firstName} ${mentee.secondName}`} hideChevron/>
+          <ListItem title="Date and Time" rightTitle={`${appointment.startTime}`} hideChevron/>
+          <ListItem title="Place" rightTitle={appointment.meetingAddress} hideChevron/>
+          <ListItem title="End data and time" rightTitle={appointment.endTime} hideChevron/>
         </List>
 
         <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom]}>

@@ -4,13 +4,11 @@ import { BaseStyles } from '../BaseStyles';
 import { FullWidthButton } from '../components';
 import PropTypes from 'prop-types';
 
+import { store, Requests } from '../model'
+
 export default class EmergencyAlertSentScreen extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      token: props.navigation.state.params.token
-    }
   }
 
   static navigationOptions = {
@@ -18,22 +16,7 @@ export default class EmergencyAlertSentScreen extends React.Component {
   };
 
   componentDidMount() {
-    return fetch('http://ymca.pw/api/methods/emergency', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        auth: this.state.token
-      })
-    })
-    .then((response) => {
-      console.log("EMERGENCY API RESPONSE: " + JSON.stringify(response));
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+    return Requests.sendEmergency(store.getState().mentorInfo.jwt)
   }
 
   backButtonPressed() {

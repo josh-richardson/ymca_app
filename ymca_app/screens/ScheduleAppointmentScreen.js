@@ -17,10 +17,9 @@ export default class ScheduleAppointmentScreen extends React.Component {
     super(props)
 
     this.state = {
-      token: props.navigation.state.params.token,
       date: currentDate(),
       time: "12:00",
-      isLoading: true
+      mentees: store.getState().mentees
     }
 
     if(props.navigation.state.params.hasOwnProperty("meeting")) {
@@ -31,22 +30,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
   }
 
   componentDidMount() {
-    // fetch("https://api.myjson.com/bins/k30an")
-    // .then((response) => response.json())
-    // .then((responseJson) => {
-    //   this.setState({
-    //     isLoading: false,
-    //     mentees: responseJson.mentees,
-    //   });
-    // })
-    // .catch((error) => {
-    //   console.error(error);
-    // });
 
-    this.setState({
-      isLoading: false,
-      mentees: store.getState().mentees
-    })
   }
 
   scheduleAppointment() {
@@ -55,15 +39,6 @@ export default class ScheduleAppointmentScreen extends React.Component {
   }
 
   render() {
-
-    if(this.state.isLoading) {
-      return(
-        <View style={[BaseStyles.container, BaseStyles.centerChildren]}>
-          <Text style={{marginLeft:'15%', marginRight:'15%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>Loading mentees data...</Text>
-        </View>
-      )
-    }
-
     return(
       <View style={[BaseStyles.container, BaseStyles.centerChildrenHorizontally]}>
         <DatePicker
@@ -98,7 +73,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
           onValueChange={(value, index) => this.setState({selectedMentee: value})}>
         {
           this.state.mentees.map(mentee =>
-            <Picker.Item key={mentee.key} label={`${mentee.firstName} ${mentee.lastName}`} value={mentee.key}/>
+            <Picker.Item key={mentee._id} label={`${mentee.firstName} ${mentee.secondName}`} value={mentee._id}/>
           )
         }
         </Picker>

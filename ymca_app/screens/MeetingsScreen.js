@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 
-import { store } from '../model'
+import { store, Accessors } from '../model'
 
 export default class MeetingsScreen extends React.Component {
   static navigationOptions = {
@@ -14,58 +14,47 @@ export default class MeetingsScreen extends React.Component {
     super(props)
 
     this.state = {
-      isLoading: true,
-      token: props.navigation.state.params.token
+      meetings: store.getState().appointments
     }
   }
 
   componentDidMount() {
-    this.setState({
-      isLoading: false,
-      meetings: store.getState().appointments
-    })
+
   }
 
   showMeetingDetails(meeting) {
     const { navigate } = this.props.navigation;
 
-    navigate('MeetingDetails', {meeting, token: this.state.token})
+    navigate('MeetingDetails', {meeting})
   }
 
-  renderItem(item) {
+  renderItem(appointment) {
 
-    const initials = `${item.firstName.charAt(0)}${item.secondName.charAt(0)}`
+    const mentee = Accessors.getMentee(appointment.mentee)
+    const initials = `${mentee.firstName.charAt(0)}${mentee.secondName.charAt(0)}`
 
     return (
       <ListItem
         button
-        title={`${item.firstName} ${item.secondName}`}
-        subtitle={item.date}
+        title={`${mentee.firstName} ${mentee.secondName}`}
+        subtitle={appointment.date}
+        key={appointment._id}
         avatar={<Avatar
                 title={initials}
                 rounded
               />}
-        onPress={() => {this.showMeetingDetails(item)}}
+        onPress={() => {this.showMeetingDetails(appointment)}}
       />
     )
   }
 
   render() {
-    if(this.state.isLoading) {
-      return(
-        <View style={[BaseStyles.container, BaseStyles.centerChildren]}>
-          <Text style={{marginLeft:'15%', marginRight:'15%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>Loading meetings data...</Text>
-        </View>
-      )
-    }
-
     return(
       <View>
         <List>
-          <FlatList
-            data={this.state.meetings}
-            renderItem={({item}) => this.renderItem(item)}
-          />
+          {
+            this.state.meetings.map(appointment => this.renderItem(appointment))
+          }
         </List>
       </View>
     )

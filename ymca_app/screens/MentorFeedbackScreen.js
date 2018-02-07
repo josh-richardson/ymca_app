@@ -14,7 +14,6 @@ export default class MentorFeedbackScreen extends React.Component {
 
     this.state = {
       meeting: props.navigation.state.params.meeting,
-      token: props.navigation.state.params.token,
 
       response1: "",
       response2: "",
@@ -31,8 +30,8 @@ export default class MentorFeedbackScreen extends React.Component {
   doneButtonPressed() {
     // TODO: Send response to server
     // Possibly validate that all questions are answered
-    
-    this.props.navigation.navigate('MenteeFeedback', {token: this.state.token, meeting: this.state.meeting})
+
+    this.props.navigation.navigate('MenteeFeedback', {meeting: this.state.meeting})
   }
 
   render() {
