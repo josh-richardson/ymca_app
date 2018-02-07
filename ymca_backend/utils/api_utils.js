@@ -13,6 +13,7 @@ const objectExistsByKey = function (model, key, value) {
     });
 };
 
+
 const findObjectByKey = function (model, key, value) {
     return new Promise(function (resolve, reject) {
         model.findOne({[key]: value}, function (err, result) {
@@ -22,6 +23,7 @@ const findObjectByKey = function (model, key, value) {
         });
     });
 };
+
 
 const updateSchemaField = function (schema, object, fieldName, fieldValue) {
     const obj = schema['schema']['paths'][fieldName]['instance'];
