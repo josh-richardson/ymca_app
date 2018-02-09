@@ -581,7 +581,25 @@ describe('Test suite for API', () => {
                         'id': deletedMeetingId
                     })
                 .expect(200)
+                .end((err, res) => {        it('should return success and result with meeting modified', (done) => {
+            request(www)
+                .post('/api/methods/meetings/edit')
+                .set('content-type', 'application/x-www-form-urlencoded')
+                .send(
+                    {
+                        'auth': authToken,
+                        'id': initialMeetingId,
+                        'json': '{"actualStartTime": "' + (Date.now() - 4999500).toString() + '", "meetingAddress": "Some changed meeting address"}'
+                    })
+                .expect(200)
                 .end((err, res) => {
+                    res.body.should.have.properties('success', 'result');
+                    res.body.success.should.be.eql(true);
+                    res.body.result.should.have.properties('actualStartTime', 'meetingAddress');
+                    res.body.result.meetingAddress.should.be.eql("Some changed meeting address");
+                    done();
+                });
+        });
                     res.body.should.have.property('success');
                     res.body.success.should.be.eql(true);
                     done();
