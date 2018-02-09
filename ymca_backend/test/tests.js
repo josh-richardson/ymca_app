@@ -671,6 +671,50 @@ describe('Test suite for API', () => {
                 });
         });
 
+        it('should return access denied',(done)=>{
+            var authentication;
+            var username='zara@gmail.com',password='password12345';
+            var firstName='Zara',secondName='Mackie',phone='01418808876'
+            it('should return a new user',(done)=>{
+            request(www)
+              .post('/api/users/register')
+              .set('content-type', 'application/x-www-form-urlencoded')
+              .send({email:username,password:password,firstName:firstName})
+              .expect(200)
+              .end((err,res)=>{
+                console.log(res);
+                res.body.should.have.property('success');
+
+              })
+            });
+            it('should return 200',(done)=>{
+
+            request(www)
+              .post('/api/users/authenticate')
+              .set('content-type', 'application/x-www-form-urlencoded')
+              .send({email:username,password:password})
+              .expect(200)
+              .end((err,res)=>{
+                console.log(res);
+                res.body.should.have.property('token');
+                authentication=res.body.token;
+
+              })
+            });
+            it('should return a 403',(done)=>{
+
+            request(www)
+              .post('/api/admin/mentees')
+              .set('content-type', 'application/x-www-form-urlencoded')
+              .send({auth:authentication})
+              .expect(403)
+              .end((err,res)=>{
+                console.log(res);
+                done();
+              })
+            });
+        })
+
 
     });
 
