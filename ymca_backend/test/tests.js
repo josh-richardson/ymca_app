@@ -28,62 +28,72 @@ mongoose.connect(config.db_path, {
 
 //region Declarations for basic tests
 let initialUserDetails = {
-    'email': 'joshua@richardson.tech',
-    'password': 'password',
-    'firstName': 'Joshua',
-    'secondName': 'Richardson',
-    'phone': '07450650708'
+    email: 'joshua@richardson.tech',
+    password: 'password',
+    firstName: 'Joshua',
+    secondName: 'Richardson',
+    phone: '07450650708'
 };
 
 
 let deletedUserDetails = {
-    'email': 'devdude@devdude.me',
-    'password': 'password',
-    'firstName': 'Youssef',
-    'secondName': 'SamiDevdude',
-    'phone': '07450650708'
+    email: 'devdude@devdude.me',
+    password: 'password',
+    firstName: 'Youssef',
+    secondName: 'SamiDevdude',
+    phone: '07450650708'
 };
 
 let userAuth = {
-    'email': 'joshua@richardson.tech',
-    'password': 'password',
+    email: 'joshua@richardson.tech',
+    password: 'password',
 };
 
 let initialMenteeDetails = {
-    'email': 'somementee@gmail.com',
-    'meetingAddress': '25 Imaginary Road, Kelvinbridge, Glagsow, G12 NQW',
-    'firstName': 'Jack',
-    'secondName': 'Saunders',
-    'phone': '07450470502',
-    'mentorEmail': 'joshua@richardson.tech'
+    email: 'somementee@gmail.com',
+    meetingAddress: '25 Imaginary Road, Kelvinbridge, Glagsow, G12 NQW',
+    firstName: 'Jack',
+    secondName: 'Saunders',
+    phone: '07450470502',
+    mentorEmail: 'joshua@richardson.tech'
 };
 
 
 let deletedMenteeDetails = {
-    'email': 'somementee1@gmail.com',
-    'meetingAddress': 'lorem',
-    'firstName': 'lorem',
-    'secondName': 'lorem',
-    'phone': '07450470502',
-    'mentorEmail': 'joshua@richardson.tech'
+    email: 'somementee1@gmail.com',
+    meetingAddress: 'lorem',
+    firstName: 'lorem',
+    secondName: 'lorem',
+    phone: '07450470502',
+    mentorEmail: 'joshua@richardson.tech'
 };
 
 
 let deletedManagerDetails = {
-    'email': 'somemanager@gmail.com',
-    'firstName': 'Jesse',
-    'secondName': 'Jackson',
-    'phone': '07650650801'
+    email: 'somemanager@gmail.com',
+    firstName: 'Jesse',
+    secondName: 'Jackson',
+    phone: '07650650801'
 };
 
 let initialManagerDetails = {
-    'email': 'someothermanager@gmail.com',
-    'firstName': 'Jethro',
-    'secondName': 'Jackson',
-    'phone': '07650650801'
+    email: 'someothermanager@gmail.com',
+    firstName: 'Jethro',
+    secondName: 'Jackson',
+    phone: '07650650801'
+};
+
+
+let testEscalationUserDetails = {
+    email: 'zara@gmail.com',
+    password: 'password12345',
+    firstName: 'James',
+    secondName: 'Jackson',
+    phone: '07450650708'
 };
 
 let authToken = '';
+let escalationAuthToken = '';
 let initialUserId = '';
 let initialMenteeId = '';
 let initialManagerId = '';
@@ -581,25 +591,26 @@ describe('Test suite for API', () => {
                         'id': deletedMeetingId
                     })
                 .expect(200)
-                .end((err, res) => {        it('should return success and result with meeting modified', (done) => {
-            request(www)
-                .post('/api/methods/meetings/edit')
-                .set('content-type', 'application/x-www-form-urlencoded')
-                .send(
-                    {
-                        'auth': authToken,
-                        'id': initialMeetingId,
-                        'json': '{"actualStartTime": "' + (Date.now() - 4999500).toString() + '", "meetingAddress": "Some changed meeting address"}'
-                    })
-                .expect(200)
                 .end((err, res) => {
-                    res.body.should.have.properties('success', 'result');
-                    res.body.success.should.be.eql(true);
-                    res.body.result.should.have.properties('actualStartTime', 'meetingAddress');
-                    res.body.result.meetingAddress.should.be.eql("Some changed meeting address");
-                    done();
-                });
-        });
+                    it('should return success and result with meeting modified', (done) => {
+                        request(www)
+                            .post('/api/methods/meetings/edit')
+                            .set('content-type', 'application/x-www-form-urlencoded')
+                            .send(
+                                {
+                                    'auth': authToken,
+                                    'id': initialMeetingId,
+                                    'json': '{"actualStartTime": "' + (Date.now() - 4999500).toString() + '", "meetingAddress": "Some changed meeting address"}'
+                                })
+                            .expect(200)
+                            .end((err, res) => {
+                                res.body.should.have.properties('success', 'result');
+                                res.body.success.should.be.eql(true);
+                                res.body.result.should.have.properties('actualStartTime', 'meetingAddress');
+                                res.body.result.meetingAddress.should.be.eql("Some changed meeting address");
+                                done();
+                            });
+                    });
                     res.body.should.have.property('success');
                     res.body.success.should.be.eql(true);
                     done();
@@ -689,52 +700,43 @@ describe('Test suite for API', () => {
                 });
         });
 
-        it('should return access denied',(done)=>{
-            var authentication;
-            var username='zara@gmail.com',password='password12345';
-            var firstName='Zara',secondName='Mackie',phone='01418808876'
-            it('should return a new user',(done)=>{
-            request(www)
-              .post('/api/users/register')
-              .set('content-type', 'application/x-www-form-urlencoded')
-              .send({email:username,password:password,firstName:firstName})
-              .expect(200)
-              .end((err,res)=>{
-                console.log(res);
-                res.body.should.have.property('success');
+        describe('More advanced tests (global)', () => {
 
-              })
+
+
+
+            it('should return a new user', (done) => {
+                request(www)
+                    .post('/api/users/register')
+                    .set('content-type', 'application/x-www-form-urlencoded')
+                    .send(testEscalationUserDetails)
+                    .expect(200)
+                    .end((err, res) => {
+                        done();
+                    })
             });
-            it('should return 200',(done)=>{
-
-            request(www)
-              .post('/api/users/authenticate')
-              .set('content-type', 'application/x-www-form-urlencoded')
-              .send({email:username,password:password})
-              .expect(200)
-              .end((err,res)=>{
-                console.log(res);
-                res.body.should.have.property('token');
-                authentication=res.body.token;
-
-              })
+            it('should return 200', (done) => {
+                request(www)
+                    .post('/api/users/authenticate')
+                    .set('content-type', 'application/x-www-form-urlencoded')
+                    .send({email: testEscalationUserDetails.email, password: testEscalationUserDetails.password})
+                    .expect(200)
+                    .end((err, res) => {
+                        res.body.should.have.property('token');
+                        escalationAuthToken = res.body.token;
+                        done();
+                    })
             });
-            it('should return a 403',(done)=>{
-
-            request(www)
-              .post('/api/admin/mentees')
-              .set('content-type', 'application/x-www-form-urlencoded')
-              .send({auth:authentication})
-              .expect(403)
-              .end((err,res)=>{
-                console.log(res);
-                done();
-              })
+            it('should return a 403', (done) => {
+                request(www)
+                    .post('/api/admin/mentees')
+                    .set('content-type', 'application/x-www-form-urlencoded')
+                    .send({auth: escalationAuthToken})
+                    .expect(403)
+                    .end((err, res) => {
+                        done();
+                    })
             });
-        })
-
-
+        });
     });
-
-
 });
