@@ -53,13 +53,16 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
     if(this.state.isUpdatingAppointment) {
       Requests.updateMeeting(store.getState().mentorInfo.jwt, this.state.id, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
-        console.log(response)
 
         if(response.success) {
           Alert.alert("Appointment updated!")
 
-          let newAppointment = {...response.result, mentee: response.result.mentee._id}
+          let newAppointment = {...response.result, mentee: response.result.mentee}
           store.dispatch(updateAppointment(this.state.id, newAppointment))
+
+          if(this.props.navigation.state.params.hasOwnProperty("onGoBack")) {
+            this.props.navigation.state.params.onGoBack()
+          }
 
           this.props.navigation.goBack()
         }

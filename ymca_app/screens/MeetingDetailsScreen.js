@@ -9,7 +9,8 @@ import { Accessors, Requests, removeAppointment, store } from '../model'
 
 export default class MeetingDetailsScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
-    const mentee = Accessors.getMentee(navigation.state.params.meeting.mentee)
+    const meeting = Accessors.getAppointment(navigation.state.params.meetingID)
+    const mentee = Accessors.getMentee(meeting.mentee)
 
     return {
       title: `Meeting with ${mentee.firstName}`,
@@ -20,12 +21,16 @@ export default class MeetingDetailsScreen extends React.Component {
     super(props)
 
     this.state = {
-      meeting: props.navigation.state.params.meeting,
+      meeting: Accessors.getAppointment(props.navigation.state.params.meetingID),
     }
   }
 
+  refresh() {
+    this.setState({meeting: Accessors.getAppointment(this.state.meeting._id)})
+  }
+
   changeMeeting() {
-    this.props.navigation.navigate("ScheduleAppointment", {meeting: this.state.meeting})
+    this.props.navigation.navigate("ScheduleAppointment", {meeting: this.state.meeting, onGoBack: this.refresh.bind(this)})
   }
   extendMeeting() {
     Alert.alert("Extending meeting...")

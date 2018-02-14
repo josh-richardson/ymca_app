@@ -27,10 +27,10 @@ export default class MeetingsScreen extends React.Component {
     this.setState({meetings: store.getState().appointments})
   }
 
-  showMeetingDetails(meeting) {
+  showMeetingDetails(meetingID) {
     const { navigate } = this.props.navigation;
 
-    navigate('MeetingDetails', {meeting, onGoBack: this.refresh.bind(this)})
+    navigate('MeetingDetails', {meetingID, onGoBack: this.refresh.bind(this)})
   }
 
   renderItem(appointment) {
@@ -48,7 +48,7 @@ export default class MeetingsScreen extends React.Component {
                 title={initials}
                 rounded
               />}
-        onPress={() => {this.showMeetingDetails(appointment)}}
+        onPress={() => {this.showMeetingDetails(appointment._id)}}
       />
     )
   }
