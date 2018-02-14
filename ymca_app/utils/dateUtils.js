@@ -1,9 +1,14 @@
 let formatDate = (date) => {
-  var day = date.getDate()
-  var month = date.getMonth() + 1
-  var year = date.getFullYear()
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-  return year + '-' + month + '-' + day
+  const minute = date.getMinutes()
+  const hour = date.getHours()
+
+  const day = date.getDate()
+  const month = months[date.getMonth()]
+  const year = date.getFullYear()
+
+  return `${day} ${month} ${year} ${hour}:${minute}`
 }
 
 let currentDate = () => {

@@ -22,7 +22,7 @@ export default class MainScreen extends React.Component {
   }
 
   componentDidMount() {
-    console.log(store.getState())
+
   }
 
   scheduleAppointment() {

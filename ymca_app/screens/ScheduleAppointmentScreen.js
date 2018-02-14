@@ -1,9 +1,9 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image, FlatList, Picker, Alert, TextInput } from 'react-native'
+import { StyleSheet, Text, View, Image, FlatList, Picker, Alert, TextInput, Slider } from 'react-native'
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 import DatePicker from 'react-native-datepicker'
-import { currentDate, currentDatePlus } from '../utils'
+import { currentDate, currentDatePlus, formatDate } from '../utils'
 import { Divider, FullWidthButton } from '../components'
 
 import { store, Requests, addAppointment } from '../model'
@@ -17,11 +17,11 @@ export default class ScheduleAppointmentScreen extends React.Component {
     super(props)
 
     this.state = {
-      datetime: new Date(),
+      datetime: currentDate(),
       mentees: store.getState().mentees,
       selectedMentee: store.getState().mentees[0]._id,
       place: "",
-
+      duration: 1.0, // Duration in hours
     }
 
     // TODO: Fix this when implementing update meeting
@@ -37,8 +37,17 @@ export default class ScheduleAppointmentScreen extends React.Component {
   }
 
   scheduleAppointment() {
-    // TODO: Implement place form
-    Requests.addMeeting(store.getState().mentorInfo.jwt, this.state.selectedMentee, this.state.place, Date.parse(this.state.datetime), Date.parse(this.state.datetime)+30000).then(response => {
+    // Parse start time
+    let startTime = Date.parse(this.state.datetime)
+
+    // Calculate end time from start time and duration
+    let endTime = new Date(this.state.datetime)
+    endTime.setHours(endTime.getHours()+this.state.duration, endTime.getMinutes()+(this.state.duration % 1)*60)
+    endTime = Date.parse(endTime)
+
+    Requests.addMeeting(store.getState().mentorInfo.jwt, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
+        console.log(response)
+
         if(response.success) {
           Alert.alert("Appointment scheduled!")
 
@@ -52,6 +61,9 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
   setPlace(place) {
     this.setState({ place })
+  }
+  setDuration(duration) {
+    this.setState({ duration })
   }
 
   render() {
@@ -67,8 +79,12 @@ export default class ScheduleAppointmentScreen extends React.Component {
           maxDate={currentDatePlus(90)}
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
-          onDateChange={(datetime) => {this.setState({datetime: datetime})}}
+          onDateChange={(datetime) => {this.setState({ datetime })}}
         />
+
+        <Text style={{width: '85%', fontWeight: 'bold', textAlign:'center', fontSize:16, marginTop: 20}}>Meeting duration: {this.state.duration} hours</Text>
+
+        <Slider minimumValue={1} maximumValue={4} step={0.5} value={1} onValueChange={value => this.setDuration(value)} style={{width: '85%'}}/>
 
         <Divider />
 
