@@ -3,13 +3,18 @@ import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton } from '../components'
+import { formatDate } from '../utils'
 
-import { Accessors } from '../model'
+import { Accessors, Requests, removeAppointment, store } from '../model'
 
 export default class MeetingDetailsScreen extends React.Component {
-  static navigationOptions = ({navigation}) => ({
-      title: `Meeting with ${navigation.state.params.meeting.firstName}`
-  });
+  static navigationOptions = ({navigation}) => {
+    const mentee = Accessors.getMentee(navigation.state.params.meeting.mentee)
+
+    return {
+      title: `Meeting with ${mentee.firstName}`,
+    }
+  }
 
   constructor(props) {
     super(props)
@@ -17,10 +22,6 @@ export default class MeetingDetailsScreen extends React.Component {
     this.state = {
       meeting: props.navigation.state.params.meeting,
     }
-  }
-
-  componentDidMount() {
-
   }
 
   changeMeeting() {
@@ -33,7 +34,18 @@ export default class MeetingDetailsScreen extends React.Component {
     this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
   }
   cancelMeeting() {
-    Alert.alert("Canceling meeting...")
+    Requests.deleteMeeting(store.getState().mentorInfo.jwt, this.state.meeting._id).then(response => {
+      console.log(response)
+
+      if(response.success) {
+        Alert.alert("Appointment cancelled!")
+
+        store.dispatch(removeAppointment(this.state.meeting._id))
+
+        this.props.navigation.state.params.onGoBack()
+        this.props.navigation.goBack()
+      }
+    })
   }
   emergency() {
     const {navigate} = this.props.navigation;
@@ -46,6 +58,8 @@ export default class MeetingDetailsScreen extends React.Component {
 
     const mentee = Accessors.getMentee(appointment.mentee)
     const initials = `${mentee.firstName.charAt(0)}${mentee.secondName.charAt(0)}`
+
+    console.log(appointment)
 
     return(
       <View style={BaseStyles.container}>
@@ -60,9 +74,9 @@ export default class MeetingDetailsScreen extends React.Component {
 
         <List>
           <ListItem title="Name" rightTitle={`${mentee.firstName} ${mentee.secondName}`} hideChevron/>
-          <ListItem title="Date and Time" rightTitle={`${appointment.startTime}`} hideChevron/>
           <ListItem title="Place" rightTitle={appointment.meetingAddress} hideChevron/>
-          <ListItem title="End data and time" rightTitle={appointment.endTime} hideChevron/>
+          <ListItem title="Date and Time" rightTitle={formatDate(new Date(appointment.startTime))} hideChevron/>
+          <ListItem title="End date and time" rightTitle={formatDate(new Date(appointment.endTime))} hideChevron/>
         </List>
 
         <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom]}>

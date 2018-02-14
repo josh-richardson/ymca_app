@@ -30,6 +30,13 @@ export default class Requests {
     return response
   }
 
+  static async deleteMeeting(jwt, id) {
+    console.log({ auth: jwt, meeting: id })
+
+    let response = await Requests.makeRequest('methods/meetings/delete', { auth: jwt, id })
+    return response
+  }
+
   static async makeRequest(url, bodyObject) {
     let response = await fetch(`http://ymca.pw/api/${url}`, {
       method: 'POST',

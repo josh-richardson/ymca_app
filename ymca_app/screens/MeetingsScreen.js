@@ -6,9 +6,10 @@ import { List, ListItem, Avatar } from 'react-native-elements'
 import { store, Accessors } from '../model'
 
 export default class MeetingsScreen extends React.Component {
-  static navigationOptions = {
+  static navigationOptions = ({navigation}) => ({
     title: 'Upcoming Meetings',
-  };
+    refresh: () => navigation.state.params.currentScreen.refresh(),
+  })
 
   constructor(props) {
     super(props)
@@ -22,10 +23,14 @@ export default class MeetingsScreen extends React.Component {
 
   }
 
+  refresh() {
+    this.setState({meetings: store.getState().appointments})
+  }
+
   showMeetingDetails(meeting) {
     const { navigate } = this.props.navigation;
 
-    navigate('MeetingDetails', {meeting})
+    navigate('MeetingDetails', {meeting, onGoBack: this.refresh.bind(this)})
   }
 
   renderItem(appointment) {
