@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image, FlatList, Picker, Alert } from 'react-native'
+import { StyleSheet, Text, View, Image, FlatList, Picker, Alert, TextInput } from 'react-native'
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 import DatePicker from 'react-native-datepicker'
@@ -19,7 +19,9 @@ export default class ScheduleAppointmentScreen extends React.Component {
     this.state = {
       datetime: new Date(),
       mentees: store.getState().mentees,
-      selectedMentee: store.getState().mentees[0]._id
+      selectedMentee: store.getState().mentees[0]._id,
+      place: "",
+
     }
 
     // TODO: Fix this when implementing update meeting
@@ -36,7 +38,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
   scheduleAppointment() {
     // TODO: Implement place form
-    Requests.addMeeting(store.getState().mentorInfo.jwt, this.state.selectedMentee, "Some place", Date.parse(this.state.datetime), Date.parse(this.state.datetime)+30000).then(response => {
+    Requests.addMeeting(store.getState().mentorInfo.jwt, this.state.selectedMentee, this.state.place, Date.parse(this.state.datetime), Date.parse(this.state.datetime)+30000).then(response => {
         if(response.success) {
           Alert.alert("Appointment scheduled!")
 
@@ -46,6 +48,10 @@ export default class ScheduleAppointmentScreen extends React.Component {
           this.props.navigation.goBack()
         }
     })
+  }
+
+  setPlace(place) {
+    this.setState({ place })
   }
 
   render() {
@@ -63,6 +69,13 @@ export default class ScheduleAppointmentScreen extends React.Component {
           cancelBtnText="Cancel"
           onDateChange={(datetime) => {this.setState({datetime: datetime})}}
         />
+
+        <Divider />
+
+        <View style={{margin: 10, flexDirection: "row", justifyContent: "space-between"}}>
+          <Text style={{width: '30%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select location: </Text>
+          <TextInput style={{marginLeft: 10}} placeholder="Meeting place" onChangeText={(text) => this.setPlace(text)} />
+        </View>
 
         <Text style={{width: '85%', marginTop: 30, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select Mentee</Text>
         <Divider />
