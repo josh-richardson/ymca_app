@@ -35,6 +35,11 @@ export default class Requests {
     return response
   }
 
+  static async updateMeeting(jwt, meetingID, menteeID, meetingAddress, startTime, endTime) {
+    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ mentee: menteeID, meetingAddress, startTime, endTime }) })
+    return response
+  }
+
   static async makeRequest(url, bodyObject) {
     let response = await fetch(`http://ymca.pw/api/${url}`, {
       method: 'POST',
@@ -50,7 +55,8 @@ export default class Requests {
       return responseJson
     } else {
       console.log(`Response status is ${response.status}.`)
-      console.log(`Response is ${response}.`)
+      console.log("Response:")
+      console.log(response)
     }
   }
 }
