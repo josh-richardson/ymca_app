@@ -35,8 +35,6 @@ export default class MeetingDetailsScreen extends React.Component {
   }
   cancelMeeting() {
     Requests.deleteMeeting(store.getState().mentorInfo.jwt, this.state.meeting._id).then(response => {
-      console.log(response)
-
       if(response.success) {
         Alert.alert("Appointment cancelled!")
 
@@ -58,8 +56,6 @@ export default class MeetingDetailsScreen extends React.Component {
 
     const mentee = Accessors.getMentee(appointment.mentee)
     const initials = `${mentee.firstName.charAt(0)}${mentee.secondName.charAt(0)}`
-
-    console.log(appointment)
 
     return(
       <View style={BaseStyles.container}>

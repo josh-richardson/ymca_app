@@ -17,7 +17,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
     super(props)
 
     this.state = {
-      datetime: currentDate(),
+      datetime: new Date(),
       mentees: store.getState().mentees,
       selectedMentee: store.getState().mentees[0]._id,
       place: "",
@@ -41,21 +41,21 @@ export default class ScheduleAppointmentScreen extends React.Component {
     let startTime = Date.parse(this.state.datetime)
 
     // Calculate end time from start time and duration
-    let endTime = new Date(this.state.datetime)
-    endTime.setHours(endTime.getHours()+this.state.duration, endTime.getMinutes()+(this.state.duration % 1)*60)
-    endTime = Date.parse(endTime)
+    let endTime = startTime + this.state.duration * 60 * 60 * 1000
+
+    console.log(startTime)
+    console.log(endTime)
 
     Requests.addMeeting(store.getState().mentorInfo.jwt, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
-        console.log(response)
 
-        if(response.success) {
-          Alert.alert("Appointment scheduled!")
+      if(response.success) {
+        Alert.alert("Appointment scheduled!")
 
-          let newAppointment = {...response.result, mentee: response.result.mentee._id}
-          store.dispatch(addAppointment(newAppointment))
+        let newAppointment = {...response.result, mentee: response.result.mentee._id}
+        store.dispatch(addAppointment(newAppointment))
 
-          this.props.navigation.goBack()
-        }
+        this.props.navigation.goBack()
+      }
     })
   }
 
@@ -64,6 +64,9 @@ export default class ScheduleAppointmentScreen extends React.Component {
   }
   setDuration(duration) {
     this.setState({ duration })
+  }
+  setDatetime(datetime) {
+    this.setState({datetime})
   }
 
   render() {
@@ -79,7 +82,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
           maxDate={currentDatePlus(90)}
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
-          onDateChange={(datetime) => {this.setState({ datetime })}}
+          onDateChange={(datetime) => {this.setDatetime(datetime)}}
         />
 
         <Text style={{width: '85%', fontWeight: 'bold', textAlign:'center', fontSize:16, marginTop: 20}}>Meeting duration: {this.state.duration} hours</Text>

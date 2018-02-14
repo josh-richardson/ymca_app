@@ -31,8 +31,6 @@ export default class Requests {
   }
 
   static async deleteMeeting(jwt, id) {
-    console.log({ auth: jwt, meeting: id })
-
     let response = await Requests.makeRequest('methods/meetings/delete', { auth: jwt, id })
     return response
   }
