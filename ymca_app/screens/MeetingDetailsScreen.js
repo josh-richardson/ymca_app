@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
+import { StyleSheet, ScrollView, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton } from '../components'
@@ -64,7 +64,7 @@ export default class MeetingDetailsScreen extends React.Component {
 
     return(
       <View style={BaseStyles.container}>
-
+		<ScrollView>
         <View style={[BaseStyles.centerChildren, { marginTop: 10 }]}>
           <Avatar
             title={initials}
@@ -80,7 +80,7 @@ export default class MeetingDetailsScreen extends React.Component {
           <ListItem title="End date and time" rightTitle={formatDate(new Date(appointment.endTime))} hideChevron/>
         </List>
 
-        <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom]}>
+        <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom, { marginBottom: 10 }]}>
 
           <FullWidthButton
             onPress={() => {this.changeMeeting()}}
@@ -118,7 +118,7 @@ export default class MeetingDetailsScreen extends React.Component {
 			iconName='exclamation'
           />
         </View>
-
+		</ScrollView>
       </View>
     )
   }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image, FlatList, Picker, Alert, TextInput, Slider } from 'react-native'
+import { StyleSheet, ScrollView, Text, View, Image, FlatList, Picker, Alert, TextInput, Slider } from 'react-native'
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 import DatePicker from 'react-native-datepicker'
@@ -125,7 +125,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
         <Divider />
 
         <Picker
-          style={{width:'85%', height:100}}
+          style={{width:'85%', height:30}}
           selectedValue={this.state.selectedMentee}
           onValueChange={(value, index) => this.setState({selectedMentee: value})}>
         {
@@ -142,7 +142,6 @@ export default class ScheduleAppointmentScreen extends React.Component {
           title="Confirm Appointment"
 		  iconName='calendar-check'
         />
-
       </View>
     )
   }
