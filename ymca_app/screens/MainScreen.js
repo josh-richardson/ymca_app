@@ -57,12 +57,14 @@ export default class MainScreen extends React.Component {
           style={{marginTop: '7%'}}
           backgroundColor='#0075ff'
           title="Schedule Appointment"
+		  iconName='calendar-plus'
         />
         <FullWidthButton
           onPress={() => {this.showUpcomingAppointments()}}
           style={{marginTop: '2%'}}
           backgroundColor='#0075ff'
           title="Upcoming Appointments"
+		  iconName='calendar-range'
         />
 
         <Divider style={{marginTop: 20}} />
@@ -71,6 +73,7 @@ export default class MainScreen extends React.Component {
           style={{marginTop: '0%'}}
           backgroundColor='#ff0000'
           title="Sign Out"
+		  iconName='logout'
         />
 
         <FullWidthButton
@@ -78,6 +81,7 @@ export default class MainScreen extends React.Component {
           style={{marginTop: '2%'}}
           backgroundColor='#ff0000'
           title="Reset Password"
+		  iconName='refresh'
         />
       </View>
     )

@@ -87,30 +87,35 @@ export default class MeetingDetailsScreen extends React.Component {
             style={{marginTop: '7%'}}
             backgroundColor='#0075ff'
             title="Change Meeting"
+			iconName='calendar-clock'
           />
           <FullWidthButton
             onPress={() => {this.extendMeeting()}}
             style={{marginTop: '2%'}}
             backgroundColor='#0075ff'
             title="Extend Meeting"
+			iconName='clock-start'
           />
           <FullWidthButton
             onPress={() => {this.endMeeting()}}
             style={{marginTop: '2%'}}
             backgroundColor='#0075ff'
             title="End Meeting"
+			iconName='check'
           />
           <FullWidthButton
             onPress={() => {this.cancelMeeting()}}
             style={{marginTop: '2%'}}
             backgroundColor='#ff0f00'
             title="Cancel Meeting"
+			iconName='close-box-outline'
           />
           <FullWidthButton
             onPress={() => {this.emergency()}}
             style={{marginTop: '2%'}}
             backgroundColor='#ff0f00'
             title="Emergency"
+			iconName='exclamation'
           />
         </View>
 

@@ -140,6 +140,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
           style={{marginTop: 120}}
           backgroundColor='#0075ff'
           title="Confirm Appointment"
+		  iconName='calendar-check'
         />
 
       </View>
