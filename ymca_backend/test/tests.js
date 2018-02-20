@@ -700,10 +700,7 @@ describe('Test suite for API', () => {
                 });
         });
 
-        describe('More advanced tests (global)', () => {
-
-
-
+        describe('Testing admin function privileges', () => {
 
             it('should return a new user', (done) => {
                 request(www)

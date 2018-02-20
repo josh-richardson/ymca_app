@@ -51,8 +51,8 @@ router.post('/meetings/add', passport.authenticate('jwt', {session: false}), [
             newMeeting.mentor = req.user;
             newMeeting.mentee = result_mentee;
             newMeeting.meetingAddress = data.meetingAddress;
-            newMeeting.startTime = new Date(data.startTime * 1000);
-            newMeeting.endTime = new Date(data.endTime * 1000);
+            newMeeting.startTime = new Date(data.startTime);
+            newMeeting.endTime = new Date(data.endTime);
             newMeeting.save(function (err, result) {
                 if (err) res.json(err);
                 res.json({success: true, result: result})
