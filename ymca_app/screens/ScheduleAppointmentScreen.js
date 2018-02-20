@@ -47,10 +47,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
     // Calculate end time from start time and duration
     let endTime = startTime + this.state.duration * 60 * 60 * 1000
-
-    console.log(startTime)
-    console.log(endTime)
-
+    
     if(this.state.isUpdatingAppointment) {
       Requests.updateMeeting(store.getState().mentorInfo.jwt, this.state.id, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
 
@@ -105,7 +102,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
           cancelBtnText="Cancel"
           onDateChange={(datetime) => {this.setDatetime(datetime)}}
         />
-		
+
 		<Divider />
 
         <Text style={{width: '85%', fontWeight: 'bold', textAlign:'center', fontSize:16, margin:10}}>Meeting duration: {this.state.duration} hours</Text>
@@ -118,7 +115,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
           <Text style={{paddingBottom: 10, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select location: </Text>
           <TextInput value={this.state.place} style={{height: 50, width:250, textAlign:'center'}} placeholder="Meeting place" onChangeText={(text) => this.setPlace(text)} />
         </View>
-		
+
 		<Divider />
 
         <Text style={{width: '85%', margin: 10, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select Mentee</Text>
@@ -135,7 +132,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
         </Picker>
 
 		<Divider />
-		
+
         <FullWidthButton
           onPress={() => {this.scheduleAppointment()}}
           style={{marginTop: 30}}
