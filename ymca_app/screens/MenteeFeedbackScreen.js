@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, FlatList, ScrollView, TextInput, Alert }
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton, FormQuestion, ToggleButton } from '../components'
+import { NavigationActions } from 'react-navigation'
 
 export default class MenteeFeedbackScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
@@ -41,8 +42,16 @@ export default class MenteeFeedbackScreen extends React.Component {
 
   doneButtonPressed() {
     // TODO: Send response to server
-    // Possibly validate that all questions are answered
 
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({
+          routeName: 'Meetings',
+        }),
+      ],
+    });
+    this.props.navigation.dispatch(resetAction);
   }
 
   render() {
