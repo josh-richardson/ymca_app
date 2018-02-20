@@ -25,6 +25,7 @@ export default class MeetingDetailsScreen extends React.Component {
     this.state = {
       meeting: Accessors.getAppointment(props.navigation.state.params.meetingID),
       meetingHasStarted: meeting.hasOwnProperty("actualStartTime"),
+      meetingHasEnded: meeting.hasOwnProperty("actualEndTime"),
     }
   }
 
@@ -61,9 +62,18 @@ export default class MeetingDetailsScreen extends React.Component {
     Alert.alert("Extending meeting...")
   }
   endMeeting() {
-    // TODO: Fix this
-    // this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
-    this.cancelMeeting()
+    Requests.endMeeting(store.getState().mentorInfo.jwt, this.state.meeting._id).then(response => {
+      if(response.success) {
+        let newAppointment = {...response.result, mentee: response.result.mentee}
+        store.dispatch(updateAppointment(this.state.meeting._id, newAppointment))
+
+        this.setState({meetingHasEnded: true})
+
+        this.screenDidFocus()
+
+        this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
+      }
+    })
   }
   cancelMeeting() {
     // show alert
@@ -95,9 +105,11 @@ export default class MeetingDetailsScreen extends React.Component {
   renderMeetingStarted() {
     return (
       <View>
+        <Text style={{marginTop: '3%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>{"Meeting in Progress"}</Text>
+
         <FullWidthButton
           onPress={() => {this.extendMeeting()}}
-          style={{marginTop: '7%'}}
+          style={{marginTop: '2%'}}
           backgroundColor='#0075ff'
           title="Extend Meeting"
           iconName='plus-box-outline'
@@ -174,10 +186,10 @@ export default class MeetingDetailsScreen extends React.Component {
 
         <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom, { marginBottom: 10 }]}>
 
-
           {
-            this.state.meetingHasStarted ?
-              this.renderMeetingStarted() : this.renderMeetingNotStarted()
+            this.state.meetingHasEnded ? (<Text style={{marginTop: '3%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>{"Meeting is over!"}</Text>) : (this.state.meetingHasStarted ?
+              this.renderMeetingStarted() : this.renderMeetingNotStarted())
+
           }
         </View>
 		</ScrollView>
