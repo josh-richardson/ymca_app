@@ -25,6 +25,11 @@ export default class ScheduleAppointmentScreen extends React.Component {
       isUpdatingAppointment: false
     }
 
+    if(props.navigation.state.params.hasOwnProperty("menteeID")) {
+      this.state.selectedMentee = props.navigation.state.params.menteeID
+      this.state.place = props.navigation.state.params.place
+    }
+
     if(props.navigation.state.params.hasOwnProperty("meeting")) {
       let meeting = props.navigation.state.params.meeting
 

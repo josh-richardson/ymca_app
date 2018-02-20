@@ -5,7 +5,7 @@ import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton, FormQuestion, ToggleButton } from '../components'
 import { NavigationActions } from 'react-navigation'
 
-import { Requests, store, updateAppointment } from '../model'
+import { Requests, store, updateAppointment, Accessors } from '../model'
 
 export default class MenteeFeedbackScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
@@ -50,8 +50,37 @@ export default class MenteeFeedbackScreen extends React.Component {
       let newAppointment = {...response.result, mentee: response.result.mentee}
       store.dispatch(updateAppointment(this.state.id, newAppointment))
 
-      this.resetNavStack()
+      this.promptScheduleNextMeeting()
     })
+  }
+
+  promptScheduleNextMeeting() {
+    let mentee = Accessors.getMentee(this.state.meeting.mentee)
+
+    Alert.alert(
+      "Done!",
+      `Meeting finished. Please hand the phone back to the mentor.\nWould you like to schedule another appointment now with ${mentee.firstName}?`,
+      [
+        {text: "Yes", onPress: () => this.scheduleNextMeeting()},
+        {text: "No", style: "cancel", onPress: () => this.resetNavStack()}
+      ]
+    )
+  }
+
+  scheduleNextMeeting() {
+    const resetAction = NavigationActions.reset({
+      index: 1,
+      actions: [
+        NavigationActions.navigate({
+          routeName: 'Main',
+        }),
+        NavigationActions.navigate({
+          routeName: 'ScheduleAppointment',
+          params: {menteeID: this.state.meeting.mentee, place: this.state.meeting.meetingAddress}
+        }),
+      ],
+    });
+    this.props.navigation.dispatch(resetAction);
   }
 
   resetNavStack() {
