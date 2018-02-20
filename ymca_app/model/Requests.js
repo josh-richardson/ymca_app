@@ -40,6 +40,11 @@ export default class Requests {
     return response
   }
 
+  static async startMeeting(jwt, meetingID) {
+    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ actualStartTime: Date.parse(new Date()) }) })
+    return response
+  }
+
   static async makeRequest(url, bodyObject) {
     let response = await fetch(`http://ymca.pw/api/${url}`, {
       method: 'POST',
