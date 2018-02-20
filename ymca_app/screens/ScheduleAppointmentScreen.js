@@ -46,6 +46,12 @@ export default class ScheduleAppointmentScreen extends React.Component {
   }
 
   scheduleAppointment() {
+    if(this.state.place == "") {
+      Alert.alert("Meeting location", "Please specify a place to meet!")
+
+      return;
+    }
+
     // Parse start time
     let startTime = Date.parse(this.state.datetime)
 
@@ -142,7 +148,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
           style={{marginTop: 150}}
           backgroundColor='#0075ff'
           title="Confirm Appointment"
-  	  iconName='calendar-check'
+  	      iconName='calendar-check'
         />
       </View>
     )
