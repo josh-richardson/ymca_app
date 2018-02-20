@@ -1,12 +1,12 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image, FlatList, Picker, Alert } from 'react-native'
+import { StyleSheet, Text, View, Image, FlatList, Picker, Alert, TextInput, Slider } from 'react-native'
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 import DatePicker from 'react-native-datepicker'
-import { currentDate, currentDatePlus } from '../utils'
+import { currentDate, currentDatePlus, formatDate } from '../utils'
 import { Divider, FullWidthButton } from '../components'
 
-import { store } from '../model'
+import { store, Requests, addAppointment, updateAppointment } from '../model'
 
 export default class ScheduleAppointmentScreen extends React.Component {
   static navigationOptions = {
@@ -17,77 +17,105 @@ export default class ScheduleAppointmentScreen extends React.Component {
     super(props)
 
     this.state = {
-      token: props.navigation.state.params.token,
-      date: currentDate(),
-      time: "12:00",
-      isLoading: true
+      datetime: new Date(),
+      mentees: store.getState().mentees,
+      selectedMentee: store.getState().mentees[0]._id,
+      place: "",
+      duration: 1.0, // Duration in hours
+      isUpdatingAppointment: false
     }
 
+    // TODO: Fix this when implementing update meeting
     if(props.navigation.state.params.hasOwnProperty("meeting")) {
-      this.state.date = props.navigation.state.params.meeting.date
-      this.state.time = props.navigation.state.params.meeting.time
-      this.state.selectedMentee = `${props.navigation.state.params.meeting.firstName} ${props.navigation.state.params.meeting.secondName}`
+      let meeting = props.navigation.state.params.meeting
+
+      this.state.isUpdatingAppointment = true
+      this.state.id = meeting._id
+      this.state.datetime = new Date(meeting.startTime)
+      this.state.place = meeting.meetingAddress
+      this.state.selectedMentee = meeting.mentee
     }
   }
 
   componentDidMount() {
-    // fetch("https://api.myjson.com/bins/k30an")
-    // .then((response) => response.json())
-    // .then((responseJson) => {
-    //   this.setState({
-    //     isLoading: false,
-    //     mentees: responseJson.mentees,
-    //   });
-    // })
-    // .catch((error) => {
-    //   console.error(error);
-    // });
 
-    this.setState({
-      isLoading: false,
-      mentees: store.getState().mentees
-    })
   }
 
   scheduleAppointment() {
-    Alert.alert("Scheduling appointment...")
-    this.props.navigation.goBack()
+    // Parse start time
+    let startTime = Date.parse(this.state.datetime)
+
+    // Calculate end time from start time and duration
+    let endTime = startTime + this.state.duration * 60 * 60 * 1000
+
+    console.log(startTime)
+    console.log(endTime)
+
+    if(this.state.isUpdatingAppointment) {
+      Requests.updateMeeting(store.getState().mentorInfo.jwt, this.state.id, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
+
+        if(response.success) {
+          Alert.alert("Appointment updated!")
+
+          let newAppointment = {...response.result, mentee: response.result.mentee}
+          store.dispatch(updateAppointment(this.state.id, newAppointment))
+
+          this.props.navigation.goBack()
+        }
+      })
+
+      return;
+    }
+
+    Requests.addMeeting(store.getState().mentorInfo.jwt, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
+
+      if(response.success) {
+        Alert.alert("Appointment scheduled!")
+
+        let newAppointment = {...response.result, mentee: response.result.mentee._id}
+        store.dispatch(addAppointment(newAppointment))
+
+        this.props.navigation.goBack()
+      }
+    })
+  }
+
+  setPlace(place) {
+    this.setState({ place })
+  }
+  setDuration(duration) {
+    this.setState({ duration })
+  }
+  setDatetime(datetime) {
+    this.setState({datetime})
   }
 
   render() {
-
-    if(this.state.isLoading) {
-      return(
-        <View style={[BaseStyles.container, BaseStyles.centerChildren]}>
-          <Text style={{marginLeft:'15%', marginRight:'15%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>Loading mentees data...</Text>
-        </View>
-      )
-    }
-
     return(
       <View style={[BaseStyles.container, BaseStyles.centerChildrenHorizontally]}>
         <DatePicker
           style={{width: '85%', marginTop: 30}}
-          date={this.state.date}
-          mode="date"
+          date={this.state.datetime}
+          mode="datetime"
           placeholder="Select Appointment Date"
-          format="YYYY-MM-DD"
-          minDate={currentDate()}
+          format="DD MMM YYYY hh:mm"
+          minDate={new Date()}
           maxDate={currentDatePlus(90)}
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
-          onDateChange={(date) => {this.setState({date: date})}}
+          onDateChange={(datetime) => {this.setDatetime(datetime)}}
         />
 
-        <DatePicker
-          style={{width: '85%', marginTop: 10}}
-          date={this.state.time}
-          mode="time"
-          placeholder="Select Appointment Time"
-          confirmBtnText="Confirm"
-          cancelBtnText="Cancel"
-          onDateChange={(time) => {this.setState({time: time})}}
-        />
+        <Text style={{width: '85%', fontWeight: 'bold', textAlign:'center', fontSize:16, marginTop: 20}}>Meeting duration: {this.state.duration} hours</Text>
+
+        <Slider minimumValue={1} maximumValue={4} step={0.5} value={1} onValueChange={value => this.setDuration(value)} style={{width: '85%'}}/>
+
+        <Divider />
+
+        <View style={{margin: 10, flexDirection: "row", justifyContent: "space-between"}}>
+          <Text style={{width: '30%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select location: </Text>
+          <TextInput value={this.state.place} style={{marginLeft: 10}} placeholder="Meeting place" onChangeText={(text) => this.setPlace(text)} />
+        </View>
 
         <Text style={{width: '85%', marginTop: 30, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select Mentee</Text>
         <Divider />
@@ -98,7 +126,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
           onValueChange={(value, index) => this.setState({selectedMentee: value})}>
         {
           this.state.mentees.map(mentee =>
-            <Picker.Item key={mentee.key} label={`${mentee.firstName} ${mentee.lastName}`} value={mentee.key}/>
+            <Picker.Item key={mentee._id} label={`${mentee.firstName} ${mentee.secondName}`} value={mentee._id}/>
           )
         }
         </Picker>

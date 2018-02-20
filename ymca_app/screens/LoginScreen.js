@@ -5,7 +5,7 @@ import { FullWidthButton } from '../components';
 import PropTypes from 'prop-types';
 import { NavigationActions } from 'react-navigation';
 
-import { store, setMentees, setAppointments } from '../model'
+import { store, setMentees, setAppointments, setInfo, Requests, StoreHydrator } from '../model'
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -19,8 +19,8 @@ export default class LoginScreen extends React.Component {
 
     /** UNCOMMENT THIS FOR QUICK LOGIN **/
     this.state = {
-      email: "WalterSmith@mail.com",
-      password: "WalterPass",
+      email: "test@gmail.com",
+      password: "password123",
       message: "",
     };
   }
@@ -28,50 +28,28 @@ export default class LoginScreen extends React.Component {
   loginButtonPressed() {
     this.setState({message: "Logging in..."})
 
-    fetch('http://ymca.pw/api/users/authenticate/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.password,
-      })
-    })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      if(responseJson.token) {
-        this.setState({
-          hasLoggedIn: true,
-          message: "Successfully logged in!",
-          token: responseJson.token,
-        });
+    Requests.login(this.state.email, this.state.password).then(jwt => {
+      this.setState({message: "Successfully logged in. Retrieving information..."})
 
-        // TODO: FETCH AND STORE USER MENTEES HERE
-
-        // TODO: FETCH AND STORE USER APPOINTMENTS HERE
-
+      StoreHydrator.retrieveAndStoreMentorData(jwt).then(() => {
         const resetAction = NavigationActions.reset({
           index: 0,
           actions: [
             NavigationActions.navigate({
               routeName: 'Main',
-              params: {token: this.state.token}
             }),
           ],
         });
         this.props.navigation.dispatch(resetAction);
+      })
 
-      } else {
-        this.setState({
-          message: "Wrong username or password.",
-        })
-      }
+    }).catch(error => {
+      console.log(`Couldn't log in: ${error}`)
+
+      this.setState({
+        message: "An error occured. Your username or password might be incorrect. Try again.",
+      })
     })
-    .catch((error) => {
-      console.error(error);
-    });
   }
 
   setEmailAddress(email) {

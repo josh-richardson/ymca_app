@@ -6,14 +6,14 @@ export default function appointments(state = [], action) {
       return [...state, action.appointmentObject]
 
     case REMOVE_APPOINTMENT:
-      return state.filter(appointment => action.id != appointment.id)
+      return state.filter(appointment => action.id != appointment._id)
 
     case SET_APPOINTMENTS:
       return action.appointmentObjects
 
     case UPDATE_APPOINTMENT:
       return state.map(appointment => {
-        if(action.id == appointment.id) { return action.newAppointmentObject }
+        if(action.id == appointment._id) { return action.newAppointmentObject }
         return appointment
       })
 

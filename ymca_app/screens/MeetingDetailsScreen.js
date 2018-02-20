@@ -3,45 +3,81 @@ import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton } from '../components'
+import { formatDate } from '../utils'
+
+import { Accessors, Requests, removeAppointment, store } from '../model'
 
 export default class MeetingDetailsScreen extends React.Component {
-  static navigationOptions = ({navigation}) => ({
-      title: `Meeting with ${navigation.state.params.meeting.firstName}`
-  });
+  static navigationOptions = ({navigation}) => {
+    const meeting = Accessors.getAppointment(navigation.state.params.meetingID)
+    const mentee = Accessors.getMentee(meeting.mentee)
+
+    return {
+      title: `Meeting with ${mentee.firstName}`,
+    }
+  }
 
   constructor(props) {
     super(props)
 
     this.state = {
-      meeting: props.navigation.state.params.meeting,
-      token: props.navigation.state.params.token
+      meeting: Accessors.getAppointment(props.navigation.state.params.meetingID),
     }
   }
 
   componentDidMount() {
+    this.focusListener = this.props.navigation.addListener('didFocus', () => this.screenDidFocus())
+  }
 
+  componentWillUnmount() {
+    this.focusListener.remove()
+  }
+
+  screenDidFocus() {
+    this.setState({meeting: Accessors.getAppointment(this.state.meeting._id)})
   }
 
   changeMeeting() {
-    this.props.navigation.navigate("ScheduleAppointment", {token: this.state.token, meeting: this.state.meeting})
+    this.props.navigation.navigate("ScheduleAppointment", {meeting: this.state.meeting})
   }
   extendMeeting() {
     Alert.alert("Extending meeting...")
   }
   endMeeting() {
-    this.props.navigation.navigate('MentorFeedback', {token: this.state.token, meeting: this.state.meeting})
+    this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
   }
   cancelMeeting() {
-    Alert.alert("Canceling meeting...")
+    // show alert
+    Alert.alert(
+      "Confirmation",
+      "Are you sure you wish to cancel this meeting?",
+      [
+        {text: "Yes", onPress: () => this.sendDeleteRequest()},
+        {text: "No", style: "cancel"}
+      ]
+    )
   }
+  sendDeleteRequest() {
+    Requests.deleteMeeting(store.getState().mentorInfo.jwt, this.state.meeting._id).then(response => {
+      if(response.success) {
+        store.dispatch(removeAppointment(this.state.meeting._id))
+
+        this.props.navigation.goBack()
+      }
+    })
+  }
+
   emergency() {
     const {navigate} = this.props.navigation;
 
-    navigate('EmergencyAlertSent', {token: this.state.token})
+    navigate('EmergencyAlertSent')
   }
 
   render() {
-    const initials = `${this.state.meeting.firstName.charAt(0)}${this.state.meeting.secondName.charAt(0)}`
+    const appointment = this.state.meeting
+
+    const mentee = Accessors.getMentee(appointment.mentee)
+    const initials = `${mentee.firstName.charAt(0)}${mentee.secondName.charAt(0)}`
 
     return(
       <View style={BaseStyles.container}>
@@ -55,10 +91,10 @@ export default class MeetingDetailsScreen extends React.Component {
         </View>
 
         <List>
-          <ListItem title="Name" rightTitle={`${this.state.meeting.firstName} ${this.state.meeting.secondName}`} hideChevron/>
-          <ListItem title="Date and Time" rightTitle={`${this.state.meeting.date} ${this.state.meeting.time}`} hideChevron/>
-          <ListItem title="Place" rightTitle={this.state.meeting.place} hideChevron/>
-          <ListItem title="Duration" rightTitle={this.state.meeting.duration} hideChevron/>
+          <ListItem title="Name" rightTitle={`${mentee.firstName} ${mentee.secondName}`} hideChevron/>
+          <ListItem title="Place" rightTitle={appointment.meetingAddress} hideChevron/>
+          <ListItem title="Date and Time" rightTitle={formatDate(new Date(appointment.startTime))} hideChevron/>
+          <ListItem title="End date and time" rightTitle={formatDate(new Date(appointment.endTime))} hideChevron/>
         </List>
 
         <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom]}>

@@ -5,6 +5,8 @@ import { List, ListItem, Avatar } from 'react-native-elements'
 import { FullWidthButton, Divider } from '../components'
 import { NavigationActions } from 'react-navigation'
 
+import { store } from '../model'
+
 export default class MainScreen extends React.Component {
   static navigationOptions = {
     title: 'YMCA Mentors',
@@ -16,7 +18,6 @@ export default class MainScreen extends React.Component {
 
     this.state = {
       isLoading: true,
-      token: props.navigation.state.params.token
     }
   }
 
@@ -25,7 +26,7 @@ export default class MainScreen extends React.Component {
   }
 
   scheduleAppointment() {
-    this.props.navigation.navigate("ScheduleAppointment", {token: this.state.token})
+    this.props.navigation.navigate("ScheduleAppointment", {})
   }
 
   signOut() {
@@ -45,7 +46,7 @@ export default class MainScreen extends React.Component {
   }
 
   showUpcomingAppointments() {
-    this.props.navigation.navigate('Meetings', {token: this.state.token})
+    this.props.navigation.navigate('Meetings')
   }
 
   render() {
