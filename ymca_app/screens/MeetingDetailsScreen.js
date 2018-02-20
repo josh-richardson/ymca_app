@@ -114,7 +114,7 @@ export default class MeetingDetailsScreen extends React.Component {
           style={{marginTop: '2%'}}
           backgroundColor='#ff0f00'
           title="Emergency"
-          iconName='exclamation'
+          iconName='alert-box'
         />
       </View>
     )
@@ -128,7 +128,7 @@ export default class MeetingDetailsScreen extends React.Component {
           style={{marginTop: '7%'}}
           backgroundColor='#0075ff'
           title="Start Meeting"
-          iconName='calendar-clock'
+          iconName='alarm-check'
         />
         <FullWidthButton
           onPress={() => {this.changeMeeting()}}
