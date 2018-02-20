@@ -25,7 +25,6 @@ export default class ScheduleAppointmentScreen extends React.Component {
       isUpdatingAppointment: false
     }
 
-    // TODO: Fix this when implementing update meeting
     if(props.navigation.state.params.hasOwnProperty("meeting")) {
       let meeting = props.navigation.state.params.meeting
 
@@ -47,7 +46,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
     // Calculate end time from start time and duration
     let endTime = startTime + this.state.duration * 60 * 60 * 1000
-    
+
     if(this.state.isUpdatingAppointment) {
       Requests.updateMeeting(store.getState().mentorInfo.jwt, this.state.id, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
 
