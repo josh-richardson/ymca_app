@@ -50,6 +50,16 @@ export default class Requests {
     return response
   }
 
+  static async sendMentorFeedback(jwt, meetingID, mentorFeedback) {
+    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ mentor_notes: mentorFeedback }) })
+    return response
+  }
+
+  static async sendMenteeFeedback(jwt, meetingID, menteeFeedback, menteeRating = 0) {
+    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ mentee_notes: menteeFeedback, mentee_rating: menteeRating }) })
+    return response
+  }
+
   static async makeRequest(url, bodyObject) {
     let response = await fetch(`http://ymca.pw/api/${url}`, {
       method: 'POST',
