@@ -25,12 +25,20 @@ export default class MeetingDetailsScreen extends React.Component {
     }
   }
 
-  refresh() {
+  componentDidMount() {
+    this.focusListener = this.props.navigation.addListener('didFocus', () => this.screenDidFocus())
+  }
+
+  componentWillUnmount() {
+    this.focusListener.remove()
+  }
+
+  screenDidFocus() {
     this.setState({meeting: Accessors.getAppointment(this.state.meeting._id)})
   }
 
   changeMeeting() {
-    this.props.navigation.navigate("ScheduleAppointment", {meeting: this.state.meeting, onGoBack: this.refresh.bind(this)})
+    this.props.navigation.navigate("ScheduleAppointment", {meeting: this.state.meeting})
   }
   extendMeeting() {
     Alert.alert("Extending meeting...")
@@ -54,7 +62,6 @@ export default class MeetingDetailsScreen extends React.Component {
       if(response.success) {
         store.dispatch(removeAppointment(this.state.meeting._id))
 
-        this.props.navigation.state.params.onGoBack()
         this.props.navigation.goBack()
       }
     })

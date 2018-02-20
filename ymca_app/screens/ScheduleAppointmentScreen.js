@@ -60,10 +60,6 @@ export default class ScheduleAppointmentScreen extends React.Component {
           let newAppointment = {...response.result, mentee: response.result.mentee}
           store.dispatch(updateAppointment(this.state.id, newAppointment))
 
-          if(this.props.navigation.state.params.hasOwnProperty("onGoBack")) {
-            this.props.navigation.state.params.onGoBack()
-          }
-
           this.props.navigation.goBack()
         }
       })

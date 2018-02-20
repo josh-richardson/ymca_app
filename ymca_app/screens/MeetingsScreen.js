@@ -20,17 +20,21 @@ export default class MeetingsScreen extends React.Component {
   }
 
   componentDidMount() {
-
+    this.focusListener = this.props.navigation.addListener('didFocus', () => this.screenDidFocus())
   }
 
-  refresh() {
+  componentWillUnmount() {
+    this.focusListener.remove()
+  }
+
+  screenDidFocus() {
     this.setState({meetings: store.getState().appointments})
   }
-
+  
   showMeetingDetails(meetingID) {
     const { navigate } = this.props.navigation;
 
-    navigate('MeetingDetails', {meetingID, onGoBack: this.refresh.bind(this)})
+    navigate('MeetingDetails', {meetingID})
   }
 
   renderItem(appointment) {
