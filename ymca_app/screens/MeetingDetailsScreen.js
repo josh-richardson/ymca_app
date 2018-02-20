@@ -39,10 +39,19 @@ export default class MeetingDetailsScreen extends React.Component {
     this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
   }
   cancelMeeting() {
+    // show alert
+    Alert.alert(
+      "Confirmation",
+      "Are you sure you wish to cancel this meeting?",
+      [
+        {text: "Yes", onPress: () => this.sendDeleteRequest()},
+        {text: "No", style: "cancel"}
+      ]
+    )
+  }
+  sendDeleteRequest() {
     Requests.deleteMeeting(store.getState().mentorInfo.jwt, this.state.meeting._id).then(response => {
       if(response.success) {
-        Alert.alert("Appointment cancelled!")
-
         store.dispatch(removeAppointment(this.state.meeting._id))
 
         this.props.navigation.state.params.onGoBack()
@@ -50,6 +59,7 @@ export default class MeetingDetailsScreen extends React.Component {
       }
     })
   }
+
   emergency() {
     const {navigate} = this.props.navigation;
 
