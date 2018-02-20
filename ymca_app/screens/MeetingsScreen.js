@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
+import { formatDate } from '../utils'
 
 import { store, Accessors } from '../model'
 
@@ -30,7 +31,7 @@ export default class MeetingsScreen extends React.Component {
   screenDidFocus() {
     this.setState({meetings: store.getState().appointments})
   }
-  
+
   showMeetingDetails(meetingID) {
     const { navigate } = this.props.navigation;
 
@@ -46,7 +47,7 @@ export default class MeetingsScreen extends React.Component {
       <ListItem
         button
         title={`${mentee.firstName} ${mentee.secondName}`}
-        subtitle={appointment.startTime}
+        subtitle={formatDate(new Date(appointment.startTime))}
         rightTitle={appointment.meetingAddress}
         key={appointment._id}
         avatar={<Avatar
