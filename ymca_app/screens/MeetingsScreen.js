@@ -42,7 +42,8 @@ export default class MeetingsScreen extends React.Component {
       <ListItem
         button
         title={`${mentee.firstName} ${mentee.secondName}`}
-        subtitle={appointment.date}
+        subtitle={appointment.startTime}
+        rightTitle={appointment.meetingAddress}
         key={appointment._id}
         avatar={<Avatar
                 title={initials}
