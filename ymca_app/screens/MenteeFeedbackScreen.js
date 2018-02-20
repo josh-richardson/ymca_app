@@ -5,6 +5,8 @@ import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton, FormQuestion, ToggleButton } from '../components'
 import { NavigationActions } from 'react-navigation'
 
+import { Requests, store, updateAppointment } from '../model'
+
 export default class MenteeFeedbackScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
       title: `Mentee Feedback`
@@ -39,10 +41,20 @@ export default class MenteeFeedbackScreen extends React.Component {
     this.setState({sadToggled: true, happyToggled: false, impartialToggled: false})
   }
 
-
   doneButtonPressed() {
-    // TODO: Send response to server
+    let menteeFeedback = JSON.stringify({response: this.state.response})
+    let menteeRating = this.sadToggled ? 1 : (this.impartialToggled ? 2 : (this.happyToggled ? 3 : 0))
 
+    Requests.sendMenteeFeedback(store.getState().mentorInfo.jwt, this.state.meeting._id, menteeFeedback, menteeRating).then(response => {
+
+      let newAppointment = {...response.result, mentee: response.result.mentee}
+      store.dispatch(updateAppointment(this.state.id, newAppointment))
+
+      this.resetNavStack()
+    })
+  }
+
+  resetNavStack() {
     const resetAction = NavigationActions.reset({
       index: 0,
       actions: [
