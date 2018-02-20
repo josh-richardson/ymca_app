@@ -31,7 +31,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
       this.state.isUpdatingAppointment = true
       this.state.id = meeting._id
-      this.state.datetime = meeting.startTime
+      this.state.datetime = new Date(meeting.startTime)
       this.state.place = meeting.meetingAddress
       this.state.selectedMentee = meeting.mentee
     }
