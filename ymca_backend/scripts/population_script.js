@@ -40,7 +40,13 @@ const menteeDetails = {
     'phone': '07450760408',
     'meetingAddress': 'Some scottish road somewhere'
 }
-
+const mentee2Details = {
+    'email': "mentee2@gmail.com",
+    'firstName': "Jeff",
+    'secondName': "Bezos",
+    'phone': '07450760408',
+    'meetingAddress': '12 Scotland St.'
+}
 
 const newUser = new user();
 newUser.email = userDetails.email;
@@ -80,7 +86,13 @@ newUser.save(function (err, result) {
                 });
             }
         });
+        const newMentee2 = new mentee();
+        newMentee2.email = mentee2Details.email;
+        newMentee2.firstName = mentee2Details.firstName;
+        newMentee2.secondName = mentee2Details.secondName;
+        newMentee2.phone = mentee2Details.phone;
+        newMentee2.meetingAddress = mentee2Details.meetingAddress;
+        newMentee2.mentor = newUser;
+        newMentee2.save(function (err, result) {});
     }
 });
-
-
