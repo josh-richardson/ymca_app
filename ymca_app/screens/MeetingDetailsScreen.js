@@ -25,12 +25,20 @@ export default class MeetingDetailsScreen extends React.Component {
     }
   }
 
-  refresh() {
+  componentDidMount() {
+    this.focusListener = this.props.navigation.addListener('didFocus', () => this.screenDidFocus())
+  }
+
+  componentWillUnmount() {
+    this.focusListener.remove()
+  }
+
+  screenDidFocus() {
     this.setState({meeting: Accessors.getAppointment(this.state.meeting._id)})
   }
 
   changeMeeting() {
-    this.props.navigation.navigate("ScheduleAppointment", {meeting: this.state.meeting, onGoBack: this.refresh.bind(this)})
+    this.props.navigation.navigate("ScheduleAppointment", {meeting: this.state.meeting})
   }
   extendMeeting() {
     Alert.alert("Extending meeting...")
@@ -39,17 +47,26 @@ export default class MeetingDetailsScreen extends React.Component {
     this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
   }
   cancelMeeting() {
+    // show alert
+    Alert.alert(
+      "Confirmation",
+      "Are you sure you wish to cancel this meeting?",
+      [
+        {text: "Yes", onPress: () => this.sendDeleteRequest()},
+        {text: "No", style: "cancel"}
+      ]
+    )
+  }
+  sendDeleteRequest() {
     Requests.deleteMeeting(store.getState().mentorInfo.jwt, this.state.meeting._id).then(response => {
       if(response.success) {
-        Alert.alert("Appointment cancelled!")
-
         store.dispatch(removeAppointment(this.state.meeting._id))
 
-        this.props.navigation.state.params.onGoBack()
         this.props.navigation.goBack()
       }
     })
   }
+
   emergency() {
     const {navigate} = this.props.navigation;
 

@@ -31,7 +31,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
       this.state.isUpdatingAppointment = true
       this.state.id = meeting._id
-      this.state.datetime = meeting.startTime
+      this.state.datetime = new Date(meeting.startTime)
       this.state.place = meeting.meetingAddress
       this.state.selectedMentee = meeting.mentee
     }
@@ -59,10 +59,6 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
           let newAppointment = {...response.result, mentee: response.result.mentee}
           store.dispatch(updateAppointment(this.state.id, newAppointment))
-
-          if(this.props.navigation.state.params.hasOwnProperty("onGoBack")) {
-            this.props.navigation.state.params.onGoBack()
-          }
 
           this.props.navigation.goBack()
         }
