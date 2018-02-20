@@ -94,7 +94,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
           date={this.state.datetime}
           mode="datetime"
           placeholder="Select Appointment Date"
-          format="DD MMM YYYY hh:mm"
+          format="DD MMM YYYY, hh:mm a"
           minDate={new Date()}
           maxDate={currentDatePlus(90)}
           confirmBtnText="Confirm"

@@ -1,14 +1,14 @@
 let formatDate = (date) => {
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  const options = {
+    hour12: true,
+    month: "short",
+    year: "numeric",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  }
 
-  const minute = date.getMinutes()
-  const hour = date.getHours()
-
-  const day = date.getDate()
-  const month = months[date.getMonth()]
-  const year = date.getFullYear()
-
-  return `${day} ${month} ${year} ${hour}:${minute}`
+  return date.toLocaleString('en-GB', options)
 }
 
 let currentDate = () => {
