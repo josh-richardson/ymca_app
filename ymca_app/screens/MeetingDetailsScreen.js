@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
+import { StyleSheet, ScrollView, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton } from '../components'
@@ -81,7 +81,7 @@ export default class MeetingDetailsScreen extends React.Component {
 
     return(
       <View style={BaseStyles.container}>
-
+		<ScrollView>
         <View style={[BaseStyles.centerChildren, { marginTop: 10 }]}>
           <Avatar
             title={initials}
@@ -97,40 +97,45 @@ export default class MeetingDetailsScreen extends React.Component {
           <ListItem title="End date and time" rightTitle={formatDate(new Date(appointment.endTime))} hideChevron/>
         </List>
 
-        <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom]}>
+        <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom, { marginBottom: 10 }]}>
 
           <FullWidthButton
             onPress={() => {this.changeMeeting()}}
             style={{marginTop: '7%'}}
             backgroundColor='#0075ff'
             title="Change Meeting"
+			iconName='calendar-clock'
           />
           <FullWidthButton
             onPress={() => {this.extendMeeting()}}
             style={{marginTop: '2%'}}
             backgroundColor='#0075ff'
             title="Extend Meeting"
+			iconName='plus-box-outline'
           />
           <FullWidthButton
             onPress={() => {this.endMeeting()}}
             style={{marginTop: '2%'}}
             backgroundColor='#0075ff'
             title="End Meeting"
+			iconName='checkbox-marked-outline'
           />
           <FullWidthButton
             onPress={() => {this.cancelMeeting()}}
             style={{marginTop: '2%'}}
             backgroundColor='#ff0f00'
             title="Cancel Meeting"
+			iconName='close-box-outline'
           />
           <FullWidthButton
             onPress={() => {this.emergency()}}
             style={{marginTop: '2%'}}
             backgroundColor='#ff0f00'
             title="Emergency"
+			iconName='exclamation'
           />
         </View>
-
+		</ScrollView>
       </View>
     )
   }

@@ -84,6 +84,7 @@ export default class LoginScreen extends React.Component {
             style={{marginTop: '7%'}}
             backgroundColor='#0075ff'
             title="Sign In"
+			iconName='login'
           />
 
         </View>

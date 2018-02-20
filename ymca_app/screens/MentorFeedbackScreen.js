@@ -70,6 +70,7 @@ export default class MentorFeedbackScreen extends React.Component {
               style={{marginTop: '2%', marginBottom: '2%'}}
               backgroundColor='#0075ff'
               title="Done"
+			  iconName='check'
             />
           </View>
         </ScrollView>

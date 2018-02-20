@@ -26,6 +26,10 @@
     "react-navigation": "^1.1.0-rc.5",
     "react-native-elements": "^0.18.2",
     "react-native-datepicker": "1.6.0",
+    "react-native-elements": "^0.18.2",
+    "react-native-icons": "^0.7.1",
+    "react-native-vector-icons": "^4.5.0",
+    "react-navigation": "^1.0.0-beta.16",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2"
   }

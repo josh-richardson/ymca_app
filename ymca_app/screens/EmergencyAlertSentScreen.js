@@ -38,6 +38,7 @@ export default class EmergencyAlertSentScreen extends React.Component {
           style={{marginTop: '7%'}}
           backgroundColor='#0075ff'
           title="Back"
+		  iconName='arrow-left-bold-box-outline'
         />
 
       </View>

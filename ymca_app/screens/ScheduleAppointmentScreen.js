@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image, FlatList, Picker, Alert, TextInput, Slider } from 'react-native'
+import { StyleSheet, ScrollView, Text, View, Image, FlatList, Picker, Alert, TextInput, Slider } from 'react-native'
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 import DatePicker from 'react-native-datepicker'
@@ -105,23 +105,26 @@ export default class ScheduleAppointmentScreen extends React.Component {
           cancelBtnText="Cancel"
           onDateChange={(datetime) => {this.setDatetime(datetime)}}
         />
+		
+		<Divider />
 
-        <Text style={{width: '85%', fontWeight: 'bold', textAlign:'center', fontSize:16, marginTop: 20}}>Meeting duration: {this.state.duration} hours</Text>
+        <Text style={{width: '85%', fontWeight: 'bold', textAlign:'center', fontSize:16, margin:10}}>Meeting duration: {this.state.duration} hours</Text>
 
         <Slider minimumValue={1} maximumValue={4} step={0.5} value={1} onValueChange={value => this.setDuration(value)} style={{width: '85%'}}/>
 
         <Divider />
 
-        <View style={{margin: 10, flexDirection: "row", justifyContent: "space-between"}}>
-          <Text style={{width: '30%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select location: </Text>
-          <TextInput value={this.state.place} style={{marginLeft: 10}} placeholder="Meeting place" onChangeText={(text) => this.setPlace(text)} />
+        <View style={{margin: 10, flexDirection: "column", justifyContent: "center"}}>
+          <Text style={{paddingBottom: 10, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select location: </Text>
+          <TextInput value={this.state.place} style={{height: 50, width:250, textAlign:'center'}} placeholder="Meeting place" onChangeText={(text) => this.setPlace(text)} />
         </View>
+		
+		<Divider />
 
-        <Text style={{width: '85%', marginTop: 30, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select Mentee</Text>
-        <Divider />
+        <Text style={{width: '85%', margin: 10, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select Mentee</Text>
 
         <Picker
-          style={{width:'85%', height:100}}
+          style={{width:'85%', height:50}}
           selectedValue={this.state.selectedMentee}
           onValueChange={(value, index) => this.setState({selectedMentee: value})}>
         {
@@ -131,13 +134,15 @@ export default class ScheduleAppointmentScreen extends React.Component {
         }
         </Picker>
 
+		<Divider />
+		
         <FullWidthButton
           onPress={() => {this.scheduleAppointment()}}
-          style={{marginTop: 120}}
+          style={{marginTop: 30}}
           backgroundColor='#0075ff'
           title="Confirm Appointment"
+		  iconName='calendar-check'
         />
-
       </View>
     )
   }
