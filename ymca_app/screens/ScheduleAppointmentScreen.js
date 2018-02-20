@@ -25,7 +25,6 @@ export default class ScheduleAppointmentScreen extends React.Component {
       isUpdatingAppointment: false
     }
 
-    // TODO: Fix this when implementing update meeting
     if(props.navigation.state.params.hasOwnProperty("meeting")) {
       let meeting = props.navigation.state.params.meeting
 
@@ -47,9 +46,6 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
     // Calculate end time from start time and duration
     let endTime = startTime + this.state.duration * 60 * 60 * 1000
-
-    console.log(startTime)
-    console.log(endTime)
 
     if(this.state.isUpdatingAppointment) {
       Requests.updateMeeting(store.getState().mentorInfo.jwt, this.state.id, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
@@ -105,8 +101,8 @@ export default class ScheduleAppointmentScreen extends React.Component {
           cancelBtnText="Cancel"
           onDateChange={(datetime) => {this.setDatetime(datetime)}}
         />
-		
-		<Divider />
+
+    		<Divider />
 
         <Text style={{width: '85%', fontWeight: 'bold', textAlign:'center', fontSize:16, margin:10}}>Meeting duration: {this.state.duration} hours</Text>
 
@@ -114,17 +110,19 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
         <Divider />
 
-        <View style={{margin: 10, flexDirection: "column", justifyContent: "center"}}>
+        <View style={{marginTop: 10, flexDirection: "column", justifyContent: "center"}}>
           <Text style={{paddingBottom: 10, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select location: </Text>
           <TextInput value={this.state.place} style={{height: 50, width:250, textAlign:'center'}} placeholder="Meeting place" onChangeText={(text) => this.setPlace(text)} />
         </View>
-		
-		<Divider />
 
-        <Text style={{width: '85%', margin: 10, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select Mentee</Text>
+    		<Divider />
+
+        <Text style={{width: '85%', marginTop: 5, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select Mentee</Text>
+
+        <Divider />
 
         <Picker
-          style={{width:'85%', height:50}}
+          style={{width:'85%', height:25}}
           selectedValue={this.state.selectedMentee}
           onValueChange={(value, index) => this.setState({selectedMentee: value})}>
         {
@@ -134,14 +132,12 @@ export default class ScheduleAppointmentScreen extends React.Component {
         }
         </Picker>
 
-		<Divider />
-		
         <FullWidthButton
           onPress={() => {this.scheduleAppointment()}}
-          style={{marginTop: 30}}
+          style={{marginTop: 150}}
           backgroundColor='#0075ff'
           title="Confirm Appointment"
-		  iconName='calendar-check'
+  	  iconName='calendar-check'
         />
       </View>
     )
