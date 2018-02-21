@@ -117,7 +117,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
         <Text style={{width: '85%', fontWeight: 'bold', textAlign:'center', fontSize:16, margin:10}}>Meeting duration: {this.state.duration} hours</Text>
 
-        <Slider minimumValue={1} maximumValue={4} step={0.5} value={1} onValueChange={value => this.setDuration(value)} style={{width: '85%'}}/>
+        <Slider minimumValue={1} maximumValue={2} step={0.5} value={1} onValueChange={value => this.setDuration(value)} style={{width: '85%'}}/>
 
         <Divider />
 

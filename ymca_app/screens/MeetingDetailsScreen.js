@@ -67,6 +67,8 @@ export default class MeetingDetailsScreen extends React.Component {
         this.screenDidFocus()
 
         Alert.alert("Success!", `Your meeting is now scheduled to end at ${formatDate(new Date(newAppointment.endTime))}.`)
+      } else {
+        Alert.alert("Error!", "You can't extend this further! Please end the meeting at the ending time.")
       }
     })
   }
