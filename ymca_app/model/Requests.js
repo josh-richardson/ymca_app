@@ -54,9 +54,9 @@ export default class Requests {
 
   static async extendMeeting(jwt, meetingID) {
     let meeting = Accessors.getAppointment(meetingID)
-    let newEndTime = meeting.startTime + 0.25 * 60 * 60 * 1000
+    let newEndTime = Date.parse(meeting.endTime) + 0.25 * 60 * 60 * 1000
 
-    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ endTime: newEndTime })
+    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ endTime: newEndTime }) })
     return response
   }
 

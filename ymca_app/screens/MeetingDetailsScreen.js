@@ -59,7 +59,16 @@ export default class MeetingDetailsScreen extends React.Component {
     this.props.navigation.navigate("ScheduleAppointment", {meeting: this.state.meeting})
   }
   extendMeeting() {
-    Alert.alert("Extending meeting...")
+    Requests.extendMeeting(store.getState().mentorInfo.jwt, this.state.meeting._id).then(response => {
+      if(response.success) {
+        let newAppointment = {...response.result, mentee: response.result.mentee}
+        store.dispatch(updateAppointment(this.state.meeting._id, newAppointment))
+
+        this.screenDidFocus()
+
+        Alert.alert("Success!", `Your meeting is now scheduled to end at ${formatDate(new Date(newAppointment.endTime))}.`)
+      }
+    })
   }
   endMeeting() {
     Requests.endMeeting(store.getState().mentorInfo.jwt, this.state.meeting._id).then(response => {
