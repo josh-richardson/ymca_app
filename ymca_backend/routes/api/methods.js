@@ -77,6 +77,25 @@ router.post('/meetings/edit', passport.authenticate('jwt', {session: false}), [
     }
 );
 
+router.post('/meetings/extend', passport.authenticate('jwt', {session: false}), [
+        check('id').exists().escape(),
+    ],
+    function (req, res) {
+        api_utils.findObjectByKey(meeting, 'mentor', req.user).then(() => {
+            if(meeting.number_of_extensions < 6) {
+              meeting.number_of_extensions += 1
+              meeting.endTime = new Date(Date.parse(meeting.endTime) + 0.25 * 60 * 60 * 1000)
+              meeting.save()
+              api_utils.updateObject(meeting, "id", req, res);
+            } else {
+              res.json({error: "maximum number reached", success: false})
+            }
+        }).catch((err) => {
+            res.json(err);
+        })
+    }
+);
+
 
 router.post('/meetings/delete', passport.authenticate('jwt', {session: false}), [
         check('id').exists().escape(),
