@@ -1,3 +1,5 @@
+import Accessors from './Accessors'
+
 export default class Requests {
 
   static async login(email, password) {
@@ -47,6 +49,14 @@ export default class Requests {
 
   static async endMeeting(jwt, meetingID) {
     let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ actualEndTime: Date.parse(new Date()) }) })
+    return response
+  }
+
+  static async extendMeeting(jwt, meetingID) {
+    let meeting = Accessors.getAppointment(meetingID)
+    let newEndTime = meeting.startTime + 0.25 * 60 * 60 * 1000
+
+    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ endTime: newEndTime })
     return response
   }
 
