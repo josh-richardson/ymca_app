@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, ScrollView, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
-import { FullWidthButton } from '../components'
+import { FullWidthButton, Divider } from '../components'
 import { formatDate } from '../utils'
 
 import { Accessors, Requests, removeAppointment, store, updateAppointment } from '../model'
@@ -39,6 +39,14 @@ export default class MeetingDetailsScreen extends React.Component {
 
   screenDidFocus() {
     this.setState({meeting: Accessors.getAppointment(this.state.meeting._id)})
+  }
+
+  meetingAllowedToStart() {
+    let meetingDate = Date.parse(this.state.meeting.startTime)
+    let difference = meetingDate - Date.parse(new Date())
+    let diffInMinutes = difference/(1000*60)
+
+    return diffInMinutes <= 30
   }
 
   startMeeting() {
@@ -157,26 +165,31 @@ export default class MeetingDetailsScreen extends React.Component {
     )
   }
 
+  renderCantStartMeetingMessage() {
+    return (
+      <Text style={{textAlign:'center', fontSize:16, marginTop:'5%'}} numberOfLines={4} multiline={true}>You will be able to start the meeting up to half an hour before the scheduled time.</Text>
+    )
+  }
+
   renderMeetingNotStarted() {
     return (
-      <View>
-        <FullWidthButton
+      <View style={{marginTop: this.meetingAllowedToStart() ? '7%' : '2%'}}>
+        { this.meetingAllowedToStart() && <FullWidthButton
           onPress={() => {this.startMeeting()}}
-          style={{marginTop: '7%'}}
+          style={{marginBottom: '2%'}}
           backgroundColor='#0075ff'
           title="Start Meeting"
           iconName='alarm-check'
-        />
+        /> }
         <FullWidthButton
           onPress={() => {this.changeMeeting()}}
-          style={{marginTop: '2%'}}
+          style={{marginBottom: '2%'}}
           backgroundColor='#0075ff'
           title="Change Meeting"
           iconName='calendar-clock'
         />
         <FullWidthButton
           onPress={() => {this.cancelMeeting()}}
-          style={{marginTop: '2%'}}
           backgroundColor='#ff0f00'
           title="Cancel Meeting"
           iconName='close-box-outline'
@@ -208,6 +221,8 @@ export default class MeetingDetailsScreen extends React.Component {
           <ListItem title="Date and Time" rightTitle={formatDate(new Date(appointment.startTime))} hideChevron/>
           <ListItem title="End date and time" rightTitle={formatDate(new Date(appointment.endTime))} hideChevron/>
         </List>
+
+        {!this.meetingAllowedToStart() && this.renderCantStartMeetingMessage()}
 
         <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom, { marginBottom: 10 }]}>
 
