@@ -86,7 +86,7 @@ export default class MeetingDetailsScreen extends React.Component {
 
     Alert.alert(
       "Confirm ending meeting",
-      `Is the meeting with ${mentee.firstName} about to end?`,
+      `Is the meeting with ${mentee.firstName} ending now?`,
       [
         {text: "Yes", onPress: () => this.endMeeting()},
         {text: "No", style: "cancel"}
@@ -104,7 +104,7 @@ export default class MeetingDetailsScreen extends React.Component {
 
         this.screenDidFocus()
 
-        this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
+        this.props.navigation.navigate('MenteeFeedback', {meeting: this.state.meeting})
       }
     })
   }
