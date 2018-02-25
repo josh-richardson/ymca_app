@@ -72,6 +72,20 @@ export default class MeetingDetailsScreen extends React.Component {
       }
     })
   }
+
+  askToEndMeeting() {
+    let mentee = Accessors.getMentee(this.state.meeting.mentee)
+
+    Alert.alert(
+      "Confirm ending meeting",
+      `Is the meeting with ${mentee.firstName} about to end?`,
+      [
+        {text: "Yes", onPress: () => this.endMeeting()},
+        {text: "No", style: "cancel"}
+      ]
+    )
+  }
+
   endMeeting() {
     Requests.endMeeting(store.getState().mentorInfo.jwt, this.state.meeting._id).then(response => {
       if(response.success) {
@@ -126,7 +140,7 @@ export default class MeetingDetailsScreen extends React.Component {
           iconName='plus-box-outline'
         />
         <FullWidthButton
-          onPress={() => {this.endMeeting()}}
+          onPress={() => {this.askToEndMeeting()}}
           style={{marginTop: '2%'}}
           backgroundColor='#0075ff'
           title="End Meeting"
