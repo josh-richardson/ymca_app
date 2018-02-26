@@ -24,8 +24,10 @@ export default class MeetingDetailsScreen extends React.Component {
 
     this.state = {
       meeting: Accessors.getAppointment(props.navigation.state.params.meetingID),
+      canStartMeeting: meetingAllowedToStart(meeting.startTime),
       meetingHasStarted: meeting.hasOwnProperty("actualStartTime"),
       meetingHasEnded: meeting.hasOwnProperty("actualEndTime"),
+      mentorHasProvidedFeedback: meeting.hasOwnProperty("mentor_notes"),
     }
   }
 
@@ -38,15 +40,17 @@ export default class MeetingDetailsScreen extends React.Component {
   }
 
   screenDidFocus() {
-    this.setState({meeting: Accessors.getAppointment(this.state.meeting._id)})
-  }
+    let meeting = Accessors.getAppointment(this.state.meeting._id)
+    console.log("MEETING")
+    console.log(meeting)
 
-  meetingAllowedToStart() {
-    let meetingDate = Date.parse(this.state.meeting.startTime)
-    let difference = meetingDate - Date.parse(new Date())
-    let diffInMinutes = difference/(1000*60)
-
-    return diffInMinutes <= 30
+    this.setState({
+      meeting: meeting,
+      canStartMeeting: meetingAllowedToStart(meeting.startTime),
+      meetingHasStarted: meeting.hasOwnProperty("actualStartTime"),
+      meetingHasEnded: meeting.hasOwnProperty("actualEndTime"),
+      mentorHasProvidedFeedback: meeting.hasOwnProperty("mentor_notes")
+    })
   }
 
   startMeeting() {
@@ -129,10 +133,12 @@ export default class MeetingDetailsScreen extends React.Component {
     })
   }
 
-  emergency() {
-    const {navigate} = this.props.navigation;
+  giveMentorFeedback() {
+    this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
+  }
 
-    navigate('EmergencyAlertSent')
+  emergency() {
+    this.props.navigation.navigate('EmergencyAlertSent')
   }
 
   renderMeetingStarted() {
@@ -173,8 +179,8 @@ export default class MeetingDetailsScreen extends React.Component {
 
   renderMeetingNotStarted() {
     return (
-      <View style={{marginTop: this.meetingAllowedToStart() ? '7%' : '2%'}}>
-        { this.meetingAllowedToStart() && <FullWidthButton
+      <View style={{marginTop: this.state.canStartMeeting ? '7%' : '2%'}}>
+        { this.state.canStartMeeting && <FullWidthButton
           onPress={() => {this.startMeeting()}}
           style={{marginBottom: '2%'}}
           backgroundColor='#0075ff'
@@ -198,6 +204,20 @@ export default class MeetingDetailsScreen extends React.Component {
     )
   }
 
+  renderMeetingEnded() {
+    return (
+      <View style={{marginTop: '5%'}}>
+        {!this.state.mentorHasProvidedFeedback && <FullWidthButton
+          onPress={() => {this.giveMentorFeedback()}}
+          backgroundColor='#0075ff'
+          title="Give Feedback"
+          iconName='close-box-outline' // TODO: Change this
+        />}
+        <Text style={{marginTop: '3%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>{this.state.mentorHasProvidedFeedback ? "Meeting is over! Thanks for giving feedback." : "Meeting is over! Please give feedback."}</Text>
+      </View>
+    )
+  }
+
   render() {
     const appointment = this.state.meeting
 
@@ -206,7 +226,6 @@ export default class MeetingDetailsScreen extends React.Component {
 
     return(
       <View style={BaseStyles.container}>
-		<ScrollView>
         <View style={[BaseStyles.centerChildren, { marginTop: 10 }]}>
           <Avatar
             title={initials}
@@ -222,17 +241,16 @@ export default class MeetingDetailsScreen extends React.Component {
           <ListItem title="End date and time" rightTitle={formatDate(new Date(appointment.endTime))} hideChevron/>
         </List>
 
-        {!this.meetingAllowedToStart() && this.renderCantStartMeetingMessage()}
+        {!this.state.canStartMeeting && this.renderCantStartMeetingMessage()}
 
         <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom, { marginBottom: 10 }]}>
 
           {
-            this.state.meetingHasEnded ? (<Text style={{marginTop: '3%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>{"Meeting is over!"}</Text>) : (this.state.meetingHasStarted ?
+            this.state.meetingHasEnded ? (this.renderMeetingEnded()) : (this.state.meetingHasStarted ?
               this.renderMeetingStarted() : this.renderMeetingNotStarted())
 
           }
         </View>
-		</ScrollView>
       </View>
     )
   }
@@ -240,4 +258,12 @@ export default class MeetingDetailsScreen extends React.Component {
   styles = StyleSheet.create({
 
   });
+}
+
+function meetingAllowedToStart(startTime) {
+  let meetingDate = Date.parse(startTime)
+  let difference = meetingDate - Date.parse(new Date())
+  let diffInMinutes = difference/(1000*60)
+
+  return diffInMinutes <= 30
 }
