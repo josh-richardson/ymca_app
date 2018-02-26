@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, FlatList, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Alert, ScrollView } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 import { formatDate } from '../utils'
-
+import { ListSectionHeader } from '../components'
 import { store, Accessors } from '../model'
 
 export default class MeetingsScreen extends React.Component {
@@ -29,13 +29,11 @@ export default class MeetingsScreen extends React.Component {
   }
 
   screenDidFocus() {
-    this.setState({meetings: store.getState().appointments})
+    this.setState({meetings: Accessors.refreshAppointments()})
   }
 
   showMeetingDetails(meetingID) {
-    const { navigate } = this.props.navigation;
-
-    navigate('MeetingDetails', {meetingID})
+    this.props.navigation.navigate('MeetingDetails', {meetingID})
   }
 
   renderItem(appointment) {
@@ -61,13 +59,35 @@ export default class MeetingsScreen extends React.Component {
 
   render() {
     return(
-      <View>
-        <List>
+      <ScrollView>
+        <ListSectionHeader text={"Upcoming Appointments"} />
+        <List containerStyle={this.styles.section}>
           {
-            this.state.meetings.map(appointment => this.renderItem(appointment))
+            this.state.meetings.filter(appointment => !appointment.isPast && !appointment.isInProgress && appointment.needsFeedback).map(appointment => this.renderItem(appointment))
           }
         </List>
-      </View>
+
+        <ListSectionHeader text={"In Progress"} />
+        <List containerStyle={this.styles.section}>
+          {
+            this.state.meetings.filter(appointment => appointment.isInProgress && appointment.needsFeedback).map(appointment => this.renderItem(appointment))
+          }
+        </List>
+
+        <ListSectionHeader text={"Needs Feedback"} />
+        <List containerStyle={this.styles.section}>
+          {
+            this.state.meetings.filter(appointment => appointment.isPast && appointment.needsFeedback).map(appointment => this.renderItem(appointment))
+          }
+        </List>
+
+        <ListSectionHeader text={"Past Appointments"} />
+        <List containerStyle={this.styles.section}>
+          {
+            this.state.meetings.filter(appointment => appointment.isPast && !appointment.needsFeedback).map(appointment => this.renderItem(appointment))
+          }
+        </List>
+      </ScrollView>
     )
   }
 
@@ -78,5 +98,9 @@ export default class MeetingsScreen extends React.Component {
       alignItems: 'center',
       justifyContent: 'center',
     },
+
+    section: {
+      marginTop: 0
+    }
   });
 }

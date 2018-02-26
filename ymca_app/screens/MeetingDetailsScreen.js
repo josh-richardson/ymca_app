@@ -41,8 +41,6 @@ export default class MeetingDetailsScreen extends React.Component {
 
   screenDidFocus() {
     let meeting = Accessors.getAppointment(this.state.meeting._id)
-    console.log("MEETING")
-    console.log(meeting)
 
     this.setState({
       meeting: meeting,
@@ -51,6 +49,8 @@ export default class MeetingDetailsScreen extends React.Component {
       meetingHasEnded: meeting.hasOwnProperty("actualEndTime"),
       mentorHasProvidedFeedback: meeting.hasOwnProperty("mentor_notes")
     })
+
+    Accessors.refreshAppointment(meeting._id)
   }
 
   startMeeting() {
