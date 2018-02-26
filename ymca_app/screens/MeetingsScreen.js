@@ -8,7 +8,7 @@ import { store, Accessors } from '../model'
 
 export default class MeetingsScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
-    title: 'Upcoming Meetings',
+    title: 'Your Meetings',
     refresh: () => navigation.state.params.currentScreen.refresh(),
   })
 
