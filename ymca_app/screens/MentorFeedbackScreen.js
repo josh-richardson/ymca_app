@@ -34,9 +34,9 @@ export default class MentorFeedbackScreen extends React.Component {
     Requests.sendMentorFeedback(store.getState().mentorInfo.jwt, this.state.meeting._id, mentorFeedback).then(response => {
 
       let newAppointment = {...response.result, mentee: response.result.mentee}
-      store.dispatch(updateAppointment(this.state.id, newAppointment))
-
-      this.props.navigation.navigate('MenteeFeedback', {meeting: this.state.meeting})
+      store.dispatch(updateAppointment(this.state.meeting._id, newAppointment))
+                                                                                                                              
+      this.props.navigation.goBack()
     })
   }
 

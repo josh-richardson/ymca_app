@@ -48,7 +48,7 @@ export default class MenteeFeedbackScreen extends React.Component {
     Requests.sendMenteeFeedback(store.getState().mentorInfo.jwt, this.state.meeting._id, menteeFeedback, menteeRating).then(response => {
 
       let newAppointment = {...response.result, mentee: response.result.mentee}
-      store.dispatch(updateAppointment(this.state.id, newAppointment))
+      store.dispatch(updateAppointment(this.state.meeting._id, newAppointment))
 
       this.promptScheduleNextMeeting()
     })
@@ -62,7 +62,7 @@ export default class MenteeFeedbackScreen extends React.Component {
       `Meeting finished. Please hand the phone back to the mentor.\nWould you like to schedule another appointment now with ${mentee.firstName}?`,
       [
         {text: "Yes", onPress: () => this.scheduleNextMeeting()},
-        {text: "No", style: "cancel", onPress: () => this.resetNavStack()}
+        {text: "No", style: "cancel", onPress: () => this.props.navigation.goBack()}
       ]
     )
   }
