@@ -1,8 +1,9 @@
-import { store, setMentorInfo, } from '.'
+import store from './store'
+import { setInfo } from './Actions'
 
 export default class Mentor {
   static setInfo(info) {
-    store.dispatch(setMentorInfo(info))
+    store.dispatch(setInfo(info))
   }
 
   static getInfoObject() {

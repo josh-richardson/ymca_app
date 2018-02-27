@@ -1,4 +1,5 @@
-import { store, addAppointment, removeAppointment, setAppointments, updateAppointment } from '.'
+import store from './store'
+import { addAppointment, removeAppointment, setAppointments, updateAppointment } from './Actions'
 import Mentee from './Mentee'
 
 export default class Appointment {

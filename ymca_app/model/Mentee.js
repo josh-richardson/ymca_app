@@ -1,4 +1,5 @@
-import { store, addMentee, removeMentee, setMentees, } from '.'
+import store from './store'
+import { addMentee, removeMentee, setMentees } from './Actions'
 
 export default class Mentee {
   constructor(menteeObject) {
