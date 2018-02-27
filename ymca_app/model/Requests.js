@@ -68,7 +68,7 @@ export default class Requests {
   }
 
   static async makeRequest(url, bodyObject) {
-    let response = await fetch(`http://ymca.pw/api/${url}`, {
+    let response = await fetch(`https://ymca.pw/api/${url}`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
