@@ -1,4 +1,5 @@
 import { store, addAppointment, removeAppointment, setAppointments, updateAppointment } from '.'
+import Mentee from './Mentee'
 
 export default class Appointment {
 
@@ -36,7 +37,7 @@ export default class Appointment {
   }
 
   getMentee() {
-    // TODO: implement this
+    return Mentee.getMenteeByID(this.getMenteeID())
   }
 
   isPast() {
@@ -57,7 +58,7 @@ export default class Appointment {
 
     this.appointmentObject = newObject
 
-    store.dispatch(updateAppointment(this))
+    store.dispatch(updateAppointment(this.getID(), this))
   }
 
   deleteSelf() {
