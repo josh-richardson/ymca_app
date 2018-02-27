@@ -5,6 +5,7 @@ export default class Mentee {
   constructor(menteeObject) {
     if(!Mentee.validateMenteeObject(menteeObject)) {
       console.error("Mentee object invalid. Returning null.")
+      console.log(menteeObject)
       return null
     }
 
@@ -67,20 +68,20 @@ export default class Mentee {
   static hydrateMentees(menteeObjects) {
     let mentees = []
 
-    for(let object in menteeObjects) {
-      mentees.push(new Mentee(object))
+    for(let i in menteeObjects) {
+      mentees.push(new Mentee(menteeObjects[i]))
     }
 
     store.dispatch(setMentees(mentees))
   }
 
   static validateMenteeObject(menteeObject) {
-    const requiredProps = ["__v", "_id", "email", "firstName", "secondName", "meetingAddess", "phone", "mentor"]
+    const requiredProps = ["__v", "_id", "email", "firstName", "secondName", "meetingAddress", "phone", "mentor"]
 
-    for(let prop in requiredProps) {
-      if(!menteeObject.hasOwnProperty(prop)) return false
+    for(let i in requiredProps) {
+      if(!menteeObject.hasOwnProperty(requiredProps[i])) return false
     }
 
-    return (typeof menteeObject.mentee == "string")
+    return true
   }
 }

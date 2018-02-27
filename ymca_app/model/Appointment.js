@@ -73,8 +73,8 @@ export default class Appointment {
   static hydrateAppointments(appointmentObjects) {
     let appointments = []
 
-    for(let object in appointmentObjects) {
-      appointments.push(new Appointment(object))
+    for(let i in appointmentObjects) {
+      appointments.push(new Appointment(appointmentObjects[i]))
     }
 
     store.dispatch(setAppointments(appointments))
@@ -83,8 +83,8 @@ export default class Appointment {
   static validateAppointmentObject(appointmentObject) {
     const requiredProps = ["__v", "_id", "startTime", "endTime", "meetingAddress", "number_of_extensions", "mentor", "mentee"]
 
-    for(let prop in requiredProps) {
-      if(!appointmentObject.hasOwnProperty(prop)) return false
+    for(let i in requiredProps) {
+      if(!appointmentObject.hasOwnProperty(requiredProps[i])) return false
     }
 
     return (typeof appointmentObject.mentee == "string")
