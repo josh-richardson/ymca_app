@@ -41,6 +41,15 @@ export default class Appointment {
     return Mentee.getMenteeByID(this.getMenteeID())
   }
 
+  getActualStartTime() {
+    if(this.appointmentObject.hasOwnProperty("actualStartTime")) return this.appointmentObject.actualStartTime
+    return null
+  }
+  getActualEndTime() {
+    if(this.appointmentObject.hasOwnProperty("actualEndTime")) return this.appointmentObject.actualEndTime
+    return null
+  }
+
   isPast() {
     return this.appointmentObject.hasOwnProperty("actualEndTime")
   }
@@ -49,6 +58,14 @@ export default class Appointment {
   }
   needsFeedback() {
     return !this.appointmentObject.hasOwnProperty("mentor_notes")
+  }
+
+  canStartMeeting() {
+    let meetingDate = Date.parse(this.getStartTime())
+    let difference = meetingDate - Date.parse(new Date())
+    let diffInMinutes = difference/(1000*60)
+
+    return diffInMinutes <= 30
   }
 
   updateAppointment(newObject) {
