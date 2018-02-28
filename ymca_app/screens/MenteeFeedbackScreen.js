@@ -4,8 +4,7 @@ import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton, FormQuestion, ToggleButton } from '../components'
 import { NavigationActions } from 'react-navigation'
-
-import { Requests, store, updateAppointment, Accessors } from '../model'
+import { Requests, Mentee, Appointment, Mentor } from '../model'
 
 export default class MenteeFeedbackScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
@@ -45,17 +44,15 @@ export default class MenteeFeedbackScreen extends React.Component {
     let menteeFeedback = JSON.stringify({response: this.state.response})
     let menteeRating = this.sadToggled ? 1 : (this.impartialToggled ? 2 : (this.happyToggled ? 3 : 0))
 
-    Requests.sendMenteeFeedback(store.getState().mentorInfo.jwt, this.state.meeting._id, menteeFeedback, menteeRating).then(response => {
-
-      let newAppointment = {...response.result, mentee: response.result.mentee}
-      store.dispatch(updateAppointment(this.state.meeting._id, newAppointment))
+    Requests.sendMenteeFeedback(Mentor.jwt, this.state.meeting.id, menteeFeedback, menteeRating).then(response => {
+      this.state.meeting.update(response.result)
 
       this.promptScheduleNextMeeting()
     })
   }
 
   promptScheduleNextMeeting() {
-    let mentee = Accessors.getMentee(this.state.meeting.mentee)
+    let mentee = this.state.meeting.mentee
 
     Alert.alert(
       "Done!",
@@ -76,7 +73,7 @@ export default class MenteeFeedbackScreen extends React.Component {
         }),
         NavigationActions.navigate({
           routeName: 'ScheduleAppointment',
-          params: {menteeID: this.state.meeting.mentee, place: this.state.meeting.meetingAddress}
+          params: {menteeID: this.state.meeting.menteeID, place: this.state.meeting.meetingAddress}
         }),
       ],
     });

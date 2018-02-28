@@ -4,7 +4,7 @@ import { BaseStyles } from '../BaseStyles';
 import { FullWidthButton } from '../components';
 import PropTypes from 'prop-types';
 
-import { store, Requests } from '../model'
+import { Mentor, Requests } from '../model'
 
 export default class EmergencyAlertSentScreen extends React.Component {
   constructor(props) {
@@ -16,7 +16,7 @@ export default class EmergencyAlertSentScreen extends React.Component {
   };
 
   componentDidMount() {
-    return Requests.sendEmergency(store.getState().mentorInfo.jwt)
+    return Requests.sendEmergency(Mentor.jwt)
   }
 
   backButtonPressed() {
