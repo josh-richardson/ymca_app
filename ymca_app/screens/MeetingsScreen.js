@@ -4,19 +4,21 @@ import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 import { formatDate } from '../utils'
 import { ListSectionHeader } from '../components'
-import { store, Accessors } from '../model'
+import { Appointment, Mentee } from '../model'
 
 export default class MeetingsScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
     title: 'Your Meetings',
-    refresh: () => navigation.state.params.currentScreen.refresh(),
   })
 
   constructor(props) {
     super(props)
 
     this.state = {
-      meetings: store.getState().appointments
+      upcomingMeetings: Appointment.upcomingAppointments,
+      inProgressMeetings: Appointment.inProgressAppointments,
+      needsFeedbackMeetings: Appointment.needsFeedbackAppointments,
+      pastMeetings: Appointment.pastAppointments
     }
   }
 
@@ -29,7 +31,12 @@ export default class MeetingsScreen extends React.Component {
   }
 
   screenDidFocus() {
-    this.setState({meetings: Accessors.refreshAppointments()})
+    this.setState({
+      upcomingMeetings: Appointment.upcomingAppointments,
+      inProgressMeetings: Appointment.inProgressAppointments,
+      needsFeedbackMeetings: Appointment.needsFeedbackAppointments,
+      pastMeetings: Appointment.pastAppointments
+    })
   }
 
   showMeetingDetails(meetingID) {
@@ -38,21 +45,20 @@ export default class MeetingsScreen extends React.Component {
 
   renderItem(appointment) {
 
-    const mentee = Accessors.getMentee(appointment.mentee)
-    const initials = `${mentee.firstName.charAt(0)}${mentee.secondName.charAt(0)}`
+    const mentee = appointment.mentee
 
     return (
       <ListItem
         button
-        title={`${mentee.firstName} ${mentee.secondName}`}
+        title={mentee.name}
         subtitle={formatDate(new Date(appointment.startTime))}
         rightTitle={appointment.meetingAddress}
-        key={appointment._id}
+        key={appointment.id}
         avatar={<Avatar
-                title={initials}
+                title={mentee.initials}
                 rounded
               />}
-        onPress={() => {this.showMeetingDetails(appointment._id)}}
+        onPress={() => {this.showMeetingDetails(appointment.id)}}
       />
     )
   }
@@ -63,28 +69,28 @@ export default class MeetingsScreen extends React.Component {
         <ListSectionHeader text={"Upcoming Appointments"} />
         <List containerStyle={this.styles.section}>
           {
-            this.state.meetings.filter(appointment => !appointment.isPast && !appointment.isInProgress && appointment.needsFeedback).map(appointment => this.renderItem(appointment))
+            this.state.upcomingMeetings.map(appointment => this.renderItem(appointment))
           }
         </List>
 
         <ListSectionHeader text={"In Progress"} />
         <List containerStyle={this.styles.section}>
           {
-            this.state.meetings.filter(appointment => appointment.isInProgress && appointment.needsFeedback).map(appointment => this.renderItem(appointment))
+            this.state.inProgressMeetings.map(appointment => this.renderItem(appointment))
           }
         </List>
 
         <ListSectionHeader text={"Needs Feedback"} />
         <List containerStyle={this.styles.section}>
           {
-            this.state.meetings.filter(appointment => appointment.isPast && appointment.needsFeedback).map(appointment => this.renderItem(appointment))
+            this.state.needsFeedbackMeetings.map(appointment => this.renderItem(appointment))
           }
         </List>
 
         <ListSectionHeader text={"Past Appointments"} />
         <List containerStyle={this.styles.section}>
           {
-            this.state.meetings.filter(appointment => appointment.isPast && !appointment.needsFeedback).map(appointment => this.renderItem(appointment))
+            this.state.pastMeetings.map(appointment => this.renderItem(appointment))
           }
         </List>
       </ScrollView>

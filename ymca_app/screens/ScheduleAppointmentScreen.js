@@ -5,8 +5,7 @@ import { List, ListItem, Avatar } from 'react-native-elements'
 import DatePicker from 'react-native-datepicker'
 import { currentDate, currentDatePlus, formatDate } from '../utils'
 import { Divider, FullWidthButton } from '../components'
-
-import { store, Requests, addAppointment, updateAppointment } from '../model'
+import { Mentee, Appointment, Mentor, Requests } from '../model'
 
 export default class ScheduleAppointmentScreen extends React.Component {
   static navigationOptions = {
@@ -18,8 +17,8 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
     this.state = {
       datetime: new Date(),
-      mentees: store.getState().mentees,
-      selectedMentee: store.getState().mentees[0]._id,
+      mentees: Mentee.allMentees,
+      selectedMentee: Mentee.allMentees[0].id,
       place: "",
       duration: 1.0, // Duration in hours
       isUpdatingAppointment: false
@@ -34,10 +33,10 @@ export default class ScheduleAppointmentScreen extends React.Component {
       let meeting = props.navigation.state.params.meeting
 
       this.state.isUpdatingAppointment = true
-      this.state.id = meeting._id
+      this.state.id = meeting.id
       this.state.datetime = new Date(meeting.startTime)
       this.state.place = meeting.meetingAddress
-      this.state.selectedMentee = meeting.mentee
+      this.state.selectedMentee = meeting.menteeID
     }
   }
 
@@ -59,13 +58,11 @@ export default class ScheduleAppointmentScreen extends React.Component {
     let endTime = startTime + this.state.duration * 60 * 60 * 1000
 
     if(this.state.isUpdatingAppointment) {
-      Requests.updateMeeting(store.getState().mentorInfo.jwt, this.state.id, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
+      Requests.updateMeeting(Mentor.jwt, this.state.id, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
 
         if(response.success) {
           Alert.alert("Appointment updated!")
-
-          let newAppointment = {...response.result, mentee: response.result.mentee}
-          store.dispatch(updateAppointment(this.state.id, newAppointment))
+          Appointment.getAppointmentByID(this.state.id).update(response.result)
 
           this.props.navigation.goBack()
         }
@@ -74,13 +71,12 @@ export default class ScheduleAppointmentScreen extends React.Component {
       return;
     }
 
-    Requests.addMeeting(store.getState().mentorInfo.jwt, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
+    Requests.addMeeting(Mentor.jwt, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
 
       if(response.success) {
         Alert.alert("Appointment scheduled!")
 
-        let newAppointment = {...response.result, mentee: response.result.mentee._id}
-        store.dispatch(addAppointment(newAppointment))
+        new Appointment(response.result)
 
         this.props.navigation.goBack()
       }
@@ -138,7 +134,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
           onValueChange={(value, index) => this.setState({selectedMentee: value})}>
         {
           this.state.mentees.map(mentee =>
-            <Picker.Item key={mentee._id} label={`${mentee.firstName} ${mentee.secondName}`} value={mentee._id}/>
+            <Picker.Item key={mentee.id} label={mentee.name} value={mentee.id}/>
           )
         }
         </Picker>

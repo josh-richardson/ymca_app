@@ -3,8 +3,7 @@ import { StyleSheet, Text, View, Image, FlatList, ScrollView, TextInput, Alert }
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton, FormQuestion } from '../components'
-
-import { Requests, store, updateAppointment } from '../model'
+import { Requests, Mentor, Mentee, Appointment } from '../model'
 
 export default class MentorFeedbackScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
@@ -31,11 +30,9 @@ export default class MentorFeedbackScreen extends React.Component {
 
   doneButtonPressed() {
     let mentorFeedback = JSON.stringify({q1: this.state.response1, q2: this.state.response2, q3: this.state.response3, q4: this.state.response4, q5: this.state.response5})
-    Requests.sendMentorFeedback(store.getState().mentorInfo.jwt, this.state.meeting._id, mentorFeedback).then(response => {
+    Requests.sendMentorFeedback(Mentor.jwt, this.state.meeting.id, mentorFeedback).then(response => {
+      this.state.meeting.update(response.result)
 
-      let newAppointment = {...response.result, mentee: response.result.mentee}
-      store.dispatch(updateAppointment(this.state.meeting._id, newAppointment))
-                                                                                                                              
       this.props.navigation.goBack()
     })
   }
