@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt-nodejs');
@@ -6,11 +5,7 @@ const bcrypt = require('bcrypt-nodejs');
 const userSchema = new Schema({
     email: {type: String, required: true, unique: true},
     password: {type: String, required: true},
-    phone: {type: String, required: true},
-    firstName: {type: String, required: true},
-    secondName: {type: String, required: true},
-    admin: {type: Boolean, required: true},
-    manager: {type: Schema.Types.ObjectId, ref: 'Manager', required: false},
+    linkedModel: {type: Schema.Types.Mixed, required: true}
 });
 
 userSchema.methods.hashPassword = function (password) {

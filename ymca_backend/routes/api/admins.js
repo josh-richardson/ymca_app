@@ -4,7 +4,8 @@ const {check, validationResult} = require('express-validator/check');
 const {matchedData, sanitize} = require('express-validator/filter');
 const user = require('../../models/user');
 const mentee = require('../../models/mentee');
-const manager = require('../../models/manager');
+const manager = require('../../models/users/manager');
+const admin = require('../../models/users/admin');
 const config = require('../../config/config');
 const jwt = require('jwt-simple');
 const passport = require('passport');
@@ -12,10 +13,53 @@ const api_utils = require('../../utils/api_utils');
 
 
 function isAdmin(req, res, next) {
-    if (req.user.admin)
+    if (req.user.linkedModel instanceof admin)
         return next();
     res.status(403).json({error: "Access Denied"})
 }
+
+
+router.post('/register', [
+    check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail()
+        .custom(value => {
+            return api_utils.objectExistsByKey(user, 'email', value).then(retVal => {
+                if (!retVal) throw new Error();
+                return true;
+            }).catch(() => {
+                return false;
+            });
+        }).withMessage("This email is either in use, or a server error occurred.").escape(),
+    check('password', 'Passwords must be at least 5 characters').isLength({min: 5}),
+    check('phone').exists().isMobilePhone("en-GB").escape(),
+    check('firstName').exists().isAlphanumeric().escape(),
+    check('secondName').exists().isAlphanumeric().escape(),
+    check('isAdmin').exists().isBoolean().escape(),
+], (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.mapped()});
+    }
+    const data = matchedData(req);
+    if (data.isAdmin === true) {
+        api_utils.createAdmin(data).then(user => res.json(user)).catch(err => {
+            res.status(500).json(config.debug ? err : {error: 'Server error occurred'});
+        });
+    } else {
+        api_utils.createManager(data).then(user => res.json(user)).catch(err => {
+            res.status(500).json(config.debug ? err : {error: 'Server error occurred'});
+        });
+    }
+
+});
+
+
+router.post('/create', passport.authenticate('jwt', {session: false}),
+    function (req, res) {
+        user.find().then(users => {
+            res.json(users);
+        })
+    }
+);
 
 
 router.post('/mentors', passport.authenticate('jwt', {session: false}), isAdmin,

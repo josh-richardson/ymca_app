@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 const user = require('../models/user');
 const mentee = require('../models/mentee');
-const manager = require('../models/manager');
+const manager = require('../models/users/manager');
 const meeting = require('../models/meeting');
+const admin = require('../models/users/admin');
+const mentor = require('../models/users/mentor');
 
 const config = require('../config/config');
 process.env.NODE_ENV = 'test';
@@ -25,7 +27,7 @@ mongoose.connect(config.db_path, {
     });
 
 
-const userDetails = {
+const mentorDetails = {
     'email': "test@gmail.com",
     'password': "password123",
     'firstName': 'Jack',
@@ -49,12 +51,12 @@ const mentee2Details = {
 }
 
 const newUser = new user();
-newUser.email = userDetails.email;
-newUser.password = newUser.hashPassword(userDetails.password);
-newUser.firstName = userDetails.firstName;
-newUser.secondName = userDetails.secondName;
-newUser.admin = true;
-newUser.phone = userDetails.phone;
+newUser.email = mentorDetails.email;
+newUser.password = newUser.hashPassword(mentorDetails.password);
+const newAdmin = new admin();
+newAdmin.firstName = mentorDetails.firstName;
+newAdmin.secondName = mentorDetails.secondName;
+newAdmin.phone = mentorDetails.phone;
 newUser.save(function (err, result) {
     if (err) {
         console.log(Error)

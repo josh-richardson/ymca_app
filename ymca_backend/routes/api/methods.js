@@ -9,7 +9,7 @@ const passport = require('passport');
 const twilio = require('../../utils/twilio');
 const sendgrid = require('../../utils/sendgrid');
 const api_utils = require('../../utils/api_utils');
-const manager = require('../../models/manager');
+const manager = require('../../models/users/manager');
 const mentee = require('../../models/mentee');
 const meeting = require('../../models/meeting');
 
@@ -24,6 +24,7 @@ router.post('/profile', passport.authenticate('jwt', {session: false}),
 router.post('/emergency', passport.authenticate('jwt', {session: false}),
     function (req, res) {
         api_utils.findObjectByKey(manager, '_id', req.user.manager).then(result_manager => {
+            console.log("shit just fucking went down mates");
             twilio.sendSms(result_manager.phone, "An emergency happened, send help!");
             sendgrid.sendEmail(result_manager.email, "YMCA Emergency", "An enmergency happaned, send help!");
             res.json({success: true});

@@ -12,7 +12,6 @@ const meetingSchema = new Schema({
     actualStartTime: {type: Date},
     actualEndTime: {type: Date},
     mentor_notes: {type: String},
-    mentor_rating: {type: Number},
     mentee_notes: {type: String},
     mentee_rating: {type: Number},
     number_of_extensions: {type: Number, default: 0},
