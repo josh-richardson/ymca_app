@@ -41,14 +41,15 @@ const menteeDetails = {
     'secondName': "Jared",
     'phone': '07450760408',
     'meetingAddress': 'Some scottish road somewhere'
-}
+};
+
 const mentee2Details = {
     'email': "mentee2@gmail.com",
     'firstName': "Jeff",
     'secondName': "Bezos",
     'phone': '07450760408',
     'meetingAddress': '12 Scotland St.'
-}
+};
 
 const newUser = new user();
 newUser.email = mentorDetails.email;
@@ -57,44 +58,62 @@ const newAdmin = new admin();
 newAdmin.firstName = mentorDetails.firstName;
 newAdmin.secondName = mentorDetails.secondName;
 newAdmin.phone = mentorDetails.phone;
-newUser.save(function (err, result) {
+newAdmin.save((err, result) => {
     if (err) {
-        console.log(Error)
+        console.log(err)
     } else {
-        console.log("Created new user");
-        const newMentee = new mentee();
-        newMentee.email = menteeDetails.email;
-        newMentee.firstName = menteeDetails.firstName;
-        newMentee.secondName = menteeDetails.secondName;
-        newMentee.phone = menteeDetails.phone;
-        newMentee.meetingAddress = menteeDetails.meetingAddress;
-        newMentee.mentor = newUser;
-        newMentee.save(function (err, result) {
-            if (!err) {
-                console.log("Created new mentee");
-                const newMeeting = new meeting();
-                newMeeting.mentor = newUser;
-                newMeeting.mentee = newMentee;
-                newMeeting.meetingAddress = newMentee.meetingAddress;
-                newMeeting.startTime = new Date();
-                newMeeting.endTime = new Date();
-                newMeeting.save(function (err, result) {
+        console.log("Saved admin");
+        newUser.linkedModel = newAdmin;
+        newUser.save(function (err, result) {
+            if (err) {
+                console.log(Error)
+            } else {
+                console.log("Created new user");
+                const newMentee = new mentee();
+                newMentee.firstName = menteeDetails.firstName;
+                newMentee.secondName = menteeDetails.secondName;
+                newMentee.phone = menteeDetails.phone;
+                newMentee.meetingAddress = menteeDetails.meetingAddress;
+                newMentee.mentor = newUser;
+                newMentee.save((err, result) => {
                     if (err) {
-                        console.log(err)
+                        console.log(err);
                     } else {
-                        console.log("Created new meeting");
-                        process.exit();
+                        console.log("Created new mentee");
+                        const newMeeting = new meeting();
+                        newMeeting.mentor = newUser;
+                        newMeeting.mentee = newMentee;
+                        newMeeting.meetingAddress = newMentee.meetingAddress;
+                        newMeeting.startTime = new Date();
+                        newMeeting.endTime = new Date();
+                        newMeeting.save(function (err, result) {
+                            if (err) {
+                                console.log(err)
+                            } else {
+                                console.log("Created new meeting");
+                                process.exit();
+                            }
+                        });
                     }
                 });
             }
         });
-        const newMentee2 = new mentee();
-        newMentee2.email = mentee2Details.email;
-        newMentee2.firstName = mentee2Details.firstName;
-        newMentee2.secondName = mentee2Details.secondName;
-        newMentee2.phone = mentee2Details.phone;
-        newMentee2.meetingAddress = mentee2Details.meetingAddress;
-        newMentee2.mentor = newUser;
-        newMentee2.save(function (err, result) {});
     }
 });
+
+
+//
+// newMentee.save(function (err, result) {
+//     if (!err) {
+//
+//     }
+// });
+// const newMentee2 = new mentee();
+// newMentee2.email = mentee2Details.email;
+// newMentee2.firstName = mentee2Details.firstName;
+// newMentee2.secondName = mentee2Details.secondName;
+// newMentee2.phone = mentee2Details.phone;
+// newMentee2.meetingAddress = mentee2Details.meetingAddress;
+// newMentee2.mentor = newUser;
+// newMentee2.save(function (err, result) {
+// });
