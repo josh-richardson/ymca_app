@@ -7,10 +7,16 @@ export default class Appointment {
   constructor(appointmentObject) {
     if(!Appointment.validateAppointmentObject(appointmentObject)) {
       console.error("Appointment object invalid. Returning null.")
+      console.error(appointmentObject)
       return null
     }
 
-    this.appointmentObject = appointmentObject
+    let mentee = appointmentObject.mentee
+    if(typeof mentee != "string") {
+      mentee = mentee._id
+    }
+
+    this.appointmentObject = {...appointmentObject, mentee}
 
     store.dispatch(addAppointment(this))
   }
@@ -104,7 +110,7 @@ export default class Appointment {
       if(!appointmentObject.hasOwnProperty(requiredProps[i])) return false
     }
 
-    return (typeof appointmentObject.mentee == "string")
+    return true
   }
 
   static get allAppointments() {
