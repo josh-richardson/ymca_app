@@ -15,60 +15,60 @@ export default class Appointment {
     store.dispatch(addAppointment(this))
   }
 
-  getID() {
+  get id() {
     return this.appointmentObject._id
   }
-  getStartTime() {
+  get startTime() {
     return this.appointmentObject.startTime
   }
-  getEndTime() {
+  get endTime() {
     return this.appointmentObject.endTime
   }
-  getMeetingAddress() {
+  get meetingAddress() {
     return this.appointmentObject.meetingAddress
   }
-  getMentorID() {
+  get mentorID() {
     return this.appointmentObject.mentorID
   }
-  getMenteeID() {
+  get menteeID() {
     return this.appointmentObject.menteeID
   }
-  getNumberOfExtensions() {
+  get numberOfExtensions() {
     return this.appointmentObject.number_of_extensions
   }
 
-  getMentee() {
-    return Mentee.getMenteeByID(this.getMenteeID())
+  get mentee() {
+    return Mentee.getMenteeByID(this.menteeID)
   }
 
-  getActualStartTime() {
+  get actualStartTime() {
     if(this.appointmentObject.hasOwnProperty("actualStartTime")) return this.appointmentObject.actualStartTime
     return null
   }
-  getActualEndTime() {
+  get actualEndTime() {
     if(this.appointmentObject.hasOwnProperty("actualEndTime")) return this.appointmentObject.actualEndTime
     return null
   }
 
-  isPast() {
+  get isPast() {
     return this.appointmentObject.hasOwnProperty("actualEndTime")
   }
-  isInProgress() {
-    return this.appointmentObject.hasOwnProperty("actualStartTime") && !this.isPast()
+  get isInProgress() {
+    return this.appointmentObject.hasOwnProperty("actualStartTime") && !this.isPast
   }
-  needsFeedback() {
+  get needsFeedback() {
     return !this.appointmentObject.hasOwnProperty("mentor_notes")
   }
 
-  canStartMeeting() {
-    let meetingDate = Date.parse(this.getStartTime())
+  get canStart() {
+    let meetingDate = Date.parse(this.startTime)
     let difference = meetingDate - Date.parse(new Date())
     let diffInMinutes = difference/(1000*60)
 
     return diffInMinutes <= 30
   }
 
-  updateAppointment(newObject) {
+  update(newObject) {
     if(!Appointment.validateAppointmentObject(newObject)) {
       console.error("Appointment object invalid. Returning null.")
       return null
@@ -84,7 +84,7 @@ export default class Appointment {
   }
 
   static getAppointmentByID(id) {
-    return store.getState().appointments.filter(appointment => appointment._id == id)[0]
+    return store.getState().appointments.filter(appointment => appointment.id == id)[0]
   }
 
   static hydrateAppointments(appointmentObjects) {
@@ -107,24 +107,24 @@ export default class Appointment {
     return (typeof appointmentObject.mentee == "string")
   }
 
-  static getAllAppointments() {
+  static get allAppointments() {
     return store.getState().appointments
   }
 
-  static getUpcomingAppointments() {
-    return Appointment.getAllAppointments().filter(appointment => !appointment.isPast && !appointment.isInProgress && appointment.needsFeedback)
+  static get upcomingAppointments() {
+    return Appointment.allAppointments.filter(appointment => !appointment.isPast && !appointment.isInProgress && appointment.needsFeedback)
   }
 
-  static getInProgressAppointments() {
-    return Appointment.getAllAppointments().filter(appointment => appointment.isInProgress && appointment.needsFeedback)
+  static get inProgressAppointments() {
+    return Appointment.allAppointments.filter(appointment => appointment.isInProgress && appointment.needsFeedback)
   }
 
-  static getNeedsFeedbackAppointments() {
-    return Appointment.getAllAppointments().filter(appointment => appointment.isPast && appointment.needsFeedback)
+  static get needsFeedbackAppointments() {
+    return Appointment.allAppointments.filter(appointment => appointment.isPast && appointment.needsFeedback)
   }
 
-  static getPastAppointments() {
-    return Appointment.getAllAppointments().filter(appointment => appointment.isPast && !appointment.needsFeedback)
+  static get pastAppointments() {
+    return Appointment.allAppointments.filter(appointment => appointment.isPast && !appointment.needsFeedback)
   }
 
 }

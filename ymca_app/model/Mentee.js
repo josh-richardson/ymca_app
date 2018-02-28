@@ -29,31 +29,31 @@ export default class Mentee {
     store.dispatch(removeMentee(this.getID()))
   }
 
-  getID() {
+  get id() {
     return this.menteeObject._id
   }
-  getEmail() {
+  get email() {
     return this.menteeObject.email
   }
-  getFirstName() {
+  get firstName() {
     return this.menteeObject.firstName
   }
-  getSecondName() {
+  get secondName() {
     return this.menteeObject.secondName
   }
-  getName() {
-    return `${this.menteeObject.firstName} ${this.menteeObject.secondName}`
+  get name() {
+    return `${this.firstName} ${this.secondName}`
   }
-  getInitials() {
-    return `${this.getFirstName().charAt(0)}${this.getSecondName().charAt(0)}`
+  get initials() {
+    return `${this.firstName.charAt(0)}${this.secondName.charAt(0)}`
   }
-  getMeetingAddress() {
+  get meetingAddress() {
     return this.menteeObject.meetingAddress
   }
-  getPhone() {
+  get phone() {
     return this.menteeObject.phone
   }
-  getMentorID() {
+  get mentorID() {
     return this.menteeObject.mentee
   }
 
@@ -61,7 +61,7 @@ export default class Mentee {
     return store.getState().mentees.filter(mentee => mentee._id == id)[0]
   }
 
-  static getAllMentees() {
+  static get allMentees() {
     return store.getState().mentees
   }
 

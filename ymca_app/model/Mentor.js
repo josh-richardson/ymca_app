@@ -14,25 +14,25 @@ export default class Mentor {
     }
   }
 
-  static getID() {
+  static get id() {
     return Mentor.getInfoObject()._id
   }
-  static getEmail() {
+  static get email() {
     return Mentor.getInfoObject().email
   }
-  static getFirstName() {
+  static get firstName() {
     return Mentor.getInfoObject().firstName
   }
-  static getSecondName() {
+  static get secondName() {
     return Mentor.getInfoObject().secondName
   }
-  static getName() {
+  static get name() {
     return `${Mentor.getFirstName()} ${Mentor.getSecondName()}`
   }
-  static getPhone() {
+  static get phone() {
     return Mentor.getInfoObject().phone
   }
-  static getJWT() {
+  static get jwt() {
     return Mentor.getInfoObject().jwt
   }
 
