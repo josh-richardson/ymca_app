@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const onymous = require('./onymous');
 
 const menteeSchema = new Schema({
-    firstName: {type: String, required: true},
-    secondName: {type: String, required: true},
     meetingAddress: {type: String, required: true},
-    mentor: {type: Schema.Types.ObjectId, ref: 'Mentor', required: false},
-});
+    mentor: {type: Schema.Types.ObjectId, ref: 'User', required: false},
+    phone: {type: String, required: true},
+}, {discriminatorKey: 'kind'});
 
-module.exports = mongoose.model('Mentee', menteeSchema);
+module.exports = onymous.discriminator('Mentee', menteeSchema);

@@ -45,7 +45,7 @@ const updateSchemaField = function (schema, object, fieldName, fieldValue) {
 const updateObject = function (schema, paramName, req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(422).json({errors: errors.mapped()});
+        res.status(422).json({errors: errors.mapped()});
     }
     const data = matchedData(req);
     const newObject = JSON.parse(data.json);

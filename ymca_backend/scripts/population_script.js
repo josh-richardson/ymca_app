@@ -27,9 +27,10 @@ mongoose.connect(config.db_path, {
     });
 
 
-const mentorDetails = {
+const adminDetails = {
     'email': "test@gmail.com",
-    'password': "password123",
+    'password': "st" +
+    "",
     'firstName': 'Jack',
     'secondName': 'Jones',
     'phone': '07450760208'
@@ -52,12 +53,12 @@ const mentee2Details = {
 };
 
 const newUser = new user();
-newUser.email = mentorDetails.email;
-newUser.password = newUser.hashPassword(mentorDetails.password);
+newUser.email = adminDetails.email;
+newUser.password = newUser.hashPassword(adminDetails.password);
 const newAdmin = new admin();
-newAdmin.firstName = mentorDetails.firstName;
-newAdmin.secondName = mentorDetails.secondName;
-newAdmin.phone = mentorDetails.phone;
+newAdmin.firstName = adminDetails.firstName;
+newAdmin.secondName = adminDetails.secondName;
+newAdmin.phone = adminDetails.phone;
 newAdmin.save((err, result) => {
     if (err) {
         console.log(err)
