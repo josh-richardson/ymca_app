@@ -13,13 +13,13 @@ const api_utils = require('../../utils/api_utils');
 
 
 function isAdmin(req, res, next) {
-    if (req.user.linkedModel instanceof admin)
+    if (req.user.linkedModel.__t === "Admin")
         return next();
     res.status(403).json({error: "Access Denied"})
 }
 
 
-router.post('/register', [
+router.post('/add', passport.authenticate('jwt', {session: false}), isAdmin, [
     check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail()
         .custom(value => {
             return api_utils.objectExistsByKey(user, 'email', value).then(retVal => {
@@ -33,33 +33,16 @@ router.post('/register', [
     check('phone').exists().isMobilePhone("en-GB").escape(),
     check('firstName').exists().isAlphanumeric().escape(),
     check('secondName').exists().isAlphanumeric().escape(),
-    check('isAdmin').exists().isBoolean().escape(),
 ], (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({errors: errors.mapped()});
     }
     const data = matchedData(req);
-    if (data.isAdmin === true) {
-        api_utils.createAdmin(data).then(user => res.json(user)).catch(err => {
-            res.status(500).json(config.debug ? err : {error: 'Server error occurred'});
-        });
-    } else {
-        api_utils.createManager(data).then(user => res.json(user)).catch(err => {
-            res.status(500).json(config.debug ? err : {error: 'Server error occurred'});
-        });
-    }
-
+    api_utils.createAdmin(data).then(user => res.json(user)).catch(err => {
+        res.status(500).json(config.debug ? err : {error: 'Server error occurred'});
+    });
 });
-
-
-router.post('/create', passport.authenticate('jwt', {session: false}),
-    function (req, res) {
-        user.find().then(users => {
-            res.json(users);
-        })
-    }
-);
 
 
 router.post('/mentors', passport.authenticate('jwt', {session: false}), isAdmin,
