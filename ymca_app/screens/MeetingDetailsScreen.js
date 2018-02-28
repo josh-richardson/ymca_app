@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, ScrollView, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
-import { FullWidthButton } from '../components'
+import { FullWidthButton, Divider } from '../components'
 import { formatDate } from '../utils'
 
 import { Accessors, Requests, removeAppointment, store, updateAppointment } from '../model'
@@ -24,8 +24,10 @@ export default class MeetingDetailsScreen extends React.Component {
 
     this.state = {
       meeting: Accessors.getAppointment(props.navigation.state.params.meetingID),
+      canStartMeeting: meetingAllowedToStart(meeting.startTime),
       meetingHasStarted: meeting.hasOwnProperty("actualStartTime"),
       meetingHasEnded: meeting.hasOwnProperty("actualEndTime"),
+      mentorHasProvidedFeedback: meeting.hasOwnProperty("mentor_notes"),
     }
   }
 
@@ -38,7 +40,17 @@ export default class MeetingDetailsScreen extends React.Component {
   }
 
   screenDidFocus() {
-    this.setState({meeting: Accessors.getAppointment(this.state.meeting._id)})
+    let meeting = Accessors.getAppointment(this.state.meeting._id)
+
+    this.setState({
+      meeting: meeting,
+      canStartMeeting: meetingAllowedToStart(meeting.startTime),
+      meetingHasStarted: meeting.hasOwnProperty("actualStartTime"),
+      meetingHasEnded: meeting.hasOwnProperty("actualEndTime"),
+      mentorHasProvidedFeedback: meeting.hasOwnProperty("mentor_notes")
+    })
+
+    Accessors.refreshAppointment(meeting._id)
   }
 
   startMeeting() {
@@ -72,6 +84,20 @@ export default class MeetingDetailsScreen extends React.Component {
       }
     })
   }
+
+  askToEndMeeting() {
+    let mentee = Accessors.getMentee(this.state.meeting.mentee)
+
+    Alert.alert(
+      "Confirm ending meeting",
+      `Is the meeting with ${mentee.firstName} ending now?`,
+      [
+        {text: "Yes", onPress: () => this.endMeeting()},
+        {text: "No", style: "cancel"}
+      ]
+    )
+  }
+
   endMeeting() {
     Requests.endMeeting(store.getState().mentorInfo.jwt, this.state.meeting._id).then(response => {
       if(response.success) {
@@ -82,7 +108,7 @@ export default class MeetingDetailsScreen extends React.Component {
 
         this.screenDidFocus()
 
-        this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
+        this.props.navigation.navigate('MenteeFeedback', {meeting: this.state.meeting})
       }
     })
   }
@@ -107,10 +133,12 @@ export default class MeetingDetailsScreen extends React.Component {
     })
   }
 
-  emergency() {
-    const {navigate} = this.props.navigation;
+  giveMentorFeedback() {
+    this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
+  }
 
-    navigate('EmergencyAlertSent')
+  emergency() {
+    this.props.navigation.navigate('EmergencyAlertSent')
   }
 
   renderMeetingStarted() {
@@ -126,7 +154,7 @@ export default class MeetingDetailsScreen extends React.Component {
           iconName='plus-box-outline'
         />
         <FullWidthButton
-          onPress={() => {this.endMeeting()}}
+          onPress={() => {this.askToEndMeeting()}}
           style={{marginTop: '2%'}}
           backgroundColor='#0075ff'
           title="End Meeting"
@@ -143,30 +171,49 @@ export default class MeetingDetailsScreen extends React.Component {
     )
   }
 
+  renderCantStartMeetingMessage() {
+    return (
+      <Text style={{textAlign:'center', fontSize:16, marginTop:'5%'}} numberOfLines={4} multiline={true}>You will be able to start the meeting up to half an hour before the scheduled time.</Text>
+    )
+  }
+
   renderMeetingNotStarted() {
     return (
-      <View>
-        <FullWidthButton
+      <View style={{marginTop: this.state.canStartMeeting ? '7%' : '2%'}}>
+        { this.state.canStartMeeting && <FullWidthButton
           onPress={() => {this.startMeeting()}}
-          style={{marginTop: '7%'}}
+          style={{marginBottom: '2%'}}
           backgroundColor='#0075ff'
           title="Start Meeting"
           iconName='alarm-check'
-        />
+        /> }
         <FullWidthButton
           onPress={() => {this.changeMeeting()}}
-          style={{marginTop: '2%'}}
+          style={{marginBottom: '2%'}}
           backgroundColor='#0075ff'
           title="Change Meeting"
           iconName='calendar-clock'
         />
         <FullWidthButton
           onPress={() => {this.cancelMeeting()}}
-          style={{marginTop: '2%'}}
           backgroundColor='#ff0f00'
           title="Cancel Meeting"
           iconName='close-box-outline'
         />
+      </View>
+    )
+  }
+
+  renderMeetingEnded() {
+    return (
+      <View style={{marginTop: '5%'}}>
+        {!this.state.mentorHasProvidedFeedback && <FullWidthButton
+          onPress={() => {this.giveMentorFeedback()}}
+          backgroundColor='#0075ff'
+          title="Give Feedback"
+          iconName='close-box-outline' // TODO: Change this
+        />}
+        <Text style={{marginTop: '3%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>{this.state.mentorHasProvidedFeedback ? "Meeting is over! Thanks for giving feedback." : "Meeting is over! Please give feedback."}</Text>
       </View>
     )
   }
@@ -179,7 +226,6 @@ export default class MeetingDetailsScreen extends React.Component {
 
     return(
       <View style={BaseStyles.container}>
-		<ScrollView>
         <View style={[BaseStyles.centerChildren, { marginTop: 10 }]}>
           <Avatar
             title={initials}
@@ -195,15 +241,16 @@ export default class MeetingDetailsScreen extends React.Component {
           <ListItem title="End date and time" rightTitle={formatDate(new Date(appointment.endTime))} hideChevron/>
         </List>
 
+        {!this.state.canStartMeeting && this.renderCantStartMeetingMessage()}
+
         <View style={[BaseStyles.centerChildrenHorizontally, BaseStyles.alignChildrenBottom, { marginBottom: 10 }]}>
 
           {
-            this.state.meetingHasEnded ? (<Text style={{marginTop: '3%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>{"Meeting is over!"}</Text>) : (this.state.meetingHasStarted ?
+            this.state.meetingHasEnded ? (this.renderMeetingEnded()) : (this.state.meetingHasStarted ?
               this.renderMeetingStarted() : this.renderMeetingNotStarted())
 
           }
         </View>
-		</ScrollView>
       </View>
     )
   }
@@ -211,4 +258,12 @@ export default class MeetingDetailsScreen extends React.Component {
   styles = StyleSheet.create({
 
   });
+}
+
+function meetingAllowedToStart(startTime) {
+  let meetingDate = Date.parse(startTime)
+  let difference = meetingDate - Date.parse(new Date())
+  let diffInMinutes = difference/(1000*60)
+
+  return diffInMinutes <= 30
 }

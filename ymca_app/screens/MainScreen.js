@@ -45,7 +45,7 @@ export default class MainScreen extends React.Component {
     Linking.openURL("http://ymca.pw/reset_password")
   }
 
-  showUpcomingAppointments() {
+  showAppointments() {
     this.props.navigation.navigate('Meetings')
   }
 
@@ -60,10 +60,10 @@ export default class MainScreen extends React.Component {
 		  iconName='calendar-plus'
         />
         <FullWidthButton
-          onPress={() => {this.showUpcomingAppointments()}}
+          onPress={() => {this.showAppointments()}}
           style={{marginTop: '2%'}}
           backgroundColor='#0075ff'
-          title="Upcoming Appointments"
+          title="Your Appointments"
 		  iconName='calendar-range'
         />
 
