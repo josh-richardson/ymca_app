@@ -7,7 +7,7 @@ export default class StoreHydrator {
     let mentees = await Requests.getMentees(jwt)
     let appointments = await Requests.getAppointments(jwt)
 
-    Mentor.setInfo(mentorInfo)
+    Mentor.setInfo(mentorInfo, jwt)
     Mentee.hydrateMentees(mentees)
     Appointment.hydrateAppointments(appointments)
   }

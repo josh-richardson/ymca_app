@@ -2,8 +2,8 @@ import store from './store'
 import { setInfo } from './Actions'
 
 export default class Mentor {
-  static setInfo(info) {
-    store.dispatch(setInfo(info))
+  static setInfo(info, jwt) {
+    store.dispatch(setInfo({...info, jwt}))
   }
 
   static getInfoObject() {
