@@ -1,5 +1,3 @@
-import Accessors from './Accessors'
-
 export default class Requests {
 
   static async login(email, password) {
