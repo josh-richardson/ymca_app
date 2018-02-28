@@ -5,7 +5,7 @@ export default class Mentee {
   constructor(menteeObject) {
     if(!Mentee.validateMenteeObject(menteeObject)) {
       console.error("Mentee object invalid. Returning null.")
-      console.log(menteeObject)
+      console.error(menteeObject)
       return null
     }
 
@@ -58,7 +58,7 @@ export default class Mentee {
   }
 
   static getMenteeByID(id) {
-    return store.getState().mentees.filter(mentee => mentee._id == id)[0]
+    return store.getState().mentees.filter(mentee => mentee.id == id)[0]
   }
 
   static get allMentees() {

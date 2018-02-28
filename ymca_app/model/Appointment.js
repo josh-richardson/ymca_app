@@ -33,10 +33,10 @@ export default class Appointment {
     return this.appointmentObject.meetingAddress
   }
   get mentorID() {
-    return this.appointmentObject.mentorID
+    return this.appointmentObject.mentor
   }
   get menteeID() {
-    return this.appointmentObject.menteeID
+    return this.appointmentObject.mentee
   }
   get numberOfExtensions() {
     return this.appointmentObject.number_of_extensions
