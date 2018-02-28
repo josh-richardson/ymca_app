@@ -77,17 +77,26 @@ router.post('/meetings/edit', passport.authenticate('jwt', {session: false}), [
     }
 );
 
+
 router.post('/meetings/extend', passport.authenticate('jwt', {session: false}), [
         check('id').exists().escape(),
     ],
     function (req, res) {
-        api_utils.findObjectByKey(meeting, 'mentor', req.user).then((meeting) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        meeting.findOne({_id: data.id, mentor: req.user}, (err, meeting) => {
+            if (err) {
+                res.json({error: "Failed to find", success:false});
+            }
             if (meeting.number_of_extensions === undefined || meeting.number_of_extensions === null) {
                 meeting.number_of_extensions = 0;
             }
             if (meeting.number_of_extensions < 6) {
                 meeting.number_of_extensions += 1;
-                meeting.endTime = new Date(Date.parse(meeting.endTime) + 0.25 * 60 * 60 * 1000)
+                meeting.endTime = new Date(Date.parse(meeting.endTime) + 0.25 * 60 * 60 * 1000);
                 meeting.save(function (err, result) {
                     if (err) res.json(err);
                     res.json({success: true, result: result})
@@ -95,11 +104,11 @@ router.post('/meetings/extend', passport.authenticate('jwt', {session: false}), 
             } else {
                 res.json({error: "maximum number reached", success: false})
             }
-        }).catch((err) => {
-            res.json(err);
-        })
+        });
+
     }
 );
+
 
 
 router.post('/meetings/delete', passport.authenticate('jwt', {session: false}), [
