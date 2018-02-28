@@ -29,8 +29,7 @@ mongoose.connect(config.db_path, {
 
 const adminDetails = {
     'email': "test@gmail.com",
-    'password': "st" +
-    "",
+    'password': "password123",
     'firstName': 'Jack',
     'secondName': 'Jones',
     'phone': '07450760208'
