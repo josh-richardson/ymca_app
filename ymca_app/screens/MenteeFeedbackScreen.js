@@ -69,7 +69,7 @@ export default class MenteeFeedbackScreen extends React.Component {
       index: 1,
       actions: [
         NavigationActions.navigate({
-          routeName: 'Main',
+          routeName: 'Meetings',
         }),
         NavigationActions.navigate({
           routeName: 'ScheduleAppointment',
