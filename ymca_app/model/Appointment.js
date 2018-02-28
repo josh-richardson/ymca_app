@@ -7,7 +7,6 @@ export default class Appointment {
   constructor(appointmentObject) {
     if(!Appointment.validateAppointmentObject(appointmentObject)) {
       console.error("Appointment object invalid. Returning null.")
-      console.error(appointmentObject)
       return null
     }
 
@@ -82,11 +81,11 @@ export default class Appointment {
 
     this.appointmentObject = newObject
 
-    store.dispatch(updateAppointment(this.getID(), this))
+    store.dispatch(updateAppointment(this.id, this))
   }
 
   deleteSelf() {
-    store.dispatch(removeAppointment(this.getID()))
+    store.dispatch(removeAppointment(this.id))
   }
 
   static getAppointmentByID(id) {

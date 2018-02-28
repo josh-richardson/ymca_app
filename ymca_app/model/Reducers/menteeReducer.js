@@ -7,7 +7,7 @@ export default function mentees(state = [], action) {
       return [...state, action.menteeObject]
 
     case REMOVE_MENTEE:
-      return state.filter(mentee => action.id != mentee._id)
+      return state.filter(mentee => action.id != mentee.id)
 
     case SET_MENTEES:
       return action.menteeObjects
