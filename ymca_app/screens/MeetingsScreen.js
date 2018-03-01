@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, FlatList, Alert, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Alert, ScrollView, Button } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 import { formatDate } from '../utils'
@@ -9,6 +9,8 @@ import { Appointment, Mentee } from '../model'
 export default class MeetingsScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
     title: 'Your Meetings',
+    headerRight: <Button style={{marginRight:10}} title="Schedule New" onPress={() => navigation.state.params.currentScreen.scheduleAppointmentPressed()} />,
+    headerLeft: <Button style={{marginLeft:10}} title="Options" onPress={() => navigation.state.params.currentScreen.optionsPressed()} />
   })
 
   constructor(props) {
@@ -20,6 +22,12 @@ export default class MeetingsScreen extends React.Component {
       needsFeedbackMeetings: Appointment.needsFeedbackAppointments,
       pastMeetings: Appointment.pastAppointments
     }
+  }
+
+  componentWillMount() {
+    this.props.navigation.setParams({
+      currentScreen: this,
+    })
   }
 
   componentDidMount() {
@@ -37,6 +45,14 @@ export default class MeetingsScreen extends React.Component {
       needsFeedbackMeetings: Appointment.needsFeedbackAppointments,
       pastMeetings: Appointment.pastAppointments
     })
+  }
+
+  scheduleAppointmentPressed() {
+    this.props.navigation.navigate("ScheduleAppointment", {})
+  }
+
+  optionsPressed() {
+    this.props.navigation.navigate("Options")
   }
 
   showMeetingDetails(meetingID) {

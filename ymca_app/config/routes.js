@@ -1,11 +1,11 @@
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
 
-import { LoginScreen, MainScreen, MeetingsScreen, MeetingDetailsScreen, ScheduleAppointmentScreen, EmergencyAlertSentScreen, MentorFeedbackScreen, MenteeFeedbackScreen } from '../screens/';
+import { LoginScreen, OptionsScreen, MeetingsScreen, MeetingDetailsScreen, ScheduleAppointmentScreen, EmergencyAlertSentScreen, MentorFeedbackScreen, MenteeFeedbackScreen } from '../screens/';
 
 const MainStackNavigator = StackNavigator({
   Login: { screen: LoginScreen },
-  Main: { screen: MainScreen },
+  Options: { screen: OptionsScreen },
   Meetings: { screen: MeetingsScreen },
   MeetingDetails: { screen: MeetingDetailsScreen },
   ScheduleAppointment: { screen: ScheduleAppointmentScreen },
