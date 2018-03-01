@@ -1,4 +1,4 @@
-export MainScreen from './MainScreen'
+export OptionsScreen from './OptionsScreen'
 export LoginScreen from './LoginScreen'
 export MeetingsScreen from './MeetingsScreen'
 export MeetingDetailsScreen from './MeetingDetailsScreen'

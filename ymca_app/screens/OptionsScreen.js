@@ -7,26 +7,21 @@ import { NavigationActions } from 'react-navigation'
 
 import { store } from '../model'
 
-export default class MainScreen extends React.Component {
+export default class OptionsScreen extends React.Component {
   static navigationOptions = {
-    title: 'YMCA Mentors',
-    headerLeft: null,
+    title: 'Options',
   };
 
   constructor(props) {
     super(props)
-
-    this.state = {
-      isLoading: true,
-    }
   }
 
   componentDidMount() {
 
   }
 
-  scheduleAppointment() {
-    this.props.navigation.navigate("ScheduleAppointment", {})
+  goBack() {
+    this.props.navigation.goBack()
   }
 
   signOut() {
@@ -45,35 +40,16 @@ export default class MainScreen extends React.Component {
     Linking.openURL("http://ymca.pw/reset_password")
   }
 
-  showAppointments() {
-    this.props.navigation.navigate('Meetings')
-  }
-
   render() {
     return(
       <View style={[BaseStyles.container, BaseStyles.centerChildrenHorizontally]}>
-        <FullWidthButton
-          onPress={() => {this.scheduleAppointment()}}
-          style={{marginTop: '7%'}}
-          backgroundColor='#0075ff'
-          title="Schedule Appointment"
-		  iconName='calendar-plus'
-        />
-        <FullWidthButton
-          onPress={() => {this.showAppointments()}}
-          style={{marginTop: '2%'}}
-          backgroundColor='#0075ff'
-          title="Your Appointments"
-		  iconName='calendar-range'
-        />
 
-        <Divider style={{marginTop: 20}} />
         <FullWidthButton
           onPress={() => {this.signOut()}}
-          style={{marginTop: '0%'}}
+          style={{marginTop: '5%'}}
           backgroundColor='#ff0000'
           title="Sign Out"
-		  iconName='logout'
+		      iconName='logout'
         />
 
         <FullWidthButton
@@ -81,7 +57,16 @@ export default class MainScreen extends React.Component {
           style={{marginTop: '2%'}}
           backgroundColor='#ff0000'
           title="Reset Password"
-		  iconName='refresh'
+		      iconName='refresh'
+        />
+        <Divider style={{marginTop: '2%'}} />
+
+        <FullWidthButton
+          onPress={() => {this.goBack()}}
+          style={{marginTop: '2%'}}
+          backgroundColor='#0075ff'
+          title="Go Back"
+		      iconName='refresh' // TODO: change this
         />
       </View>
     )

@@ -4,8 +4,7 @@ import { BaseStyles } from '../BaseStyles';
 import { FullWidthButton } from '../components';
 import PropTypes from 'prop-types';
 import { NavigationActions } from 'react-navigation';
-
-import { store, setMentees, setAppointments, setInfo, Requests, StoreHydrator } from '../model'
+import { Requests, StoreHydrator } from '../model'
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -36,7 +35,7 @@ export default class LoginScreen extends React.Component {
           index: 0,
           actions: [
             NavigationActions.navigate({
-              routeName: 'Main',
+              routeName: 'Meetings',
             }),
           ],
         });
