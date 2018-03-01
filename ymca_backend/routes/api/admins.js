@@ -47,7 +47,7 @@ router.post('/add', passport.authenticate('jwt', {session: false}), isAdmin, [
 
 router.post('/mentors', passport.authenticate('jwt', {session: false}), isAdmin,
     function (req, res) {
-        user.find().then(users => {
+        user.find({'linkedModel.__t': "Mentor"}).then(users => {
             res.json(users);
         })
     }
@@ -64,6 +64,8 @@ router.post('/mentors/delete', passport.authenticate('jwt', {session: false}), i
         }
         const data = matchedData(req);
         user.findByIdAndRemove(data.id, function (err, user) {
+            console.log(user);
+
             if (err) res.json(err);
             res.json({success: true});
         });
@@ -79,6 +81,32 @@ router.post('/mentors/edit', passport.authenticate('jwt', {session: false}), isA
         api_utils.updateObject(user, "id", req, res);
     }
 );
+
+
+router.post('/mentors/add', passport.authenticate('jwt', {session: false}), isAdmin, [
+    check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail()
+        .custom(value => {
+            return api_utils.objectExistsByKey(user, 'email', value).then(retVal => {
+                if (!retVal) throw new Error();
+                return true;
+            }).catch(() => {
+                return false;
+            });
+        }).withMessage("This email is either in use, or a server error occurred.").escape(),
+    check('password', 'Passwords must be at least 5 characters').isLength({min: 5}),
+    check('phone').exists().isMobilePhone("en-GB").escape(),
+    check('firstName').exists().isAlphanumeric().escape(),
+    check('secondName').exists().isAlphanumeric().escape(),
+], (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.mapped()});
+    }
+    const data = matchedData(req);
+    api_utils.createAdmin(data).then(user => res.json(user)).catch(err => {
+        res.status(500).json(config.debug ? err : {error: 'Server error occurred'});
+    });
+});
 
 
 router.post('/mentees', passport.authenticate('jwt', {session: false}), isAdmin,

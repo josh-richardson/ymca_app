@@ -29,7 +29,7 @@ require('./config/passport');
 
 const index = require('./routes/index');
 const api_users = require('./routes/api/users');
-const api_methods = require('./routes/api/methods');
+const api_methods = require('./routes/api/mentors');
 const api_admin = require('./routes/api/admins');
 
 
