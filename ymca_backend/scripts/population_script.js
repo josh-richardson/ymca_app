@@ -35,6 +35,7 @@ const createAdmin = (details) => {
     return new Promise((resolve, reject) => {
         const adminUser = new user();
         adminUser.email = details.email;
+        console.log(details.password);
         adminUser.password = adminUser.hashPassword(details.password);
         const newAdmin = new admin();
         newAdmin.firstName = details.firstName;
@@ -141,7 +142,7 @@ const createMeeting = (mentorUser, menteeUser) => {
 
 
 for (let i = 0; i < 3; i++) {
-    let adminEmail = faker.internet.email();
+    let adminEmail = faker.internet.email().toLowerCase();
     createAdmin({
         firstName: faker.name.firstName(),
         secondName: faker.name.lastName(),
@@ -149,10 +150,9 @@ for (let i = 0; i < 3; i++) {
         phone: faker.phone.phoneNumber().replace("-", ""),
         password: adminEmail
     }).then((admin) => {
-        console.log(admin);
     });
 
-    let managerEmail = faker.internet.email();
+    let managerEmail = faker.internet.email().toLowerCase();
     createManager({
         firstName: faker.name.firstName(),
         secondName: faker.name.lastName(),
@@ -162,7 +162,7 @@ for (let i = 0; i < 3; i++) {
     }).then((manager) => {
 
         for (let j = 0; j < 3; j++) {
-            let mentorEmail = faker.internet.email();
+            let mentorEmail = faker.internet.email().toLowerCase();
             createMentor({
                 firstName: faker.name.firstName(),
                 secondName: faker.name.lastName(),
@@ -170,7 +170,6 @@ for (let i = 0; i < 3; i++) {
                 phone: faker.phone.phoneNumber().replace("-", ""),
                 password: mentorEmail
             }, manager).then((mentor) => {
-                console.log(mentor);
                 for (let k = 0; k < 3; k++) {
                     createMentee({
                         firstName: faker.name.firstName(),
@@ -178,68 +177,15 @@ for (let i = 0; i < 3; i++) {
                         meetingAddress: faker.address.streetAddress(),
                         phone: faker.phone.phoneNumber().replace("-", ""),
                     }, mentor).then((mentee) => {
-                        console.log(mentee);
                         createMeeting(mentor, mentee).then((meeting) => {
-                            console.log(meeting);
                         });
                     });
+
                 }
             })
         }
     });
 }
 
-
-/*
-
-const newUser = new user();
-newUser.email = adminDetails.email;
-newUser.password = newUser.hashPassword(adminDetails.password);
-const newAdmin = new admin();
-newAdmin.firstName = adminDetails.firstName;
-newAdmin.secondName = adminDetails.secondName;
-newAdmin.phone = adminDetails.phone;
-newAdmin.save((err, result) => {
-    if (err) {
-        console.log(err)
-    } else {
-        console.log("Saved admin");
-        newUser.linkedModel = newAdmin;
-        newUser.save(function (err, result) {
-            if (err) {
-                console.log(Error)
-            } else {
-                console.log("Created new user");
-                const newMentee = new mentee();
-                newMentee.firstName = menteeDetails.firstName;
-                newMentee.secondName = menteeDetails.secondName;
-                newMentee.phone = menteeDetails.phone;
-                newMentee.meetingAddress = menteeDetails.meetingAddress;
-                newMentee.mentor = newUser;
-                newMentee.save((err, result) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log("Created new mentee");
-                        const newMeeting = new meeting();
-                        newMeeting.mentor = newUser;
-                        newMeeting.mentee = newMentee;
-                        newMeeting.meetingAddress = newMentee.meetingAddress;
-                        newMeeting.startTime = new Date();
-                        newMeeting.endTime = new Date();
-                        newMeeting.save(function (err, result) {
-                            if (err) {
-                                console.log(err)
-                            } else {
-                                console.log("Created new meeting");
-                                process.exit();
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    }
-});*/
 
 
