@@ -67,6 +67,17 @@ export default class ScheduleAppointmentScreen extends React.Component {
           let meeting = Appointment.getAppointmentByID(this.state.id)
           meeting.update(response.result)
 
+          PushNotification.cancelLocalNotifications({
+            id: `MeetingStart${meeting.id}`
+          })
+
+          PushNotification.localNotificationSchedule({
+            title: "Meeting",
+            message: `It's time for your meeting with ${meeting.mentee.firstName}.`,
+            date: new Date(meeting.startTime),
+            userInfo: {id: `MeetingStart${meeting.id}`}
+          })
+
           this.props.navigation.goBack()
         }
       })
