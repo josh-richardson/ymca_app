@@ -5,6 +5,7 @@ import { FullWidthButton } from '../components';
 import PropTypes from 'prop-types';
 import { NavigationActions } from 'react-navigation';
 import { Requests, StoreHydrator } from '../model'
+import PushNotification from 'react-native-push-notification';
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -22,6 +23,14 @@ export default class LoginScreen extends React.Component {
       password: "password123",
       message: "",
     };
+  }
+
+  componentDidMount() {
+    PushNotification.configure({
+      onNotification: function(notification) {
+        console.log(notification)
+      },
+    })
   }
 
   loginButtonPressed() {

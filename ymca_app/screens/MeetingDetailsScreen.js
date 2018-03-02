@@ -5,6 +5,7 @@ import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton, Divider } from '../components'
 import { formatDate } from '../utils'
 import { Requests, Appointment, Mentee, Mentor } from '../model'
+import PushNotification from 'react-native-push-notification'
 
 export default class MeetingDetailsScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
@@ -18,8 +19,6 @@ export default class MeetingDetailsScreen extends React.Component {
 
   constructor(props) {
     super(props)
-
-    let meeting = Appointment.getAppointmentByID(props.navigation.state.params.meetingID)
 
     this.state = {
       meeting: Appointment.getAppointmentByID(props.navigation.state.params.meetingID),
@@ -45,6 +44,13 @@ export default class MeetingDetailsScreen extends React.Component {
 
         this.screenDidFocus()
 
+        PushNotification.localNotificationSchedule({
+          title: "Meeting Ending",
+          message: `Your meeting with ${this.state.meeting.mentee.firstName} should be ending soon.`,
+          date: new Date(this.state.meeting.endTime),
+          userInfo: {id: `MeetingEnd${this.state.meeting.id}`}
+        })
+
         Alert.alert("Meeting started successfully!")
       }
     })
@@ -58,6 +64,17 @@ export default class MeetingDetailsScreen extends React.Component {
         this.state.meeting.update(response.result)
 
         this.screenDidFocus()
+
+        PushNotification.cancelLocalNotifications({
+          id: `MeetingEnd${this.state.meeting.id}`
+        })
+
+        PushNotification.localNotificationSchedule({
+          title: "Meeting Ending",
+          message: `Your meeting with ${this.state.meeting.mentee.firstName} should be ending soon.`,
+          date: new Date(this.state.meeting.endTime),
+          userInfo: {id: `MeetingEnd${this.state.meeting.id}`}
+        })
 
         Alert.alert("Success!", `Your meeting is now scheduled to end at ${formatDate(new Date(response.result.endTime))}.`)
       } else {
@@ -84,9 +101,18 @@ export default class MeetingDetailsScreen extends React.Component {
       if(response.success) {
         this.state.meeting.update(response.result)
 
-        this.setState({meetingHasEnded: true})
-
         this.screenDidFocus()
+
+        PushNotification.cancelLocalNotifications({
+          id: `MeetingEnd${this.state.meeting.id}`
+        })
+
+        PushNotification.localNotificationSchedule({
+          title: "Provide Feedback",
+          message: `Please provide feedback about your meeting with ${this.state.meeting.mentee.firstName}.`,
+          date: new Date(Date.now() + (1 * 60 * 60 * 1000)),
+          userInfo: {id: `MeetingFeedback${this.state.meeting.id}`}
+        })
 
         this.props.navigation.navigate('MenteeFeedback', {meeting: this.state.meeting})
       }
@@ -106,6 +132,10 @@ export default class MeetingDetailsScreen extends React.Component {
   sendDeleteRequest() {
     Requests.deleteMeeting(Mentor.jwt, this.state.meeting.id).then(response => {
       if(response.success) {
+        PushNotification.cancelLocalNotifications({
+          id: `MeetingStart${this.state.meeting.id}`
+        })
+
         this.state.meeting.deleteSelf()
 
         this.props.navigation.goBack()
