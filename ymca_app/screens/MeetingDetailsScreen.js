@@ -20,8 +20,6 @@ export default class MeetingDetailsScreen extends React.Component {
   constructor(props) {
     super(props)
 
-    let meeting = Appointment.getAppointmentByID(props.navigation.state.params.meetingID)
-
     this.state = {
       meeting: Appointment.getAppointmentByID(props.navigation.state.params.meetingID),
     }
@@ -46,6 +44,13 @@ export default class MeetingDetailsScreen extends React.Component {
 
         this.screenDidFocus()
 
+        PushNotification.localNotificationSchedule({
+          title: "Meeting Ending",
+          message: `Your meeting with ${this.state.meeting.mentee.firstName} should be ending soon.`,
+          date: new Date(this.state.meeting.endTime),
+          userInfo: {id: `MeetingEnd${this.state.meeting.id}`}
+        })
+
         Alert.alert("Meeting started successfully!")
       }
     })
@@ -59,6 +64,17 @@ export default class MeetingDetailsScreen extends React.Component {
         this.state.meeting.update(response.result)
 
         this.screenDidFocus()
+
+        PushNotification.cancelLocalNotifications({
+          id: `MeetingEnd${this.state.meeting.id}`
+        })
+
+        PushNotification.localNotificationSchedule({
+          title: "Meeting Ending",
+          message: `Your meeting with ${this.state.meeting.mentee.firstName} should be ending soon.`,
+          date: new Date(this.state.meeting.endTime),
+          userInfo: {id: `MeetingEnd${this.state.meeting.id}`}
+        })
 
         Alert.alert("Success!", `Your meeting is now scheduled to end at ${formatDate(new Date(response.result.endTime))}.`)
       } else {
@@ -85,9 +101,11 @@ export default class MeetingDetailsScreen extends React.Component {
       if(response.success) {
         this.state.meeting.update(response.result)
 
-        this.setState({meetingHasEnded: true})
-
         this.screenDidFocus()
+
+        PushNotification.cancelLocalNotifications({
+          id: `MeetingEnd${this.state.meeting.id}`
+        })
 
         this.props.navigation.navigate('MenteeFeedback', {meeting: this.state.meeting})
       }
