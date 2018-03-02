@@ -35,7 +35,6 @@ const createAdmin = (details) => {
     return new Promise((resolve, reject) => {
         const adminUser = new user();
         adminUser.email = details.email;
-        console.log(details.password);
         adminUser.password = adminUser.hashPassword(details.password);
         const newAdmin = new admin();
         newAdmin.firstName = details.firstName;

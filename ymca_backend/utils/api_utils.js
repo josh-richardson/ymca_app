@@ -76,7 +76,8 @@ const createUser = (value, userObject) => {
                 if (err) {
                     reject(err);
                 }
-                resolve(newUser);
+                resolve({success: true, result: newUser});
+
             });
         });
 

@@ -5,6 +5,7 @@ const {matchedData, sanitize} = require('express-validator/filter');
 const user = require('../../models/user');
 const mentee = require('../../models/mentee');
 const manager = require('../../models/users/manager');
+const mentor = require('../../models/users/mentor');
 const admin = require('../../models/users/admin');
 const config = require('../../config/config');
 const jwt = require('jwt-simple');
@@ -63,11 +64,13 @@ router.post('/mentors/delete', passport.authenticate('jwt', {session: false}), i
             return res.status(422).json({errors: errors.mapped()});
         }
         const data = matchedData(req);
-        user.findByIdAndRemove(data.id, function (err, user) {
-            console.log(user);
-
+        user.findOne({_id: data.id}, (err, user) => {
             if (err) res.json(err);
-            res.json({success: true});
+            else if (!user) res.json({success: false, error: 'User not found'});
+            else {
+                user.remove();
+                res.json({success: true});
+            }
         });
     }
 );
@@ -103,7 +106,7 @@ router.post('/mentors/add', passport.authenticate('jwt', {session: false}), isAd
         return res.status(422).json({errors: errors.mapped()});
     }
     const data = matchedData(req);
-    api_utils.createAdmin(data).then(user => res.json(user)).catch(err => {
+    api_utils.createMentor(data).then(user => res.json(user)).catch(err => {
         res.status(500).json(config.debug ? err : {error: 'Server error occurred'});
     });
 });
@@ -111,8 +114,8 @@ router.post('/mentors/add', passport.authenticate('jwt', {session: false}), isAd
 
 router.post('/mentees', passport.authenticate('jwt', {session: false}), isAdmin,
     function (req, res) {
-        mentee.find().then(mentees => {
-            res.json(mentees);
+        mentee.find({}).then(users => {
+            res.json(users);
         })
     }
 );
@@ -172,7 +175,7 @@ router.post('/mentees/delete', passport.authenticate('jwt', {session: false}), i
             res.json({success: true});
         });
     }
-)
+);
 
 router.post('/mentees/edit', passport.authenticate('jwt', {session: false}), isAdmin, [
         check('id').escape(),
@@ -186,8 +189,8 @@ router.post('/mentees/edit', passport.authenticate('jwt', {session: false}), isA
 
 router.post('/managers', passport.authenticate('jwt', {session: false}), isAdmin,
     function (req, res) {
-        manager.find().then(managers => {
-            res.json(managers);
+        user.find({'linkedModel.__t': "Manager"}).then(users => {
+            res.json(users);
         })
     }
 );
@@ -203,9 +206,11 @@ router.post('/managers/add', passport.authenticate('jwt', {session: false}), isA
                     return false;
                 });
             }).withMessage("This email is either in use, or a server error occurred.").escape(),
+        check('password', 'Passwords must be at least 5 characters').isLength({min: 5}),
         check('firstName').exists().isAlphanumeric().escape(),
         check('secondName').exists().isAlphanumeric().escape(),
         check('phone').exists().isMobilePhone("en-GB").escape(),
+
     ],
     function (req, res) {
         const errors = validationResult(req);
@@ -213,15 +218,8 @@ router.post('/managers/add', passport.authenticate('jwt', {session: false}), isA
             return res.status(422).json({errors: errors.mapped()});
         }
         const data = matchedData(req);
-        const newManager = new manager();
-        newManager.email = data.email;
-        newManager.firstName = data.firstName;
-        newManager.secondName = data.secondName;
-        newManager.phone = data.phone;
-        newManager.save(function (err, result) {
-            if (!err) {
-                res.json({success: true, result: newManager})
-            }
+        api_utils.createManager(data).then(user => res.json(user)).catch(err => {
+            res.status(500).json(config.debug ? err : {error: 'Server error occurred'});
         });
     }
 );
@@ -235,9 +233,13 @@ router.post('/managers/delete', passport.authenticate('jwt', {session: false}), 
             return res.status(422).json({errors: errors.mapped()});
         }
         const data = matchedData(req);
-        manager.findByIdAndRemove(data.id, function (err, user) {
+        user.findOne({_id: data.id}, (err, user) => {
             if (err) res.json(err);
-            res.json({success: true});
+            else if (!user) res.json({success: false, error: 'User not found'});
+            else {
+                user.remove();
+                res.json({success: true});
+            }
         });
     }
 );
@@ -264,8 +266,8 @@ router.post('/managers/assign', passport.authenticate('jwt', {session: false}), 
         }
         const data = matchedData(req);
         api_utils.findObjectByKey(user, 'email', data.mentorEmail).then(result_user => {
-            api_utils.findObjectByKey(manager, 'email', data.managerEmail).then(result_manager => {
-                result_user.manager = result_manager;
+            api_utils.findObjectByKey(user, 'email', data.managerEmail).then(result_manager => {
+                result_user.linkedModel.manager = result_manager;
                 result_user.save(function (err, result) {
                     if (!err) {
                         res.json({success: true, result: result_user})
@@ -278,7 +280,6 @@ router.post('/managers/assign', passport.authenticate('jwt', {session: false}), 
             })
         }).catch((err) => {
             console.log(err);
-
         });
     }
 );

@@ -10,7 +10,6 @@ const api_utils = require('../../utils/api_utils');
 const mentor = require('../../models/users/mentor');
 
 
-
 router.post('/register', [
     check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail()
         .custom(value => {
@@ -46,7 +45,9 @@ router.post('/authenticate', [
         return res.status(422).json({errors: errors.mapped()});
     }
     const authReq = matchedData(req);
+
     user.findOne({email: authReq.email}).then(foundUser => {
+
         if (!foundUser || !foundUser.validPassword(authReq.password)) {
             res.status(403).json({error: "Invalid username or password"});
         } else {
