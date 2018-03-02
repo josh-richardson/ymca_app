@@ -23,7 +23,10 @@ mongoose.connect(config.db_path, {
             console.log("Failed to connect to mongo: " + err);
         } else {
             console.log('Dropping database: ' + config.db_path);
-            mongoose.connection.db.dropDatabase();
+            mongoose.connection.db.dropDatabase().then(() => {
+                populate();
+            });
+
         }
     });
 
@@ -139,52 +142,51 @@ const createMeeting = (mentorUser, menteeUser) => {
     });
 };
 
+const populate = () => {
+    for (let i = 0; i < 3; i++) {
+        let adminEmail = faker.internet.email().toLowerCase().replace(".", "");
+        console.log(adminEmail);
+        createAdmin({
+            firstName: faker.name.firstName(),
+            secondName: faker.name.lastName(),
+            email: adminEmail,
+            phone: faker.phone.phoneNumber().replace("-", ""),
+            password: adminEmail
+        }).then((admin) => {
+        });
 
-for (let i = 0; i < 3; i++) {
-    let adminEmail = faker.internet.email().toLowerCase();
-    createAdmin({
-        firstName: faker.name.firstName(),
-        secondName: faker.name.lastName(),
-        email: adminEmail,
-        phone: faker.phone.phoneNumber().replace("-", ""),
-        password: adminEmail
-    }).then((admin) => {
-    });
+        let managerEmail = faker.internet.email().toLowerCase().replace(".", "");
+        createManager({
+            firstName: faker.name.firstName(),
+            secondName: faker.name.lastName(),
+            email: managerEmail,
+            phone: faker.phone.phoneNumber().replace("-", ""),
+            password: managerEmail
+        }).then((manager) => {
 
-    let managerEmail = faker.internet.email().toLowerCase();
-    createManager({
-        firstName: faker.name.firstName(),
-        secondName: faker.name.lastName(),
-        email: managerEmail,
-        phone: faker.phone.phoneNumber().replace("-", ""),
-        password: managerEmail
-    }).then((manager) => {
-
-        for (let j = 0; j < 3; j++) {
-            let mentorEmail = faker.internet.email().toLowerCase();
-            createMentor({
-                firstName: faker.name.firstName(),
-                secondName: faker.name.lastName(),
-                email: mentorEmail,
-                phone: faker.phone.phoneNumber().replace("-", ""),
-                password: mentorEmail
-            }, manager).then((mentor) => {
-                for (let k = 0; k < 3; k++) {
-                    createMentee({
-                        firstName: faker.name.firstName(),
-                        secondName: faker.name.lastName(),
-                        meetingAddress: faker.address.streetAddress(),
-                        phone: faker.phone.phoneNumber().replace("-", ""),
-                    }, mentor).then((mentee) => {
-                        createMeeting(mentor, mentee).then((meeting) => {
+            for (let j = 0; j < 3; j++) {
+                let mentorEmail = faker.internet.email().toLowerCase().replace(".", "");
+                createMentor({
+                    firstName: faker.name.firstName(),
+                    secondName: faker.name.lastName(),
+                    email: mentorEmail,
+                    phone: faker.phone.phoneNumber().replace("-", ""),
+                    password: mentorEmail
+                }, manager).then((mentor) => {
+                    for (let k = 0; k < 3; k++) {
+                        createMentee({
+                            firstName: faker.name.firstName(),
+                            secondName: faker.name.lastName(),
+                            meetingAddress: faker.address.streetAddress(),
+                            phone: faker.phone.phoneNumber().replace("-", ""),
+                        }, mentor).then((mentee) => {
+                            createMeeting(mentor, mentee).then((meeting) => {
+                            });
                         });
-                    });
 
-                }
-            })
-        }
-    });
-}
-
-
-
+                    }
+                })
+            }
+        });
+    }
+};
