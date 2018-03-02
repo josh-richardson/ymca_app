@@ -68,11 +68,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
           meeting.update(response.result)
 
           PushNotification.cancelLocalNotifications({
-<<<<<<< HEAD
             id: `MeetingStart${meeting.id}`
-=======
-            id: `MeetingStart${this.state.meeting.id}`
->>>>>>> 4e19f1b6675be39d6a3eea26e30577d37408fbce
           })
 
           PushNotification.localNotificationSchedule({
