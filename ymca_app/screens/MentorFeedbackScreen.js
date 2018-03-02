@@ -33,6 +33,10 @@ export default class MentorFeedbackScreen extends React.Component {
     Requests.sendMentorFeedback(Mentor.jwt, this.state.meeting.id, mentorFeedback).then(response => {
       this.state.meeting.update(response.result)
 
+      PushNotification.cancelLocalNotifications({
+        id: `MeetingFeedback${this.state.meeting.id}`
+      })
+
       this.props.navigation.goBack()
     })
   }

@@ -107,6 +107,13 @@ export default class MeetingDetailsScreen extends React.Component {
           id: `MeetingEnd${this.state.meeting.id}`
         })
 
+        PushNotification.localNotificationSchedule({
+          title: "Provide Feedback",
+          message: `Please provide feedback about your meeting with ${this.state.meeting.mentee.firstName}.`,
+          date: new Date(Date.now() + (1 * 60 * 60 * 1000)),
+          userInfo: {id: `MeetingFeedback${this.state.meeting.id}`}
+        })
+
         this.props.navigation.navigate('MenteeFeedback', {meeting: this.state.meeting})
       }
     })
