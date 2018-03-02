@@ -6,6 +6,7 @@ import DatePicker from 'react-native-datepicker'
 import { currentDate, currentDatePlus, formatDate } from '../utils'
 import { Divider, FullWidthButton } from '../components'
 import { Mentee, Appointment, Mentor, Requests } from '../model'
+import PushNotification from 'react-native-push-notification'
 
 export default class ScheduleAppointmentScreen extends React.Component {
   static navigationOptions = {
@@ -62,7 +63,9 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
         if(response.success) {
           Alert.alert("Appointment updated!")
-          Appointment.getAppointmentByID(this.state.id).update(response.result)
+
+          let meeting = Appointment.getAppointmentByID(this.state.id)
+          meeting.update(response.result)
 
           this.props.navigation.goBack()
         }
@@ -76,7 +79,14 @@ export default class ScheduleAppointmentScreen extends React.Component {
       if(response.success) {
         Alert.alert("Appointment scheduled!")
 
-        new Appointment(response.result)
+        let meeting = new Appointment(response.result)
+
+        PushNotification.localNotificationSchedule({
+          title: "Meeting",
+          message: `It's time for your meeting with ${meeting.mentee.firstName}.`,
+          date: new Date(meeting.startTime),
+          userInfo: {id: `MeetingStart${meeting.id}`}
+        })
 
         this.props.navigation.goBack()
       }

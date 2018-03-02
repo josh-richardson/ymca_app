@@ -5,6 +5,7 @@ import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton, Divider } from '../components'
 import { formatDate } from '../utils'
 import { Requests, Appointment, Mentee, Mentor } from '../model'
+import PushNotification from 'react-native-push-notification'
 
 export default class MeetingDetailsScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
@@ -106,6 +107,10 @@ export default class MeetingDetailsScreen extends React.Component {
   sendDeleteRequest() {
     Requests.deleteMeeting(Mentor.jwt, this.state.meeting.id).then(response => {
       if(response.success) {
+        PushNotification.cancelLocalNotifications({
+          id: `MeetingStart${this.state.meeting.id}`
+        })
+
         this.state.meeting.deleteSelf()
 
         this.props.navigation.goBack()
