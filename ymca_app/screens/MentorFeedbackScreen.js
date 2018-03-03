@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, FlatList, ScrollView, TextInput, Alert }
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton, FormQuestion } from '../components'
-import { Requests, Mentor, Mentee, Appointment } from '../model'
+import { Requests, Mentor, Mentee, Appointment, Notifications } from '../model'
 
 export default class MentorFeedbackScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
@@ -33,9 +33,7 @@ export default class MentorFeedbackScreen extends React.Component {
     Requests.sendMentorFeedback(Mentor.jwt, this.state.meeting.id, mentorFeedback).then(response => {
       this.state.meeting.update(response.result)
 
-      PushNotification.cancelLocalNotifications({
-        id: `MeetingFeedback${this.state.meeting.id}`
-      })
+      Notifications.feedbackProvided(this.state.meeting)
 
       this.props.navigation.goBack()
     })

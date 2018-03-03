@@ -4,8 +4,7 @@ import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton, Divider } from '../components'
 import { formatDate } from '../utils'
-import { Requests, Appointment, Mentee, Mentor } from '../model'
-import PushNotification from 'react-native-push-notification'
+import { Requests, Appointment, Mentee, Mentor, Notifications } from '../model'
 
 export default class MeetingDetailsScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
@@ -44,12 +43,7 @@ export default class MeetingDetailsScreen extends React.Component {
 
         this.screenDidFocus()
 
-        PushNotification.localNotificationSchedule({
-          title: "Meeting Ending",
-          message: `Your meeting with ${this.state.meeting.mentee.firstName} should be ending soon.`,
-          date: new Date(this.state.meeting.endTime),
-          userInfo: {id: `MeetingEnd${this.state.meeting.id}`}
-        })
+        Notifications.meetingStarted(this.state.meeting)
 
         Alert.alert("Meeting started successfully!")
       }
@@ -65,16 +59,7 @@ export default class MeetingDetailsScreen extends React.Component {
 
         this.screenDidFocus()
 
-        PushNotification.cancelLocalNotifications({
-          id: `MeetingEnd${this.state.meeting.id}`
-        })
-
-        PushNotification.localNotificationSchedule({
-          title: "Meeting Ending",
-          message: `Your meeting with ${this.state.meeting.mentee.firstName} should be ending soon.`,
-          date: new Date(this.state.meeting.endTime),
-          userInfo: {id: `MeetingEnd${this.state.meeting.id}`}
-        })
+        Notifications.meetingExtended(this.state.meeting)
 
         Alert.alert("Success!", `Your meeting is now scheduled to end at ${formatDate(new Date(response.result.endTime))}.`)
       } else {
@@ -103,16 +88,7 @@ export default class MeetingDetailsScreen extends React.Component {
 
         this.screenDidFocus()
 
-        PushNotification.cancelLocalNotifications({
-          id: `MeetingEnd${this.state.meeting.id}`
-        })
-
-        PushNotification.localNotificationSchedule({
-          title: "Provide Feedback",
-          message: `Please provide feedback about your meeting with ${this.state.meeting.mentee.firstName}.`,
-          date: new Date(Date.now() + (1 * 60 * 60 * 1000)),
-          userInfo: {id: `MeetingFeedback${this.state.meeting.id}`}
-        })
+        Notifications.meetingEnded(this.state.meeting)
 
         this.props.navigation.navigate('MenteeFeedback', {meeting: this.state.meeting})
       }
@@ -132,9 +108,7 @@ export default class MeetingDetailsScreen extends React.Component {
   sendDeleteRequest() {
     Requests.deleteMeeting(Mentor.jwt, this.state.meeting.id).then(response => {
       if(response.success) {
-        PushNotification.cancelLocalNotifications({
-          id: `MeetingStart${this.state.meeting.id}`
-        })
+        Notifications.deleteMeeting(this.state.meeting)
 
         this.state.meeting.deleteSelf()
 

@@ -2,6 +2,14 @@ import PushNotification from 'react-native-push-notification'
 
 export default class Notifications {
 
+  static initialise() {
+    PushNotification.configure({
+      onNotification: function(notification) {
+        console.log(notification)
+      },
+    })
+  }
+
   static get meetingStart() { return "MeetingStart" }
   static get meetingEnd() { return "MeetingEnd" }
   static get meetingFeedback() { return "MeetingFeedback" }
@@ -67,8 +75,19 @@ export default class Notifications {
     Notifications.scheduleStart(meeting)
   }
 
+  static meetingDeleted(meeting) {
+    Notifications.cancelStart(meeting.id)
+    Notifications.cancelEnd(meeting.id)
+    Notifications.cancelFeedback(meeting.id)
+  }
+
   static meetingStarted(meeting) {
     Notifications.cancelStart(meeting.id)
+    Notifications.cancelEnd(meeting.id)
+    Notifications.scheduleEnd(meeting)
+  }
+
+  static meetingExtended(meeting) {
     Notifications.cancelEnd(meeting.id)
     Notifications.scheduleEnd(meeting)
   }

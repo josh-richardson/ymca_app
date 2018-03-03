@@ -5,8 +5,7 @@ import { List, ListItem, Avatar } from 'react-native-elements'
 import DatePicker from 'react-native-datepicker'
 import { currentDate, currentDatePlus, formatDate } from '../utils'
 import { Divider, FullWidthButton } from '../components'
-import { Mentee, Appointment, Mentor, Requests } from '../model'
-import PushNotification from 'react-native-push-notification'
+import { Mentee, Appointment, Mentor, Requests, Notifications } from '../model'
 
 export default class ScheduleAppointmentScreen extends React.Component {
   static navigationOptions = {
@@ -67,16 +66,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
           let meeting = Appointment.getAppointmentByID(this.state.id)
           meeting.update(response.result)
 
-          PushNotification.cancelLocalNotifications({
-            id: `MeetingStart${meeting.id}`
-          })
-
-          PushNotification.localNotificationSchedule({
-            title: "Meeting",
-            message: `It's time for your meeting with ${meeting.mentee.firstName}.`,
-            date: new Date(meeting.startTime),
-            userInfo: {id: `MeetingStart${meeting.id}`}
-          })
+          Notifications.meetingScheduled(meeting)
 
           this.props.navigation.goBack()
         }
@@ -92,12 +82,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
         let meeting = new Appointment(response.result)
 
-        PushNotification.localNotificationSchedule({
-          title: "Meeting",
-          message: `It's time for your meeting with ${meeting.mentee.firstName}.`,
-          date: new Date(meeting.startTime),
-          userInfo: {id: `MeetingStart${meeting.id}`}
-        })
+        Notifications.meetingScheduled(meeting)
 
         this.props.navigation.goBack()
       }
