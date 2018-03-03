@@ -51,8 +51,8 @@ router.post('/meetings/add', passport.authenticate('jwt', {session: false}), [
             newMeeting.mentor = req.user;
             newMeeting.mentee = result_mentee;
             newMeeting.meetingAddress = data.meetingAddress;
-            newMeeting.startTime = new Date(data.startTime);
-            newMeeting.endTime = new Date(data.endTime);
+            newMeeting.startTime = new Date(parseInt(data.startTime));
+            newMeeting.endTime = new Date(parseInt(data.endTime));
             newMeeting.save(function (err, result) {
                 if (err) res.json(err);
                 res.json({success: true, result: result})
@@ -69,11 +69,17 @@ router.post('/meetings/edit', passport.authenticate('jwt', {session: false}), [
         check('json').exists().isJSON(),
     ],
     function (req, res) {
-        api_utils.findObjectByKey(meeting, 'mentor', req.user).then(() => {
-            api_utils.updateObject(meeting, "id", req, res);
-        }).catch((err) => {
-            res.json(err);
-        })
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        const newObj = JSON.parse(data.json);
+        meeting.findOneAndUpdate({_id: data.id}, {$set:newObj}, {new: true}, function(err, doc){
+            if (err) return res.json(err);
+            res.json({success: true, result: doc})
+        });
+
     }
 );
 

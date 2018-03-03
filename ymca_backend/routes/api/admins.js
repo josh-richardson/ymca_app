@@ -81,7 +81,18 @@ router.post('/mentors/edit', passport.authenticate('jwt', {session: false}), isA
         check('json').exists(),
     ],
     function (req, res) {
-        api_utils.updateObject(user, "id", req, res);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        const newObj = JSON.parse(data.json);
+        user.findOne({_id: data.id}, (err, resultUser) => {
+            mentor.findOneAndUpdate({_id: resultUser.linkedModel._id}, {$set: newObj}, {new: true}, function (err, doc) {
+                if (err) return res.json(err);
+                res.json({success: true, result: doc})
+            });
+        });
     }
 );
 
@@ -177,12 +188,22 @@ router.post('/mentees/delete', passport.authenticate('jwt', {session: false}), i
     }
 );
 
+
 router.post('/mentees/edit', passport.authenticate('jwt', {session: false}), isAdmin, [
         check('id').escape(),
         check('json').exists(),
     ],
     function (req, res) {
-        api_utils.updateObject(mentee, "id", req, res);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        const newObj = JSON.parse(data.json);
+        mentee.findOneAndUpdate({_id: data.id}, {$set: newObj}, {new: true}, function (err, doc) {
+            if (err) return res.json(err);
+            res.json({success: true, result: doc})
+        });
     }
 );
 
@@ -224,6 +245,7 @@ router.post('/managers/add', passport.authenticate('jwt', {session: false}), isA
     }
 );
 
+
 router.post('/managers/delete', passport.authenticate('jwt', {session: false}), isAdmin, [
         check('id').exists().escape(),
     ],
@@ -250,7 +272,18 @@ router.post('/managers/edit', passport.authenticate('jwt', {session: false}), is
         check('json').exists(),
     ],
     function (req, res) {
-        api_utils.updateObject(manager, "id", req, res);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.mapped()});
+        }
+        const data = matchedData(req);
+        const newObj = JSON.parse(data.json);
+        user.findOne({_id: data.id}, (err, resultUser) => {
+            manager.findOneAndUpdate({_id: resultUser.linkedModel._id}, {$set: newObj}, {new: true}, function (err, doc) {
+                if (err) return res.json(err);
+                res.json({success: true, result: doc})
+            });
+        });
     }
 );
 
