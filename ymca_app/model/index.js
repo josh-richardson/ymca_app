@@ -1,8 +1,10 @@
-export Requests from './Requests'
-export StoreHydrator from './StoreHydrator'
+import Requests from './Requests'
+import StoreHydrator from './StoreHydrator'
 
-export Appointment from './Appointment'
-export Mentee from './Mentee'
-export Mentor from './Mentor'
+import Appointment from './Appointment'
+import Mentee from './Mentee'
+import Mentor from './Mentor'
 
-export Notifications from './Notifications'
+import Notifications from './Notifications'
+
+export { Requests, StoreHydrator, Appointment, Mentee, Mentor, Notifications }
