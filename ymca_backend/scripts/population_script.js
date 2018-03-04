@@ -142,9 +142,15 @@ const createMeeting = (mentorUser, menteeUser) => {
     });
 };
 
+const generateValidEmail = function(){
+    const normEmail = faker.internet.email().toLowerCase();
+    const latermost = normEmail.substring(0, normEmail.lastIndexOf("@")).replace(".", "");
+    return latermost + normEmail.substring(normEmail.lastIndexOf("@"))
+};
+
 const populate = () => {
     for (let i = 0; i < 3; i++) {
-        let adminEmail = faker.internet.email().toLowerCase().replace(".", "");
+        let adminEmail = generateValidEmail();
         console.log(adminEmail);
         createAdmin({
             firstName: faker.name.firstName(),
@@ -155,7 +161,7 @@ const populate = () => {
         }).then((admin) => {
         });
 
-        let managerEmail = faker.internet.email().toLowerCase().replace(".", "");
+        let managerEmail = generateValidEmail();
         createManager({
             firstName: faker.name.firstName(),
             secondName: faker.name.lastName(),
@@ -165,7 +171,7 @@ const populate = () => {
         }).then((manager) => {
 
             for (let j = 0; j < 3; j++) {
-                let mentorEmail = faker.internet.email().toLowerCase().replace(".", "");
+                let mentorEmail = generateValidEmail();
                 createMentor({
                     firstName: faker.name.firstName(),
                     secondName: faker.name.lastName(),

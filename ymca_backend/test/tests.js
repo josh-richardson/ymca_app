@@ -263,26 +263,26 @@ describe('Test suite for API', () => {
                 });
         });
 
-        //
-        // it('should return success and result with user modified', (done) => {
-        //     request(www)
-        //         .post('/api/admins/mentors/edit')
-        //         .set('content-type', 'application/x-www-form-urlencoded')
-        //         .send(
-        //             {
-        //                 'auth': authToken,
-        //                 'id': initialUserId,
-        //                 'json': '{"firstName": "James"}'
-        //             })
-        //         .expect(200)
-        //         .end((err, res) => {
-        //             res.body.should.have.properties('success', 'result');
-        //             res.body.success.should.be.eql(true);
-        //             res.body.result.linkedModel.should.have.property('firstName');
-        //             res.body.result.linkedModel.firstName.should.be.eql('James');
-        //             done();
-        //         });
-        // });
+
+        it('should return success and result with user modified', (done) => {
+            request(www)
+                .post('/api/admins/mentors/edit')
+                .set('content-type', 'application/x-www-form-urlencoded')
+                .send(
+                    {
+                        'auth': authToken,
+                        'id': extraUserId,
+                        'json': '{"firstName": "James"}'
+                    })
+                .expect(200)
+                .end((err, res) => {
+                    res.body.should.have.properties('success', 'result');
+                    res.body.success.should.be.eql(true);
+                    res.body.result.should.have.property('firstName');
+                    res.body.result.firstName.should.be.eql('James');
+                    done();
+                });
+        });
 
 
         it('Should return an array of users', (done) => {
@@ -382,26 +382,26 @@ describe('Test suite for API', () => {
         });
 
 
-        // it('should return success and result with mentee modified', (done) => {
-        //     request(www)
-        //         .post('/api/admins/mentees/edit')
-        //         .set('content-type', 'application/x-www-form-urlencoded')
-        //         .send(
-        //             {
-        //                 'auth': authToken,
-        //                 'id': initialMenteeId,
-        //                 'json': '{"meetingAddress": "some road somewhere"}'
-        //             })
-        //         .expect(200)
-        //         .end((err, res) => {
-        //             res.body.should.have.properties('success', 'result');
-        //             res.body.success.should.be.eql(true);
-        //             res.body.result.should.have.property('meetingAddress');
-        //             res.body.result.meetingAddress.should.be.eql('some road somewhere');
-        //             done();
-        //         });
-        // });
-        //endregion
+        it('should return success and result with mentee modified', (done) => {
+            request(www)
+                .post('/api/admins/mentees/edit')
+                .set('content-type', 'application/x-www-form-urlencoded')
+                .send(
+                    {
+                        'auth': authToken,
+                        'id': initialMenteeId,
+                        'json': '{"meetingAddress": "some road somewhere"}'
+                    })
+                .expect(200)
+                .end((err, res) => {
+                    res.body.should.have.properties('success', 'result');
+                    res.body.success.should.be.eql(true);
+                    res.body.result.should.have.property('meetingAddress');
+                    res.body.result.meetingAddress.should.be.eql('some road somewhere');
+                    done();
+                });
+        });
+        // endregion
 
 
         //region Testing manager functions
@@ -611,6 +611,27 @@ describe('Test suite for API', () => {
                 });
         });
 
+        it('should return success and result with meeting modified', (done) => {
+            request(www)
+                .post('/api/methods/meetings/edit')
+                .set('content-type', 'application/x-www-form-urlencoded')
+                .send(
+                    {
+                        'auth': authToken,
+                        'id': initialMeetingId,
+                        'json': '{"actualStartTime": "' + (Date.now() - 4999500).toString() + '", "meetingAddress": "Some changed meeting address"}'
+                    })
+                .expect(200)
+                .end((err, res) => {
+                    // console.log("YEYEYEYEYE");
+                    // console.log(res.body);
+                    res.body.should.have.properties('success', 'result');
+                    res.body.success.should.be.eql(true);
+                    res.body.result.should.have.properties('actualStartTime', 'meetingAddress');
+                    res.body.result.meetingAddress.should.be.eql("Some changed meeting address");
+                    done();
+                });
+        });
 
         it('should return success with meeting deleted', (done) => {
             request(www)
@@ -623,27 +644,6 @@ describe('Test suite for API', () => {
                     })
                 .expect(200)
                 .end((err, res) => {
-                    it('should return success and result with meeting modified', (done) => {
-                        request(www)
-                            .post('/api/methods/meetings/edit')
-                            .set('content-type', 'application/x-www-form-urlencoded')
-                            .send(
-                                {
-                                    'auth': authToken,
-                                    'id': initialMeetingId,
-                                    'json': '{"actualStartTime": "' + (Date.now() - 4999500).toString() + '", "meetingAddress": "Some changed meeting address"}'
-                                })
-                            .expect(200)
-                            .end((err, res) => {
-                                console.log("YEYEYEYEYE");
-                                console.log(res.body);
-                                // res.body.should.have.properties('success', 'result');
-                                // res.body.success.should.be.eql(true);
-                                // res.body.result.should.have.properties('actualStartTime', 'meetingAddress');
-                                // res.body.result.meetingAddress.should.be.eql("Some changed meeting address");
-                                done();
-                            });
-                    });
                     res.body.should.have.property('success');
                     res.body.success.should.be.eql(true);
                     done();
