@@ -76,12 +76,12 @@ export default class Mentee {
   }
 
   static validateMenteeObject(menteeObject) {
-    const requiredProps = ["__v", "_id", "email", "firstName", "secondName", "meetingAddress", "phone", "mentor"]
+    const requiredProps = ["__v", "__t", "_id", "firstName", "secondName", "meetingAddress", "phone", "mentor"]
 
     for(let i in requiredProps) {
-      if(!menteeObject.hasOwnProperty(requiredProps[i])) return false
+      if(!menteeObject.hasOwnProperty(requiredProps[i])) { console.log(i); return false }
     }
 
-    return true
+    return menteeObject.__t == "Mentee"
   }
 }

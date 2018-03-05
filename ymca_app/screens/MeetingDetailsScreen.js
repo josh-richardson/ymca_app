@@ -108,7 +108,7 @@ export default class MeetingDetailsScreen extends React.Component {
   sendDeleteRequest() {
     Requests.deleteMeeting(Mentor.jwt, this.state.meeting.id).then(response => {
       if(response.success) {
-        Notifications.deleteMeeting(this.state.meeting)
+        Notifications.meetingDeleted(this.state.meeting)
 
         this.state.meeting.deleteSelf()
 

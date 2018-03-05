@@ -18,8 +18,8 @@ export default class LoginScreen extends React.Component {
 
     /** UNCOMMENT THIS FOR QUICK LOGIN **/
     this.state = {
-      email: "test@gmail.com",
-      password: "password123",
+      email: "bernardo_armstrong@gmail.com",
+      password: "bernardo_armstrong@gmail.com",
       message: "",
     };
   }
