@@ -151,7 +151,7 @@ const generateValidEmail = function(){
 const populate = () => {
     for (let i = 0; i < 3; i++) {
         let adminEmail = generateValidEmail();
-        console.log(adminEmail);
+        console.log("Admin email: " + adminEmail);
         createAdmin({
             firstName: faker.name.firstName(),
             secondName: faker.name.lastName(),
@@ -172,6 +172,7 @@ const populate = () => {
 
             for (let j = 0; j < 3; j++) {
                 let mentorEmail = generateValidEmail();
+                console.log("Mentor email: " + mentorEmail);
                 createMentor({
                     firstName: faker.name.firstName(),
                     secondName: faker.name.lastName(),
@@ -181,6 +182,7 @@ const populate = () => {
                 }, manager).then((mentor) => {
                     for (let k = 0; k < 3; k++) {
                         createMentee({
+
                             firstName: faker.name.firstName(),
                             secondName: faker.name.lastName(),
                             meetingAddress: faker.address.streetAddress(),
