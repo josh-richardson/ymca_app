@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, FlatList, Alert, ScrollView, Button } from 'react-native';
+import { Platform, StyleSheet, Text, View, Image, FlatList, Alert, ScrollView, Button } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 import { formatDate } from '../utils'
@@ -8,7 +8,7 @@ import { Appointment, Mentee } from '../model'
 
 export default class MeetingsScreen extends React.Component {
   static navigationOptions = ({navigation}) => ({
-    title: 'Your Meetings',
+    title: Platform.OS === 'android' ? '  Your Meetings' : 'Your Meetings',
     headerRight: <Button style={{marginRight:10}} title="Schedule New" onPress={() => navigation.state.params.currentScreen.scheduleAppointmentPressed()} />,
     headerLeft: <Button style={{marginLeft:10}} title="Options" onPress={() => navigation.state.params.currentScreen.optionsPressed()} />
   })

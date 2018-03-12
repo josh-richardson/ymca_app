@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, ScrollView, Text, View, Image, FlatList, Picker, Alert, TextInput, Slider } from 'react-native'
+import { Platform, StyleSheet, ScrollView, Text, View, Image, FlatList, Picker, Alert, TextInput, Slider } from 'react-native'
 import { BaseStyles } from '../BaseStyles'
 import { List, ListItem, Avatar } from 'react-native-elements'
 import DatePicker from 'react-native-datepicker'
@@ -147,7 +147,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
 
         <FullWidthButton
           onPress={() => {this.scheduleAppointment()}}
-          style={{marginTop: 150}}
+          style={{marginTop: Platform.OS === 'android' ? 75 : 165}}
           backgroundColor='#0075ff'
           title="Confirm Appointment"
   	      iconName='calendar-check'
