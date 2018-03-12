@@ -195,7 +195,7 @@ export default class MeetingDetailsScreen extends React.Component {
           onPress={() => {this.giveMentorFeedback()}}
           backgroundColor='#0075ff'
           title="Give Feedback"
-          iconName='close-box-outline' // TODO: Change this
+          iconName='message-text' // TODO: Change this
         />}
         <Text style={{marginTop: '3%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>{!this.state.meeting.needsFeedback ? "Meeting is over! Thanks for giving feedback." : "Meeting is over! Please give feedback."}</Text>
       </View>

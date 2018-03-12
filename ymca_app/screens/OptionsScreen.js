@@ -66,7 +66,7 @@ export default class OptionsScreen extends React.Component {
           style={{marginTop: '2%'}}
           backgroundColor='#0075ff'
           title="Go Back"
-		      iconName='refresh' // TODO: change this
+		      iconName='arrow-left-box' // TODO: change this
         />
       </View>
     )
