@@ -1,4 +1,5 @@
 import PushNotification from 'react-native-push-notification'
+import { Platform } from 'react-native'
 
 export default class Notifications {
 
@@ -26,15 +27,17 @@ export default class Notifications {
 
   static schedule(title, message, date, type, id) {
     PushNotification.localNotificationSchedule({
+      id: mapIDStringToInt(`${type}${id}`),
       title: title,
       message: message,
       date: new Date(date),
-      userInfo: {id: `${type}${id}`}
+      number: 0,
+      userInfo: {id: mapIDStringToInt(`${type}${id}`)}
     })
   }
   static cancel(notificationID) {
     PushNotification.cancelLocalNotifications({
-      id: notificationID
+      id: mapIDStringToInt(notificationID)
     })
   }
 
@@ -102,4 +105,13 @@ export default class Notifications {
     Notifications.cancelFeedback(meeting.id)
   }
 
+}
+
+function mapIDStringToInt(id) {
+  if(Platform.OS === 'ios') return id
+  
+  return id.split('').reduce((a,b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0)
+    return Math.abs(a & a)
+  }, 0).toString()
 }
