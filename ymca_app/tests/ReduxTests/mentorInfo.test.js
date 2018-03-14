@@ -1,4 +1,5 @@
-import { store, setInfo } from '../../model'
+import store from '../../model/store'
+import { setInfo } from '../../model/Actions'
 
 beforeAll(() => {
 
