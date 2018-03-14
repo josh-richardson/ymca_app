@@ -15,13 +15,17 @@
   },
   "jest": {
     "preset": "react-native",
-    "moduleNameMapper": { "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/assetsTransformer.js", "\\.(css|less)$": "<rootDir>/assetsTransformer.js" },
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/assetsTransformer.js",
+      "\\.(css|less)$": "<rootDir>/assetsTransformer.js"
+    },
     "transformIgnorePatterns": [
       "node_modules/(?!react-native|react-navigation)/"
     ]
   },
   "dependencies": {
     "expo": "^25.0.0",
+    "jest": "^22.4.2",
     "react": "16.2.0",
     "react-native": "0.53.0",
     "react-native-datepicker": "1.6.0",
