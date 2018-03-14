@@ -4,8 +4,7 @@ import { addMentee, removeMentee, setMentees } from './Actions'
 export default class Mentee {
   constructor(menteeObject) {
     if(!Mentee.validateMenteeObject(menteeObject)) {
-      console.error("Mentee object invalid. Returning null.")
-      console.error(menteeObject)
+      throw "Mentee object invalid during creation."
       return null
     }
 
@@ -16,7 +15,7 @@ export default class Mentee {
 
   updateMentee(newObject) {
     if(!Mentee.validateMenteeObject(newObject)) {
-      console.error("Mentee object invalid. Returning null.")
+      throw "Mentee object invalid during update."
       return null
     }
 

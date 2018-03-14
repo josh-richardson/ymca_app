@@ -6,7 +6,7 @@ export default class Appointment {
 
   constructor(appointmentObject) {
     if(!Appointment.validateAppointmentObject(appointmentObject)) {
-      console.error("Appointment object invalid. Returning null.")
+      throw "Appointment object invalid during creation."
       return null
     }
 
@@ -75,7 +75,7 @@ export default class Appointment {
 
   update(newObject) {
     if(!Appointment.validateAppointmentObject(newObject)) {
-      console.error("Appointment object invalid. Returning null.")
+      throw "Appointment object invalid during update."
       return null
     }
 

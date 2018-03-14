@@ -9,7 +9,7 @@ export default class Mentor {
   static getInfoObject() {
     if(store.getState().mentorInfo != {}) return store.getState().mentorInfo
     else {
-      console.error("No mentor information was set. Returning null.")
+      throw "No mentor information was set."
       return null
     }
   }
