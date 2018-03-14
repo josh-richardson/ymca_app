@@ -21,11 +21,11 @@ export default class Mentee {
 
     this.menteeObject = newObject
 
-    store.dispatch(updateMentee(this.getID(), this))
+    store.dispatch(updateMentee(this.id, this))
   }
 
   deleteSelf() {
-    store.dispatch(removeMentee(this.getID()))
+    store.dispatch(removeMentee(this.id))
   }
 
   get id() {
@@ -53,7 +53,7 @@ export default class Mentee {
     return this.menteeObject.phone
   }
   get mentorID() {
-    return this.menteeObject.mentee
+    return this.menteeObject.mentor
   }
 
   static getMenteeByID(id) {
