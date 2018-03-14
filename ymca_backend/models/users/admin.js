@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const onymous = require('../onymous');
 
-
+//Define admin schema, admins have all properties of onymous plus phone, first name, second name.
 const adminSchema = new Schema({
     phone: {type: String, required: true},
     firstName: {type: String, required: true},

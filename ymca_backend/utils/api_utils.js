@@ -7,6 +7,7 @@ const manager = require('../models/users/manager');
 const user = require('../models/user');
 const onymous = require('../models/onymous');
 
+//Checks if a database object exists by key and value
 const objectExistsByKey = function (model, key, value) {
     return new Promise(function (resolve, reject) {
         model.findOne({[key]: value}, function (err, result) {
@@ -17,7 +18,7 @@ const objectExistsByKey = function (model, key, value) {
     });
 };
 
-
+//Returns a database object if it exists by a key and value
 const findObjectByKey = function (model, key, value) {
     return new Promise(function (resolve, reject) {
         model.findOne({[key]: value}, function (err, result) {
@@ -28,7 +29,7 @@ const findObjectByKey = function (model, key, value) {
     });
 };
 
-
+//Creates a user when passed a user type object for the given user.
 const createUser = (value, userObject) => {
     return new Promise((resolve, reject) => {
         const newUser = new user();
@@ -44,14 +45,13 @@ const createUser = (value, userObject) => {
                     reject(err);
                 }
                 resolve({success: true, result: newUser});
-
             });
         });
 
     })
 };
 
-
+//Creates a mentor & returns it
 const createMentor = (value) => {
     return new Promise((resolve, reject) => {
         const mentorObject = new mentor();
@@ -66,7 +66,7 @@ const createMentor = (value) => {
     });
 };
 
-
+//Creates an admin and returns it
 const createAdmin = (value) => {
     return new Promise((resolve, reject) => {
         const adminObject = new admin();
@@ -81,7 +81,7 @@ const createAdmin = (value) => {
     });
 };
 
-
+//Creates a manager and returns it
 const createManager = (value) => {
     return new Promise((resolve, reject) => {
         const managerObject = new manager();
