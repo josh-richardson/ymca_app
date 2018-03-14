@@ -53,7 +53,7 @@ export default class Mentee {
     return this.menteeObject.phone
   }
   get mentorID() {
-    return this.menteeObject.mentee
+    return this.menteeObject.mentor
   }
 
   static getMenteeByID(id) {
