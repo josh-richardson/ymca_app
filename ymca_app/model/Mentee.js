@@ -65,7 +65,7 @@ export default class Mentee {
     const requiredProps = ["__v", "__t", "_id", "firstName", "secondName", "meetingAddress", "phone", "mentor"]
 
     for(let i in requiredProps) {
-      if(!menteeObject.hasOwnProperty(requiredProps[i])) { console.log(i); return false }
+      if(!menteeObject.hasOwnProperty(requiredProps[i])) return false
     }
 
     return menteeObject.__t == "Mentee"

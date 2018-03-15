@@ -27,7 +27,7 @@ export default class Mentor {
     return Mentor.getInfoObject().secondName
   }
   static get name() {
-    return `${Mentor.getFirstName()} ${Mentor.getSecondName()}`
+    return `${Mentor.firstName} ${Mentor.secondName}`
   }
   static get phone() {
     return Mentor.getInfoObject().phone
