@@ -42,7 +42,8 @@ describe('Mentee model test suite', () => {
     new Mentee(menteeObj)
 
     let mentee = Mentee.getMenteeByID(100)
-    expect(mentee).not.toBeNull()
+    expect(mentee).not.toBeUndefined()
+    expect(mentee.name).toBe("james victor")
   })
 
   test('can delete mentee', () => {
@@ -52,6 +53,25 @@ describe('Mentee model test suite', () => {
     mentee.deleteSelf()
 
     expect(Mentee.getMenteeByID(100)).toBeUndefined()
+  })
+
+  test('can hydrate mentees', () => {
+    let mentee1Obj = {"__v": 0, "__t": "Mentee", "_id": 100, "firstName": "james", "secondName": "victor", "meetingAddress": "somewhere", "phone": "467", "mentor": "some mentor"}
+    let mentee2Obj = {"__v": 0, "__t": "Mentee", "_id": 200, "firstName": "youssef", "secondName": "sami", "meetingAddress": "somewhere", "phone": "111", "mentor": "some mentor"}
+    let mentee3Obj = {"__v": 0, "__t": "Mentee", "_id": 300, "firstName": "jonathan", "secondName": "mcdonald", "meetingAddress": "somewhere", "phone": "232", "mentor": "some mentor"}
+
+    Mentee.hydrateMentees([mentee1Obj, mentee2Obj, mentee3Obj])
+
+    let mentee1 = Mentee.getMenteeByID(100)
+    let mentee2 = Mentee.getMenteeByID(200)
+    let mentee3 = Mentee.getMenteeByID(300)
+
+    expect(mentee1).not.toBeUndefined()
+    expect(mentee1.name).toBe("james victor")
+    expect(mentee2).not.toBeUndefined()
+    expect(mentee2.name).toBe("youssef sami")
+    expect(mentee3).not.toBeUndefined()
+    expect(mentee3.name).toBe("jonathan mcdonald")
   })
 
 })

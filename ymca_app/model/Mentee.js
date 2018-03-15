@@ -59,8 +59,6 @@ export default class Mentee {
     for(let i in menteeObjects) {
       mentees.push(new Mentee(menteeObjects[i]))
     }
-
-    store.dispatch(setMentees(mentees))
   }
 
   static validateMenteeObject(menteeObject) {

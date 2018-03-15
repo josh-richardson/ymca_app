@@ -1,6 +1,6 @@
 import { Appointment } from '../../model'
 
-describe('appointment model test suite', () => {
+describe('Appointment model test suite', () => {
 
   beforeEach(() => {
     Appointment.allAppointments.forEach(app => app.deleteSelf())
@@ -42,6 +42,15 @@ describe('appointment model test suite', () => {
     expect(appointment.canStart).toBe(false)
   })
 
+  test('can find appointment by ID', () => {
+    let appObj = {"__v": 0, "_id": 100, "startTime": "09/01/2018", "endTime": "09/05/2018", "meetingAddress": "some place", "number_of_extensions": 0, "mentor": "some mentor", "mentee": "some mentee"}
+    new Appointment(appObj)
+
+    let appointment = Appointment.getAppointmentByID(100)
+    expect(appointment).not.toBeUndefined()
+    expect(appointment.meetingAddress).toBe("some place")
+  })
+
   test('can update appointment', () => {
     const appointmentObj = {"__v": 0, "_id": 100, "startTime": "09/01/2018", "endTime": "09/05/2018", "meetingAddress": "some place", "number_of_extensions": 0, "mentor": "some mentor", "mentee": "some mentee"}
     let appointment = new Appointment(appointmentObj)
@@ -72,6 +81,25 @@ describe('appointment model test suite', () => {
     appointment.deleteSelf()
 
     expect(Appointment.getAppointmentByID(100)).toBeUndefined()
+  })
+
+  test('can hydrate appointments', () => {
+    let app1Obj = {"__v": 0, "_id": 100, "startTime": "09/01/2018", "endTime": "09/05/2018", "meetingAddress": "some place", "number_of_extensions": 0, "mentor": "some mentor", "mentee": "some mentee"}
+    let app2Obj = {"__v": 0, "_id": 200, "startTime": "09/02/2018", "endTime": "09/05/2018", "meetingAddress": "some other place", "number_of_extensions": 0, "mentor": "some mentor", "mentee": "some mentee"}
+    let app3Obj = {"__v": 0, "_id": 300, "startTime": "09/03/2018", "endTime": "09/05/2018", "meetingAddress": "some other other place", "number_of_extensions": 0, "mentor": "some mentor", "mentee": "some mentee"}
+
+    Appointment.hydrateAppointments([app1Obj, app2Obj, app3Obj])
+
+    let app1 = Appointment.getAppointmentByID(100)
+    let app2 = Appointment.getAppointmentByID(200)
+    let app3 = Appointment.getAppointmentByID(300)
+
+    expect(app1).not.toBeUndefined()
+    expect(app1.meetingAddress).toBe("some place")
+    expect(app2).not.toBeUndefined()
+    expect(app2.meetingAddress).toBe("some other place")
+    expect(app3).not.toBeUndefined()
+    expect(app3.meetingAddress).toBe("some other other place")
   })
 
 })

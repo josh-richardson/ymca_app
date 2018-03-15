@@ -98,8 +98,6 @@ export default class Appointment {
     for(let i in appointmentObjects) {
       appointments.push(new Appointment(appointmentObjects[i]))
     }
-
-    store.dispatch(setAppointments(appointments))
   }
 
   static validateAppointmentObject(appointmentObject) {
