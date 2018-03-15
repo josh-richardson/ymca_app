@@ -131,7 +131,11 @@ export default class Appointment {
   /**
    * Stores multiple appointments into the Redux store.
    *
+<<<<<<< HEAD
    * @param {array} appointmentObjects -  An array of appointment JS objects that must have the form passed back from the online API.
+=======
+   * @param {array} appointmentObject -  An array of appointment JS objects that must have the form passed back from the online API.
+>>>>>>> 48f4070e1601644cc6d3fc3989c1262075d872c8
    */
   static hydrateAppointments(appointmentObjects) {
     let appointments = []
