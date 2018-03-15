@@ -38,7 +38,7 @@ describe('Appointment model test suite', () => {
     expect(appointment.actualEndTime).toBeNull()
     expect(appointment.isPast).toBe(false)
     expect(appointment.isInProgress).toBe(false)
-    expect(appointment.needsFeedback).toBe(true)
+    expect(appointment.needsFeedback).toBe(false)
     expect(appointment.canStart).toBe(false)
   })
 
@@ -70,7 +70,7 @@ describe('Appointment model test suite', () => {
     expect(appointment.actualEndTime).toBeNull()
     expect(appointment.isPast).toBe(false)
     expect(appointment.isInProgress).toBe(false)
-    expect(appointment.needsFeedback).toBe(true)
+    expect(appointment.needsFeedback).toBe(false)
     expect(appointment.canStart).toBe(false)
   })
 
