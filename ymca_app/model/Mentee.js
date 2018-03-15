@@ -1,5 +1,5 @@
 import store from './store'
-import { addMentee, removeMentee, setMentees, updateMentee } from './Actions'
+import { addMentee, removeMentee, setMentees } from './Actions'
 
 /*
  * Class representing a Mentee stored in Redux.

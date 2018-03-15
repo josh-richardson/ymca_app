@@ -131,18 +131,10 @@ export default class Appointment {
   /**
    * Stores multiple appointments into the Redux store.
    *
-<<<<<<< HEAD
    * @param {array} appointmentObjects -  An array of appointment JS objects that must have the form passed back from the online API.
-=======
-   * @param {array} appointmentObject -  An array of appointment JS objects that must have the form passed back from the online API.
->>>>>>> 48f4070e1601644cc6d3fc3989c1262075d872c8
    */
   static hydrateAppointments(appointmentObjects) {
-    let appointments = []
-
-    for(let i in appointmentObjects) {
-      appointments.push(new Appointment(appointmentObjects[i]))
-    }
+    for(let i in appointmentObjects) new Appointment(appointmentObjects[i])
   }
 
   /**
@@ -168,7 +160,7 @@ export default class Appointment {
 
   /** @return {array} List of all appointments in the Redux store that have not started yet. */
   static get upcomingAppointments() {
-    return Appointment.allAppointments.filter(appointment => !appointment.isPast && !appointment.isInProgress && appointment.needsFeedback)
+    return Appointment.allAppointments.filter(appointment => !appointment.isPast && !appointment.isInProgress)
   }
 
   /** @return {array} List of appointments in the Redux store that are in progress. */
