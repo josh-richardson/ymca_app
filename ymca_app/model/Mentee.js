@@ -1,5 +1,5 @@
 import store from './store'
-import { addMentee, removeMentee, setMentees } from './Actions'
+import { addMentee, removeMentee, setMentees, updateMentee } from './Actions'
 
 export default class Mentee {
   constructor(menteeObject) {
@@ -11,17 +11,6 @@ export default class Mentee {
     this.menteeObject = menteeObject
 
     store.dispatch(addMentee(this))
-  }
-
-  updateMentee(newObject) {
-    if(!Mentee.validateMenteeObject(newObject)) {
-      throw "Mentee object invalid during update."
-      return null
-    }
-
-    this.menteeObject = newObject
-
-    store.dispatch(updateMentee(this.id, this))
   }
 
   deleteSelf() {

@@ -11,11 +11,11 @@ describe('appointment model test suite', () => {
     expect(() => new Appointment(validAppObject)).not.toThrow()
 
     let appointment = Appointment.getAppointmentByID(100)
-    expect(appointment).not.toBeNull()
+    expect(appointment).not.toBeUndefined()
   })
 
   test('validating wrong appointment failure', () => {
-    const validAppObject = {"__v": 0, "_id": 100, "startTime": "09/01/2018", "endTime": "09/05/2018", "number_of_extensions": 0, "mentor": "some mentor", "mentee": "some mentee"}
+    const invalidAppObject = {"__v": 0, "_id": 100, "startTime": "09/01/2018", "endTime": "09/05/2018", "number_of_extensions": 0, "mentor": "some mentor", "mentee": "some mentee"}
     expect(() => new Appointment(validAppObject)).toThrow()
 
     let appointment = Appointment.getAppointmentByID(100)
