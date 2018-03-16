@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/MenteeFeedbackScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/MenteeFeedbackScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module screens/MenteeFeedbackScreen
+ */
+
+import React from 'react';
+import { StyleSheet, Text, View, Image, FlatList, ScrollView, TextInput, Alert } from 'react-native';
+import { BaseStyles } from '../BaseStyles'
+import { List, ListItem, Avatar, Button } from 'react-native-elements'
+import { FullWidthButton, FormQuestion, ToggleButton } from '../components'
+import { NavigationActions } from 'react-navigation'
+import { Requests, Mentee, Appointment, Mentor } from '../model'
+
+/**
+ * @class MenteeFeedbackScreen
+ * @extends React.Component
+ *
+ * React component for the mentee feedback screen. Gets displayed when an appointment is concluded.
+ */
+export default class MenteeFeedbackScreen extends React.Component {
+
+  /** Specifies navigation options for the current screen. */
+  static navigationOptions = ({navigation}) => ({
+      title: `Mentee Feedback`
+  });
+
+  /**
+   * Sets appropriate state for the screen.
+   * @param {object} props - Props passed to the screen.
+   */
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      meeting: props.navigation.state.params.meeting,
+      token: props.navigation.state.params.token,
+
+      response: "",
+
+      happyToggled: false,
+      impartialToggled: false,
+      sadToggled: false
+    }
+  }
+
+  /** Sets the screen state to reflect the happy toggle being selected. */
+  happyPressed() {
+    this.setState({happyToggled: true, impartialToggled: false, sadToggled: false})
+  }
+  /** Sets the screen state to reflect the impartial toggle being selected. */
+  impartialPressed() {
+    this.setState({impartialToggled: true, happyToggled: false, sadToggled: false})
+  }
+  /** Sets the screen state to reflect the sad toggle being selected. */
+  sadPressed() {
+    this.setState({sadToggled: true, happyToggled: false, impartialToggled: false})
+  }
+
+  /** Sends the mentee's feedback to the server and prompts the mentor to schedule the next meeting. */
+  doneButtonPressed() {
+    let menteeFeedback = JSON.stringify({response: this.state.response})
+    let menteeRating = this.sadToggled ? 1 : (this.impartialToggled ? 2 : (this.happyToggled ? 3 : 0))
+
+    Requests.sendMenteeFeedback(Mentor.jwt, this.state.meeting.id, menteeFeedback, menteeRating).then(response => {
+      this.state.meeting.update(response.result)
+
+      this.promptScheduleNextMeeting()
+    })
+  }
+
+  /** Asks the mentor if they would like to schedule the next meeting and acts accordingly. */
+  promptScheduleNextMeeting() {
+    let mentee = this.state.meeting.mentee
+
+    Alert.alert(
+      "Done!",
+      `Meeting finished. Please hand the phone back to the mentor.\nWould you like to schedule another appointment now with ${mentee.firstName}?`,
+      [
+        {text: "Yes", onPress: () => this.scheduleNextMeeting()},
+        {text: "No", style: "cancel", onPress: () => this.props.navigation.goBack()}
+      ]
+    )
+  }
+
+  /** Resets the navigation stack such that the mentor is at the schedule meeting screen. */
+  scheduleNextMeeting() {
+    const resetAction = NavigationActions.reset({
+      index: 1,
+      actions: [
+        NavigationActions.navigate({
+          routeName: 'Meetings',
+        }),
+        NavigationActions.navigate({
+          routeName: 'ScheduleAppointment',
+          params: {menteeID: this.state.meeting.menteeID, place: this.state.meeting.meetingAddress}
+        }),
+      ],
+    });
+    this.props.navigation.dispatch(resetAction);
+  }
+
+  /** Renders the component. */
+  render() {
+    return(
+      &lt;View style={BaseStyles.container}>
+        &lt;ScrollView>
+          &lt;FormQuestion
+            question={"How was your meeting?"}
+            placeholder={"Meeting Feedback"}
+            onChangeText={(text) => {this.setState({response: text})}}
+          />
+
+          &lt;View style={[BaseStyles.centerChildrenHorizontally, {marginTop: 10}]}>
+            &lt;View style={[BaseStyles.centerChildren, {flexDirection: 'row', width: '75%'}]}>
+
+              &lt;View style={[BaseStyles.centerChildrenHorizontally, {flex:0.333}]}>&lt;ToggleButton onPress={() => this.happyPressed()} toggled={this.state.happyToggled} view={&lt;Text style={{fontSize: 45}}>😀&lt;/Text>} size={75} />&lt;/View>
+
+              &lt;View style={[BaseStyles.centerChildrenHorizontally, {flex:0.333}]}>&lt;ToggleButton onPress={() => this.impartialPressed()} toggled={this.state.impartialToggled} view={&lt;Text style={{fontSize: 45}}>😐&lt;/Text>} size={75} />&lt;/View>
+
+              &lt;View style={[BaseStyles.centerChildrenHorizontally, {flex:0.333}]}>&lt;ToggleButton onPress={() => this.sadPressed()} toggled={this.state.sadToggled} view={&lt;Text style={{fontSize: 45}}>☹️&lt;/Text>} size={75} />&lt;/View>
+
+            &lt;/View>
+          &lt;/View>
+
+
+          &lt;View style={BaseStyles.centerChildren}>
+            &lt;FullWidthButton
+              onPress={() => this.doneButtonPressed()}
+              style={{marginTop: '2%', marginBottom: '2%'}}
+              backgroundColor='#0075ff'
+              title="Done"
+			  iconName='check'
+            />
+          &lt;/View>
+        &lt;/ScrollView>
+      &lt;/View>
+    )
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a></li><li><a href="module-BaseStyles.html">BaseStyles</a></li><li><a href="module-components_Divider.html">components/Divider</a></li><li><a href="module-components_FormQuestion.html">components/FormQuestion</a></li><li><a href="module-components_FullWidthButton.html">components/FullWidthButton</a></li><li><a href="module-components_ListSectionHeader.html">components/ListSectionHeader</a></li><li><a href="module-components_ToggleButton.html">components/ToggleButton</a></li><li><a href="module-config_routes.html">config/routes</a></li><li><a href="module-model_Actions.html">model/Actions</a></li><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Reducers.html">model/Reducers</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_Storage.html">model/Storage</a></li><li><a href="module-model_store.html">model/store</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen.html">screens/EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen.html">screens/OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li><li><a href="module-utils_dateUtils.html">utils/dateUtils</a></li></ul><h3>Classes</h3><ul><li><a href="module-App-App.html">App</a></li><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_Storage.html">model/Storage</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen-EmergencyAlertSentScreen.html">EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_LoginScreen-LoginScreen.html">LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingDetailsScreen-MeetingDetailsScreen.html">MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MeetingsScreen-MeetingsScreen.html">MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen-MenteeFeedbackScreen.html">MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen-MentorFeedbackScreen.html">MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen-OptionsScreen.html">OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen-ScheduleAppointmentScreen.html">ScheduleAppointmentScreen</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 16 2018 07:25:55 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

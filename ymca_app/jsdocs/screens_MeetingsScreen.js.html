@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/MeetingsScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/MeetingsScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module screens/MeetingsScreen
+ */
+
+import React from 'react';
+import { Platform, StyleSheet, Text, View, Image, FlatList, Alert, ScrollView, Button } from 'react-native';
+import { BaseStyles } from '../BaseStyles'
+import { List, ListItem, Avatar } from 'react-native-elements'
+import { formatDate } from '../utils'
+import { ListSectionHeader } from '../components'
+import { Appointment, Mentee } from '../model'
+
+/**
+ * @class MeetingsScreen
+ * @extends React.Component
+ *
+ * React component for the meetings screen. Acts as the main screen after login and displays appointments relevant to the mentor.
+ */
+export default class MeetingsScreen extends React.Component {
+
+  /** Specifies navigation options for the current screen. */
+  static navigationOptions = ({navigation}) => ({
+    title: Platform.OS === 'android' ? '  Your Meetings' : 'Your Meetings',
+    headerRight: &lt;Button style={{marginRight:10}} title="Schedule New" onPress={() => navigation.state.params.currentScreen.scheduleAppointmentPressed()} />,
+    headerLeft: &lt;Button style={{marginLeft:10}} title="Options" onPress={() => navigation.state.params.currentScreen.optionsPressed()} />
+  })
+
+  /**
+   * Sets appropriate state for the screen.
+   * @param {object} props - Props passed to the screen.
+   */
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      upcomingMeetings: Appointment.upcomingAppointments,
+      inProgressMeetings: Appointment.inProgressAppointments,
+      needsFeedbackMeetings: Appointment.needsFeedbackAppointments,
+      pastMeetings: Appointment.pastAppointments
+    }
+  }
+
+  /** Called before the component gets mounted. */
+  componentWillMount() {
+    this.props.navigation.setParams({
+      currentScreen: this,
+    })
+  }
+
+  /** Called when the component gets mounted. */
+  componentDidMount() {
+    this.focusListener = this.props.navigation.addListener('didFocus', () => this.screenDidFocus())
+  }
+
+  /** Called before the component gets unmounted. */
+  componentWillUnmount() {
+    this.focusListener.remove()
+  }
+
+  /** Called whenever the screen is displayed or returned to. */
+  screenDidFocus() {
+    this.setState({
+      upcomingMeetings: Appointment.upcomingAppointments,
+      inProgressMeetings: Appointment.inProgressAppointments,
+      needsFeedbackMeetings: Appointment.needsFeedbackAppointments,
+      pastMeetings: Appointment.pastAppointments
+    })
+  }
+
+  /** Navigates to the schedule appointment screen. */
+  scheduleAppointmentPressed() {
+    this.props.navigation.navigate("ScheduleAppointment", {})
+  }
+
+  /** Navigates to the options screen. */
+  optionsPressed() {
+    this.props.navigation.navigate("Options")
+  }
+
+  /**
+   * Displays the meeting details screen for the meeting with the given ID.
+   * @param {string} meetingID - The ID of the meeting the details of which are to be displayed.
+   */
+  showMeetingDetails(meetingID) {
+    this.props.navigation.navigate('MeetingDetails', {meetingID})
+  }
+
+  /**
+   * Renders an appointment item appropriately such that it foes in the list.
+   * @param {Appointment} appointment - The appointment to render.
+   * @return {ListItem} A ListItem component with the appropriate details about the appointment.
+   */
+   renderItem(appointment) {
+
+    const mentee = appointment.mentee
+
+    return (
+      &lt;ListItem
+        button
+        title={mentee.name}
+        subtitle={formatDate(new Date(appointment.startTime))}
+        rightTitle={appointment.meetingAddress}
+        key={appointment.id}
+        avatar={&lt;Avatar
+                title={mentee.initials}
+                rounded
+              />}
+        onPress={() => {this.showMeetingDetails(appointment.id)}}
+      />
+    )
+  }
+
+  /** Renders the component. */
+  render() {
+    return(
+      &lt;ScrollView>
+        &lt;ListSectionHeader text={"Upcoming Appointments"} />
+        &lt;List containerStyle={this.styles.section}>
+          {
+            this.state.upcomingMeetings.map(appointment => this.renderItem(appointment))
+          }
+        &lt;/List>
+
+        &lt;ListSectionHeader text={"In Progress"} />
+        &lt;List containerStyle={this.styles.section}>
+          {
+            this.state.inProgressMeetings.map(appointment => this.renderItem(appointment))
+          }
+        &lt;/List>
+
+        &lt;ListSectionHeader text={"Needs Feedback"} />
+        &lt;List containerStyle={this.styles.section}>
+          {
+            this.state.needsFeedbackMeetings.map(appointment => this.renderItem(appointment))
+          }
+        &lt;/List>
+
+        &lt;ListSectionHeader text={"Past Appointments"} />
+        &lt;List containerStyle={this.styles.section}>
+          {
+            this.state.pastMeetings.map(appointment => this.renderItem(appointment))
+          }
+        &lt;/List>
+      &lt;/ScrollView>
+    )
+  }
+
+  /** Specifies styles used in the current component. */
+  styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+
+    section: {
+      marginTop: 0
+    }
+  });
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a></li><li><a href="module-BaseStyles.html">BaseStyles</a></li><li><a href="module-components_Divider.html">components/Divider</a></li><li><a href="module-components_FormQuestion.html">components/FormQuestion</a></li><li><a href="module-components_FullWidthButton.html">components/FullWidthButton</a></li><li><a href="module-components_ListSectionHeader.html">components/ListSectionHeader</a></li><li><a href="module-components_ToggleButton.html">components/ToggleButton</a></li><li><a href="module-config_routes.html">config/routes</a></li><li><a href="module-model_Actions.html">model/Actions</a></li><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Reducers.html">model/Reducers</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_Storage.html">model/Storage</a></li><li><a href="module-model_store.html">model/store</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen.html">screens/EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen.html">screens/OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li><li><a href="module-utils_dateUtils.html">utils/dateUtils</a></li></ul><h3>Classes</h3><ul><li><a href="module-App-App.html">App</a></li><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_Storage.html">model/Storage</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen-EmergencyAlertSentScreen.html">EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_LoginScreen-LoginScreen.html">LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingDetailsScreen-MeetingDetailsScreen.html">MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MeetingsScreen-MeetingsScreen.html">MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen-MenteeFeedbackScreen.html">MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen-MentorFeedbackScreen.html">MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen-OptionsScreen.html">OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen-ScheduleAppointmentScreen.html">ScheduleAppointmentScreen</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 16 2018 07:25:55 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

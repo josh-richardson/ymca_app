@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Requests.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Requests.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ *  Module for the Requests class.
+ *
+ * @module model/Requests
+ */
+
+/**
+ *  @class Requests
+ *  Static class that has a set of functions to send requests to the API.
+ */
+export default class Requests {
+
+  /**
+   * Sends a login request to the API.
+   *
+   * @param {string} email - The email to use for logging in.
+   * @param {string} password - The password to use for logging in.
+
+   * @return {string} The JSON Web Token to be used for authentication for future requests.
+   */
+  static async login(email, password) {
+    let response = await Requests.makeRequest('users/authenticate', {email, password})
+    return response.token
+  }
+
+  /**
+   * Retrieves the mentor information associated with the passed JWT.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   *
+   */
+  static async getMentorInformation(jwt) {
+    let response = await Requests.makeRequest('methods/profile', { auth: jwt })
+    return response
+  }
+
+  /**
+   * Retrieves the mentees associated with the mentor's JWT.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   *
+   * @return {object} The response object from the server. If the request is successful, this will be the mentees associated with the mentor.
+   */
+  static async getMentees(jwt) {
+    let response = await Requests.makeRequest('methods/mentees', { auth: jwt })
+    return response
+  }
+
+  /**
+   * Retrieves the appointments associated with the mentor's JWT.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   *
+   * @return {object} The response object from the server. If the request is successful, this will be the appointments that the mentor has or has had.
+   */
+  static async getAppointments(jwt) {
+    let response = await Requests.makeRequest('methods/meetings', { auth: jwt })
+    return response
+  }
+
+  /**
+   * Sends an emergency signal associated with the mentor's JWT.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   *
+   * @return {object} The response object from the server.
+   */
+  static async sendEmergency(jwt) {
+    let response = await Requests.makeRequest('methods/emergency', { auth: jwt })
+    return response
+  }
+
+  /**
+   * Sends an add meeting request to the server.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   * @param {string} id - The ID of the mentee with whom the meeting will be scheduled.
+   * @param {string} meetingAddress - The address where the meeting will take place.
+   * @param {number} startTime - A UNIX timestamp for the scheduled start time of the appointment.
+   * @param {number} endTime - A UNIX timestamp for the scheduled end time of the appointment.
+   *
+   * @return {object} The response object from the server. If the request is successful, this will be a JS object representing the new created appointment, ready to be passed to the `Appointment` constructor.
+   */
+  static async addMeeting(jwt, id, meetingAddress, startTime, endTime) {
+    let response = await Requests.makeRequest('methods/meetings/add', { auth: jwt, id, meetingAddress, startTime, endTime })
+    return response
+  }
+
+  /**
+   * Sends a delete meeting request to the server.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   * @param {string} id - The ID of the meeting to be deleted.
+   *
+   * @return {object} The response object from the server.
+   */
+  static async deleteMeeting(jwt, id) {
+    let response = await Requests.makeRequest('methods/meetings/delete', { auth: jwt, id })
+    return response
+  }
+
+  /**
+   * Sends an update meeting request to the server.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   * @param {string} meetingID - The ID of the appointment to be updated.
+   * @param {string} menteeID - The ID of the mentee with whom the meeting will be scheduled.
+   * @param {string} meetingAddress - The address where the meeting will take place.
+   * @param {number} startTime - A UNIX timestamp for the scheduled start time of the appointment.
+   * @param {number} endTime - A UNIX timestamp for the scheduled end time of the appointment.
+   *
+   * @return {object} The response object from the server. If the request is successful, this will be a JS object representing the new created appointment, ready to be passed to the `Appointment` constructor, or the `update()` method of an `Appointment` instance.
+   */
+  static async updateMeeting(jwt, meetingID, menteeID, meetingAddress, startTime, endTime) {
+    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ mentee: menteeID, meetingAddress, startTime, endTime }) })
+    return response
+  }
+
+  /**
+   * Sends a start meeting request to the server.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   * @param {string} meetingID - The ID of the appointment to be started.
+   *
+   * @return {object} The response object from the server. If the request is successful, this will be a JS object representing the new created appointment, ready to be passed to the `Appointment` constructor, or the `update()` method of an `Appointment` instance.
+   */
+  static async startMeeting(jwt, meetingID) {
+    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ actualStartTime: Date.parse(new Date()) }) })
+    return response
+  }
+
+  /**
+   * Sends an end meeting request to the server.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   * @param {string} meetingID - The ID of the appointment to be ended.
+   *
+   * @return {object} The response object from the server. If the request is successful, this will be a JS object representing the new created appointment, ready to be passed to the `Appointment` constructor, or the `update()` method of an `Appointment` instance.
+   */
+  static async endMeeting(jwt, meetingID) {
+    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ actualEndTime: Date.parse(new Date()) }) })
+    return response
+  }
+
+  /**
+   * Sends an extend meeting request to the server.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   * @param {string} meetingID - The ID of the appointment to be extended.
+   *
+   * @return {object} The response object from the server. If the request is successful, this will be a JS object representing the new created appointment, ready to be passed to the `Appointment` constructor, or the `update()` method of an `Appointment` instance.
+   */
+  static async extendMeeting(jwt, meetingID) {
+    let response = await Requests.makeRequest('methods/meetings/extend', { auth: jwt, id: meetingID })
+    return response
+  }
+
+  /**
+   * Sends feedback from a mentor about an appointment to the server.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   * @param {string} meetingID - The ID of the appointment to be updated.
+   * @param {object} mentorFeedback - A JS object containing mentor feedback about the meeting, typically answering the five questions specified.
+   *
+   * @return {object} The response object from the server. If the request is successful, this will be a JS object representing the new created appointment, ready to be passed to the `Appointment` constructor, or the `update()` method of an `Appointment` instance.
+   */
+  static async sendMentorFeedback(jwt, meetingID, mentorFeedback) {
+    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ mentor_notes: mentorFeedback }) })
+    return response
+  }
+
+  /**
+   * Sends feedback from a mentee about an appointment to the server.
+   *
+   * @param {string} jwt - The JSON Web Token determined when logging in required for mentor-specific requests.
+   * @param {string} meetingID - The ID of the appointment to be updated.
+   * @param {object} menteeFeedback - A JS object containing mentee feedback about the meeting, typically answering the one question specified.
+   * @param {number} menteeRating - A number 0-3 representing the happiness level specified by the mentee, 0 being unspecified, 1 being sad, 2 being impartial and 3 being happy.
+   *
+   * @return {object} The response object from the server. If the request is successful, this will be a JS object representing the new created appointment, ready to be passed to the `Appointment` constructor, or the `update()` method of an `Appointment` instance.
+   */
+  static async sendMenteeFeedback(jwt, meetingID, menteeFeedback, menteeRating = 0) {
+    let response = await Requests.makeRequest('methods/meetings/edit', { auth: jwt, id: meetingID, json: JSON.stringify({ mentee_notes: menteeFeedback, mentee_rating: menteeRating }) })
+    return response
+  }
+
+  /**
+   * Sends a request to `https://ymca.pw/api/` and appends the given url.
+   *
+   * @param {string} url - Path to which the request will be sent, after going to `https://ymca.pw/api/`.
+   * @param {object} bodyObject - Body to pass to the request.
+   */
+  static async makeRequest(url, bodyObject) {
+    let response = await fetch(`https://ymca.pw/api/${url}`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(bodyObject)
+    })
+
+    if(response.status == 200) {
+      let responseJson = await response.json()
+      return responseJson
+    } else {
+      console.log(`Response status is ${response.status}.`)
+      console.log("Response:")
+      console.log(response)
+    }
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-model_Actions.html">model/Actions</a></li><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Reducers.html">model/Reducers</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li></ul><h3>Classes</h3><ul><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 16 2018 04:28:35 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

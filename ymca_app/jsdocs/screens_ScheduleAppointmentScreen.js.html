@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/ScheduleAppointmentScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/ScheduleAppointmentScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module screens/ScheduleAppointmentScreen
+ */
+
+import React from 'react'
+import { Platform, StyleSheet, ScrollView, Text, View, Image, FlatList, Picker, Alert, TextInput, Slider } from 'react-native'
+import { BaseStyles } from '../BaseStyles'
+import { List, ListItem, Avatar } from 'react-native-elements'
+import DatePicker from 'react-native-datepicker'
+import { currentDate, currentDatePlus, formatDate } from '../utils'
+import { Divider, FullWidthButton } from '../components'
+import { Mentee, Appointment, Mentor, Requests, Notifications } from '../model'
+
+/**
+ * @class ScheduleAppointmentScreen
+ * @extends React.Component
+ *
+ * React component for the schedule appointment screen. Gets displayed when the mentor needs to schedule or update an appointment.
+ */
+export default class ScheduleAppointmentScreen extends React.Component {
+
+  /** Specifies navigation options for the current screen. */
+  static navigationOptions = {
+    title: 'Schedule New Appointment',
+  };
+
+  /**
+   * Sets appropriate state for the screen.
+   * @param {object} props - Props passed to the screen.
+   */
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      datetime: new Date(),
+      mentees: Mentee.allMentees,
+      selectedMentee: Mentee.allMentees[0].id,
+      place: "",
+      duration: 1.0, // Duration in hours
+      isUpdatingAppointment: false
+    }
+
+    if(props.navigation.state.params.hasOwnProperty("menteeID")) {
+      this.state.selectedMentee = props.navigation.state.params.menteeID
+      this.state.place = props.navigation.state.params.place
+    }
+
+    if(props.navigation.state.params.hasOwnProperty("meeting")) {
+      let meeting = props.navigation.state.params.meeting
+
+      this.state.isUpdatingAppointment = true
+      this.state.id = meeting.id
+      this.state.datetime = new Date(meeting.startTime)
+      this.state.place = meeting.meetingAddress
+      this.state.selectedMentee = meeting.menteeID
+    }
+  }
+
+  /** Initiates the schedule appointment request. */
+  scheduleAppointment() {
+    if(this.state.place == "") {
+      Alert.alert("Meeting location", "Please specify a place to meet!")
+
+      return;
+    }
+
+    // Parse start time
+    let startTime = Date.parse(this.state.datetime)
+
+    // Calculate end time from start time and duration
+    let endTime = startTime + this.state.duration * 60 * 60 * 1000
+
+    if(this.state.isUpdatingAppointment) {
+      Requests.updateMeeting(Mentor.jwt, this.state.id, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
+
+        if(response.success) {
+          Alert.alert("Appointment updated!")
+
+          let meeting = Appointment.getAppointmentByID(this.state.id)
+          meeting.update(response.result)
+
+          Notifications.meetingScheduled(meeting)
+
+          this.props.navigation.goBack()
+        }
+      })
+
+      return;
+    }
+
+    Requests.addMeeting(Mentor.jwt, this.state.selectedMentee, this.state.place, startTime, endTime).then(response => {
+
+      if(response.success) {
+        Alert.alert("Appointment scheduled!")
+
+        let meeting = new Appointment(response.result)
+
+        Notifications.meetingScheduled(meeting)
+
+        this.props.navigation.goBack()
+      }
+    })
+  }
+
+  setPlace(place) {
+    this.setState({ place })
+  }
+  setDuration(duration) {
+    this.setState({ duration })
+  }
+  setDatetime(datetime) {
+    this.setState({datetime})
+  }
+
+  /** Renders the component. */
+  render() {
+    return(
+      &lt;View style={[BaseStyles.container, BaseStyles.centerChildrenHorizontally]}>
+        &lt;DatePicker
+          style={{width: '85%', marginTop: 30}}
+          date={this.state.datetime}
+          mode="datetime"
+          placeholder="Select Appointment Date"
+          format="DD MMM YYYY, hh:mm a"
+          minDate={new Date()}
+          maxDate={currentDatePlus(90)}
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          onDateChange={(datetime) => {this.setDatetime(datetime)}}
+        />
+
+    		&lt;Divider />
+
+        &lt;Text style={{width: '85%', fontWeight: 'bold', textAlign:'center', fontSize:16, margin:10}}>Meeting duration: {this.state.duration} hours&lt;/Text>
+
+        &lt;Slider minimumValue={1} maximumValue={2} step={0.5} value={1} onValueChange={value => this.setDuration(value)} style={{width: '85%'}}/>
+
+        &lt;Divider />
+
+        &lt;View style={{marginTop: 10, flexDirection: "column", justifyContent: "center"}}>
+          &lt;Text style={{paddingBottom: 10, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select location: &lt;/Text>
+          &lt;TextInput value={this.state.place} style={{height: 50, width:250, textAlign:'center'}} placeholder="Meeting place" onChangeText={(text) => this.setPlace(text)} />
+        &lt;/View>
+
+    		&lt;Divider />
+
+        &lt;Text style={{width: '85%', marginTop: 5, fontWeight: 'bold', textAlign:'center', fontSize:16}}>Select Mentee&lt;/Text>
+
+        &lt;Divider />
+
+        &lt;Picker
+          style={{width:'85%', height:25}}
+          selectedValue={this.state.selectedMentee}
+          onValueChange={(value, index) => this.setState({selectedMentee: value})}>
+        {
+          this.state.mentees.map(mentee =>
+            &lt;Picker.Item key={mentee.id} label={mentee.name} value={mentee.id}/>
+          )
+        }
+        &lt;/Picker>
+
+        &lt;FullWidthButton
+          onPress={() => {this.scheduleAppointment()}}
+          style={{marginTop: Platform.OS === 'android' ? 75 : 165}}
+          backgroundColor='#0075ff'
+          title="Confirm Appointment"
+  	      iconName='calendar-check'
+        />
+      &lt;/View>
+    )
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a></li><li><a href="module-BaseStyles.html">BaseStyles</a></li><li><a href="module-components_Divider.html">components/Divider</a></li><li><a href="module-components_FormQuestion.html">components/FormQuestion</a></li><li><a href="module-components_FullWidthButton.html">components/FullWidthButton</a></li><li><a href="module-components_ListSectionHeader.html">components/ListSectionHeader</a></li><li><a href="module-components_ToggleButton.html">components/ToggleButton</a></li><li><a href="module-config_routes.html">config/routes</a></li><li><a href="module-model_Actions.html">model/Actions</a></li><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Reducers.html">model/Reducers</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_Storage.html">model/Storage</a></li><li><a href="module-model_store.html">model/store</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen.html">screens/EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen.html">screens/OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li><li><a href="module-utils_dateUtils.html">utils/dateUtils</a></li></ul><h3>Classes</h3><ul><li><a href="module-App-App.html">App</a></li><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_Storage.html">model/Storage</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen-EmergencyAlertSentScreen.html">EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_LoginScreen-LoginScreen.html">LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingDetailsScreen-MeetingDetailsScreen.html">MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MeetingsScreen-MeetingsScreen.html">MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen-MenteeFeedbackScreen.html">MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen-MentorFeedbackScreen.html">MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen-OptionsScreen.html">OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen-ScheduleAppointmentScreen.html">ScheduleAppointmentScreen</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 16 2018 07:25:55 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

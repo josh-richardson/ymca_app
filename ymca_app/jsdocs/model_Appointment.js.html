@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: model/Appointment.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: model/Appointment.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ *  Module for the Appointment class.
+ *
+ * @module model/Appointment
+ */
+
+import store from './store'
+import { addAppointment, removeAppointment, setAppointments, updateAppointment } from './Actions'
+import Mentee from './Mentee'
+
+/**
+ * @class Appointment
+ *
+ * Class representing an Appointment stored in Redux.
+ *
+ * Also exposes more general functionality like getters for all appointments, past appointments, etc.
+ */
+export default class Appointment {
+
+  /**
+   * Create an Appointment and store it in Redux
+   *
+   * @param {object} appointmentObject - An appointment JS object that must have the form passed back from the online API.
+   */
+  constructor(appointmentObject) {
+    if(!Appointment.validateAppointmentObject(appointmentObject)) {
+      throw "Appointment object invalid during creation."
+      return null
+    }
+
+    let mentee = appointmentObject.mentee
+    if(typeof mentee != "string") {
+      mentee = mentee._id
+    }
+
+    this.appointmentObject = {...appointmentObject, mentee}
+
+    store.dispatch(addAppointment(this))
+  }
+
+  /**
+   * The id of the appointment.
+   *
+   * @type {string}
+   */
+  get id() {
+    return this.appointmentObject._id
+  }
+  /**
+   * The start time of the appointment.
+   *
+   * @type {string}
+   */
+  get startTime() {
+    return this.appointmentObject.startTime
+  }
+  /**
+   * The end time of the appointment.
+   *
+   * @type {string}
+   */
+  get endTime() {
+    return this.appointmentObject.endTime
+  }
+  /**
+   * The meeting address of the appointment.
+   *
+   * @type {string}
+   */
+  get meetingAddress() {
+    return this.appointmentObject.meetingAddress
+  }
+  /**
+   * The ID of the mentor who scheduled this appointment.
+   *
+   * @type {string}
+   */
+  get mentorID() {
+    return this.appointmentObject.mentor
+  }
+  /**
+   * The ID of the mentee with whom the mentor is meeting.
+   *
+   * @type {string}
+   */
+  get menteeID() {
+    return this.appointmentObject.mentee
+  }
+  /**
+   * The number of extension that this appointment has had.
+   *
+   * @type {number}
+   */
+  get numberOfExtensions() {
+    return this.appointmentObject.number_of_extensions
+  }
+
+  /**
+   * The mentee object associated with the mentee of this appointment.
+   *
+   * @type {Mentee}
+   */
+  get mentee() {
+    return Mentee.getMenteeByID(this.menteeID)
+  }
+
+  /**
+   * The actual start time of the appointment, if it has started.
+   *
+   * @type {string}
+   */
+  get actualStartTime() {
+    if(this.appointmentObject.hasOwnProperty("actualStartTime")) return this.appointmentObject.actualStartTime
+    return null
+  }
+  /**
+   * The actual end time of the appointment, if it has started.
+   *
+   * @type {string}
+   */
+  get actualEndTime() {
+    if(this.appointmentObject.hasOwnProperty("actualEndTime")) return this.appointmentObject.actualEndTime
+    return null
+  }
+
+  /**
+   * Whether the appointment has ended or not.
+   *
+   * @type {boolean}
+   */
+  get isPast() {
+    return this.appointmentObject.hasOwnProperty("actualEndTime")
+  }
+  /**
+   * Whether the appointment has started but has not ended yet, i.e. is in progress.
+   *
+   * @type {boolean}
+   */
+  get isInProgress() {
+    return this.appointmentObject.hasOwnProperty("actualStartTime") &amp;&amp; !this.isPast
+  }
+  /**
+   * Whether the mentor has not provided feedback for the appointment yet, i.e. the appointment needs feedback.
+   *
+   * @type {boolean}
+   */
+  get needsFeedback() {
+    return this.isPast &amp;&amp; !this.appointmentObject.hasOwnProperty("mentor_notes")
+  }
+
+  /**
+   * Whether the appointment can be started at the current time, i.e. whether it's 30 minutes or less before the appointment.
+   *
+   * @type {boolean}
+   */
+  get canStart() {
+    let meetingDate = Date.parse(this.startTime)
+    let difference = meetingDate - Date.parse(new Date())
+    let diffInMinutes = difference/(1000*60)
+
+    return diffInMinutes &lt;= 30
+  }
+
+  /**
+   * Updates the Redux store with new appointment details.
+   *
+   * @param {object} newObject - An appointment JS object that must have the form passed back from the online API.
+   */
+  update(newObject) {
+    if(!Appointment.validateAppointmentObject(newObject)) {
+      throw "Appointment object invalid during update."
+      return null
+    }
+
+    this.appointmentObject = newObject
+
+    store.dispatch(updateAppointment(this.id, this))
+  }
+
+  /** Deletes this appointment from the Redux store. Doesn't mean the current Appointment object will no longer be accessible but it will not be found through `getAppointmentByID()`.*/
+  deleteSelf() {
+    store.dispatch(removeAppointment(this.id))
+  }
+
+  /**
+   * Searches the Redux store for an appointment with the passed ID and returns it.
+   *
+   * @param {string} id - The ID of the appointment to look for.
+   * @return {Appointment} The appointment with the given ID, if found.
+   */
+  static getAppointmentByID(id) {
+    return store.getState().appointments.filter(appointment => appointment.id == id)[0]
+  }
+
+  /**
+   * Stores multiple appointments into the Redux store.
+   *
+   * @param {array} appointmentObjects -  An array of appointment JS objects that must have the form passed back from the online API.
+   */
+  static hydrateAppointments(appointmentObjects) {
+    for(let i in appointmentObjects) new Appointment(appointmentObjects[i])
+  }
+
+  /**
+   * Ensures the JS appointment object has the correct properties required for Appointments.
+   *
+   * @param {object} appointmentObject - A potential appointment JS object.
+   * @return {boolean} Whether the passed appointment object is valid.
+   */
+  static validateAppointmentObject(appointmentObject) {
+    const requiredProps = ["__v", "_id", "startTime", "endTime", "meetingAddress", "number_of_extensions", "mentor", "mentee"]
+
+    for(let i in requiredProps) {
+      if(!appointmentObject.hasOwnProperty(requiredProps[i])) return false
+    }
+
+    return true
+  }
+
+  /**
+   * List of all appointments stored in the Redux store.
+   *
+   * @type {array}
+   */
+  static get allAppointments() {
+    return store.getState().appointments
+  }
+
+  /**
+   * List of all appointments in the Redux store that have not started yet.
+   *
+   * @type {array}
+   */
+  static get upcomingAppointments() {
+    return Appointment.allAppointments.filter(appointment => !appointment.isPast &amp;&amp; !appointment.isInProgress)
+  }
+
+  /**
+   * List of appointments in the Redux store that are in progress.
+   *
+   * @type {array}
+   */
+  static get inProgressAppointments() {
+    return Appointment.allAppointments.filter(appointment => appointment.isInProgress &amp;&amp; appointment.needsFeedback)
+  }
+
+  /**
+   * List of appointments in the Redux store that have ended but require feedback.
+   *
+   * @type {array}
+   */
+  static get needsFeedbackAppointments() {
+    return Appointment.allAppointments.filter(appointment => appointment.isPast &amp;&amp; appointment.needsFeedback)
+  }
+
+  /**
+   * List of appointments in the Redux store that are finished.
+   *
+   * @type {array}
+   */
+  static get pastAppointments() {
+    return Appointment.allAppointments.filter(appointment => appointment.isPast &amp;&amp; !appointment.needsFeedback)
+  }
+
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a></li><li><a href="module-BaseStyles.html">BaseStyles</a></li><li><a href="module-components_Divider.html">components/Divider</a></li><li><a href="module-components_FormQuestion.html">components/FormQuestion</a></li><li><a href="module-components_FullWidthButton.html">components/FullWidthButton</a></li><li><a href="module-components_ListSectionHeader.html">components/ListSectionHeader</a></li><li><a href="module-components_ToggleButton.html">components/ToggleButton</a></li><li><a href="module-config_routes.html">config/routes</a></li><li><a href="module-model_Actions.html">model/Actions</a></li><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Reducers.html">model/Reducers</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_Storage.html">model/Storage</a></li><li><a href="module-model_store.html">model/store</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen.html">screens/EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen.html">screens/OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li><li><a href="module-utils_dateUtils.html">utils/dateUtils</a></li></ul><h3>Classes</h3><ul><li><a href="module-App-App.html">App</a></li><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_Storage.html">model/Storage</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen-EmergencyAlertSentScreen.html">EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_LoginScreen-LoginScreen.html">LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingDetailsScreen-MeetingDetailsScreen.html">MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MeetingsScreen-MeetingsScreen.html">MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen-MenteeFeedbackScreen.html">MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen-MentorFeedbackScreen.html">MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen-OptionsScreen.html">OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen-ScheduleAppointmentScreen.html">ScheduleAppointmentScreen</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 16 2018 07:25:55 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
