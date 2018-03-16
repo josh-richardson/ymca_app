@@ -7,25 +7,7 @@ const config = require('../../config/config');
 const jwt = require('jwt-simple');
 const passport = require('passport');
 const api_utils = require('../../utils/api_utils');
-
-
-const createUser = function (value) {
-    return new Promise(function (resolve, reject) {
-        const newUser = new user();
-        newUser.email = value.email;
-        newUser.password = newUser.hashPassword(value.password);
-        newUser.firstName = value.firstName;
-        newUser.secondName = value.secondName;
-        newUser.admin = false;
-        newUser.phone = value.phone;
-        newUser.save(function (err, result) {
-            if (err) {
-                return reject(err);
-            }
-            resolve(newUser);
-        });
-    })
-};
+const mentor = require('../../models/users/mentor');
 
 
 router.post('/register', [
@@ -48,7 +30,7 @@ router.post('/register', [
         return res.status(422).json({errors: errors.mapped()});
     }
     const user = matchedData(req);
-    createUser(user).then(user => res.json(user)).catch(err => {
+    api_utils.createMentor(user).then(user => res.json(user)).catch(err => {
         res.status(500).json(config.debug ? err : {error: 'Server error occurred'});
     });
 });
@@ -63,7 +45,9 @@ router.post('/authenticate', [
         return res.status(422).json({errors: errors.mapped()});
     }
     const authReq = matchedData(req);
+
     user.findOne({email: authReq.email}).then(foundUser => {
+
         if (!foundUser || !foundUser.validPassword(authReq.password)) {
             res.status(403).json({error: "Invalid username or password"});
         } else {

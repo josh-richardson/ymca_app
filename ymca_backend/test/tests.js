@@ -7,6 +7,7 @@ let mongoose = require('mongoose');
 let www = require('../bin/www');
 const config = require('../config/config');
 let users = require('../models/user');
+let admin = require('../models/users/admin');
 let api_utils = require('../utils/api_utils');
 var should = require('should');
 var assert = require('assert');
@@ -29,6 +30,14 @@ mongoose.connect(config.db_path, {
 //region Declarations for basic tests
 let initialUserDetails = {
     email: 'joshua@richardson.tech',
+    password: 'password',
+    firstName: 'Joshua',
+    secondName: 'Richardson',
+    phone: '07450650708'
+};
+
+let extraUserDetails = {
+    email: 'joshua2@richardson.tech',
     password: 'password',
     firstName: 'Joshua',
     secondName: 'Richardson',
@@ -73,14 +82,16 @@ let deletedManagerDetails = {
     email: 'somemanager@gmail.com',
     firstName: 'Jesse',
     secondName: 'Jackson',
-    phone: '07650650801'
+    phone: '07650650801',
+    password: 'password1'
 };
 
 let initialManagerDetails = {
     email: 'someothermanager@gmail.com',
     firstName: 'Jethro',
     secondName: 'Jackson',
-    phone: '07650650801'
+    phone: '07650650801',
+    password: 'password1'
 };
 
 
@@ -89,7 +100,7 @@ let testEscalationUserDetails = {
     password: 'password12345',
     firstName: 'James',
     secondName: 'Jackson',
-    phone: '07450650708'
+    phone: '07450650708',
 };
 
 let authToken = '';
@@ -102,6 +113,8 @@ let deletedUserId = '';
 let deletedMenteeId = '';
 let deletedManagerId = '';
 let deletedMeetingId = '';
+
+let extraUserId = '';
 
 //endregion
 
@@ -133,14 +146,28 @@ describe('Test suite for API', () => {
                 .expect(200)
                 .end((err, res) => {
                     res.body.should.be.instanceOf(Object);
-                    res.body.should.have.properties('_id', 'phone', 'firstName', 'secondName', 'email', 'admin');
-                    res.body.email.should.be.eql(initialUserDetails.email);
-                    res.body.admin.should.be.eql(false);
-                    initialUserId = res.body._id;
+                    res.body.result.linkedModel.should.have.properties('_id', 'phone', 'firstName', 'secondName');
+                    res.body.result.email.should.be.eql(initialUserDetails.email);
+                    initialUserId = res.body.result._id;
                     done();
                 });
         });
 
+
+        it('should return a user object', (done) => {
+            request(www)
+                .post('/api/users/register')
+                .set('content-type', 'application/x-www-form-urlencoded')
+                .send(extraUserDetails)
+                .expect(200)
+                .end((err, res) => {
+                    res.body.should.be.instanceOf(Object);
+                    res.body.result.linkedModel.should.have.properties('_id', 'phone', 'firstName', 'secondName');
+                    res.body.result.email.should.be.eql(extraUserDetails.email);
+                    extraUserId = res.body.result._id;
+                    done();
+                });
+        });
 
         it('should return a second user object (setting up for later)', (done) => {
             request(www)
@@ -150,10 +177,9 @@ describe('Test suite for API', () => {
                 .expect(200)
                 .end((err, res) => {
                     res.body.should.be.instanceOf(Object);
-                    res.body.should.have.properties('_id', 'phone', 'firstName', 'secondName', 'email', 'admin');
-                    res.body.email.should.be.eql(deletedUserDetails.email);
-                    res.body.admin.should.be.eql(false);
-                    deletedUserId = res.body._id;
+                    res.body.result.linkedModel.should.have.properties('_id', 'phone', 'firstName', 'secondName');
+                    res.body.result.email.should.be.eql(deletedUserDetails.email);
+                    deletedUserId = res.body.result._id;
                     done();
                 });
         });
@@ -180,21 +206,27 @@ describe('Test suite for API', () => {
 
 
         //region Testing user functions
-        it('Should return an array of users', (done) => {
-            api_utils.findObjectByKey(users, 'email', userAuth.email).then(result_mentor => {
-                result_mentor.admin = true;
-                result_mentor.save(function (err, result) {
-                    if (err) throw (err);
-                    request(www)
-                        .post('/api/admin/mentors')
-                        .set('content-type', 'application/x-www-form-urlencoded')
-                        .send({'auth': authToken})
-                        .expect(200)
-                        .end((err, res) => {
-                            res.body.should.be.instanceOf(Array);
-                            res.body.length.should.be.eql(2);
-                            done();
-                        });
+        it('Should return an array of mentors', (done) => {
+            api_utils.findObjectByKey(users, 'email', initialUserDetails.email).then(result_user => {
+                let adminObject = new admin();
+                adminObject.firstName = initialUserDetails.firstName;
+                adminObject.secondName = initialUserDetails.secondName;
+                adminObject.phone = initialUserDetails.phone;
+                adminObject.save((err, result) => {
+                    result_user.linkedModel = adminObject;
+                    result_user.save((err, result) => {
+                        if (err) throw (err);
+                        request(www)
+                            .post('/api/admins/mentors')
+                            .set('content-type', 'application/x-www-form-urlencoded')
+                            .send({'auth': authToken})
+                            .expect(200)
+                            .end((err, res) => {
+                                res.body.should.be.instanceOf(Array);
+                                res.body.length.should.be.eql(2);
+                                done();
+                            });
+                    });
                 });
             });
         });
@@ -202,7 +234,7 @@ describe('Test suite for API', () => {
 
         it('should return success with user deleted', (done) => {
             request(www)
-                .post('/api/admin/mentors/delete')
+                .post('/api/admins/mentors/delete')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(
                     {
@@ -220,7 +252,7 @@ describe('Test suite for API', () => {
 
         it('Should return an array of users', (done) => {
             request(www)
-                .post('/api/admin/mentors')
+                .post('/api/admins/mentors')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send({'auth': authToken})
                 .expect(200)
@@ -234,12 +266,12 @@ describe('Test suite for API', () => {
 
         it('should return success and result with user modified', (done) => {
             request(www)
-                .post('/api/admin/mentors/edit')
+                .post('/api/admins/mentors/edit')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(
                     {
                         'auth': authToken,
-                        'id': initialUserId,
+                        'id': extraUserId,
                         'json': '{"firstName": "James"}'
                     })
                 .expect(200)
@@ -255,7 +287,7 @@ describe('Test suite for API', () => {
 
         it('Should return an array of users', (done) => {
             request(www)
-                .post('/api/admin/mentors')
+                .post('/api/admins/mentors')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send({'auth': authToken})
                 .expect(200)
@@ -272,7 +304,7 @@ describe('Test suite for API', () => {
         //region Testing mentee functions
         it('should return the new mentee object', (done) => {
             request(www)
-                .post('/api/admin/mentees/add')
+                .post('/api/admins/mentees/add')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(Object.assign({'auth': authToken}, initialMenteeDetails))
                 .expect(200)
@@ -289,7 +321,7 @@ describe('Test suite for API', () => {
 
         it('should return the new mentee object', (done) => {
             request(www)
-                .post('/api/admin/mentees/add')
+                .post('/api/admins/mentees/add')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(Object.assign({'auth': authToken}, deletedMenteeDetails))
                 .expect(200)
@@ -306,7 +338,7 @@ describe('Test suite for API', () => {
 
         it('should return an array of mentees', (done) => {
             request(www)
-                .post('/api/admin/mentees')
+                .post('/api/admins/mentees')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send({'auth': authToken})
                 .expect(200)
@@ -320,7 +352,7 @@ describe('Test suite for API', () => {
 
         it('should return success with mentee deleted', (done) => {
             request(www)
-                .post('/api/admin/mentees/delete')
+                .post('/api/admins/mentees/delete')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(
                     {
@@ -338,7 +370,7 @@ describe('Test suite for API', () => {
 
         it('should return an array of mentees', (done) => {
             request(www)
-                .post('/api/admin/mentees')
+                .post('/api/admins/mentees')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send({'auth': authToken})
                 .expect(200)
@@ -352,7 +384,7 @@ describe('Test suite for API', () => {
 
         it('should return success and result with mentee modified', (done) => {
             request(www)
-                .post('/api/admin/mentees/edit')
+                .post('/api/admins/mentees/edit')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(
                     {
@@ -369,21 +401,21 @@ describe('Test suite for API', () => {
                     done();
                 });
         });
-        //endregion
+        // endregion
 
 
         //region Testing manager functions
         it('should return the new manager object', (done) => {
             request(www)
-                .post('/api/admin/managers/add')
+                .post('/api/admins/managers/add')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(Object.assign({'auth': authToken}, initialManagerDetails))
                 .expect(200)
                 .end((err, res) => {
                     res.body.should.have.properties('success', 'result');
                     res.body.success.should.be.eql(true);
-                    res.body.result.should.have.property('firstName');
-                    res.body.result.firstName.should.be.eql('Jethro');
+                    res.body.result.linkedModel.should.have.property('firstName');
+                    res.body.result.linkedModel.firstName.should.be.eql('Jethro');
                     initialManagerId = res.body.result._id;
                     done();
                 });
@@ -392,15 +424,15 @@ describe('Test suite for API', () => {
 
         it('should return the new manager object', (done) => {
             request(www)
-                .post('/api/admin/managers/add')
+                .post('/api/admins/managers/add')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(Object.assign({'auth': authToken}, deletedManagerDetails))
                 .expect(200)
                 .end((err, res) => {
                     res.body.should.have.properties('success', 'result');
                     res.body.success.should.be.eql(true);
-                    res.body.result.should.have.property('firstName');
-                    res.body.result.firstName.should.be.eql('Jesse');
+                    res.body.result.linkedModel.should.have.property('firstName');
+                    res.body.result.linkedModel.firstName.should.be.eql('Jesse');
                     deletedManagerId = res.body.result._id;
                     done();
                 });
@@ -409,7 +441,7 @@ describe('Test suite for API', () => {
 
         it('should return an array of managers', (done) => {
             request(www)
-                .post('/api/admin/managers')
+                .post('/api/admins/managers')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send({'auth': authToken})
                 .expect(200)
@@ -423,7 +455,7 @@ describe('Test suite for API', () => {
 
         it('should return success with manager deleted', (done) => {
             request(www)
-                .post('/api/admin/managers/delete')
+                .post('/api/admins/managers/delete')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(
                     {
@@ -441,7 +473,7 @@ describe('Test suite for API', () => {
 
         it('should return an array of managers', (done) => {
             request(www)
-                .post('/api/admin/managers')
+                .post('/api/admins/managers')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send({'auth': authToken})
                 .expect(200)
@@ -455,7 +487,7 @@ describe('Test suite for API', () => {
 
         it('should return success and result with manager modified', (done) => {
             request(www)
-                .post('/api/admin/managers/edit')
+                .post('/api/admins/managers/edit')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(
                     {
@@ -477,21 +509,21 @@ describe('Test suite for API', () => {
 
         it('should return success and result with mentee linked to manager', (done) => {
             request(www)
-                .post('/api/admin/managers/assign')
+                .post('/api/admins/managers/assign')
                 .set('content-type', 'application/x-www-form-urlencoded')
                 .send(
                     {
                         'auth': authToken,
-                        'mentorEmail': initialUserDetails.email,
+                        'mentorEmail': extraUserDetails.email,
                         'managerEmail': initialManagerDetails.email
                     })
                 .expect(200)
                 .end((err, res) => {
                     res.body.should.have.properties('success', 'result');
                     res.body.success.should.be.eql(true);
-                    res.body.result.should.have.property('manager');
-                    res.body.result.manager.should.have.property('email');
-                    res.body.result.manager.email.should.eql(initialManagerDetails.email);
+                    res.body.result.linkedModel.should.have.property('manager');
+                    res.body.result.linkedModel.manager.should.have.property('email');
+                    res.body.result.linkedModel.manager.email.should.eql(initialManagerDetails.email);
                     done();
                 });
         });
@@ -511,9 +543,8 @@ describe('Test suite for API', () => {
                 .expect(200)
                 .end((err, res) => {
                     res.body.should.be.instanceOf(Object);
-                    res.body.should.have.properties('_id', 'phone', 'firstName', 'secondName', 'email', 'admin');
+                    res.body.linkedModel.should.have.properties('_id', 'phone', 'firstName', 'secondName');
                     res.body.email.should.be.eql(initialUserDetails.email);
-                    res.body.admin.should.be.eql(true);
                     initialUserId = res.body._id;
                     done();
                 });
@@ -580,6 +611,27 @@ describe('Test suite for API', () => {
                 });
         });
 
+        it('should return success and result with meeting modified', (done) => {
+            request(www)
+                .post('/api/methods/meetings/edit')
+                .set('content-type', 'application/x-www-form-urlencoded')
+                .send(
+                    {
+                        'auth': authToken,
+                        'id': initialMeetingId,
+                        'json': '{"actualStartTime": "' + (Date.now() - 4999500).toString() + '", "meetingAddress": "Some changed meeting address"}'
+                    })
+                .expect(200)
+                .end((err, res) => {
+                    // console.log("YEYEYEYEYE");
+                    // console.log(res.body);
+                    res.body.should.have.properties('success', 'result');
+                    res.body.success.should.be.eql(true);
+                    res.body.result.should.have.properties('actualStartTime', 'meetingAddress');
+                    res.body.result.meetingAddress.should.be.eql("Some changed meeting address");
+                    done();
+                });
+        });
 
         it('should return success with meeting deleted', (done) => {
             request(www)
@@ -592,25 +644,6 @@ describe('Test suite for API', () => {
                     })
                 .expect(200)
                 .end((err, res) => {
-                    it('should return success and result with meeting modified', (done) => {
-                        request(www)
-                            .post('/api/methods/meetings/edit')
-                            .set('content-type', 'application/x-www-form-urlencoded')
-                            .send(
-                                {
-                                    'auth': authToken,
-                                    'id': initialMeetingId,
-                                    'json': '{"actualStartTime": "' + (Date.now() - 4999500).toString() + '", "meetingAddress": "Some changed meeting address"}'
-                                })
-                            .expect(200)
-                            .end((err, res) => {
-                                res.body.should.have.properties('success', 'result');
-                                res.body.success.should.be.eql(true);
-                                res.body.result.should.have.properties('actualStartTime', 'meetingAddress');
-                                res.body.result.meetingAddress.should.be.eql("Some changed meeting address");
-                                done();
-                            });
-                    });
                     res.body.should.have.property('success');
                     res.body.success.should.be.eql(true);
                     done();
@@ -726,7 +759,7 @@ describe('Test suite for API', () => {
             });
             it('should return a 403', (done) => {
                 request(www)
-                    .post('/api/admin/mentees')
+                    .post('/api/admins/mentees')
                     .set('content-type', 'application/x-www-form-urlencoded')
                     .send({auth: escalationAuthToken})
                     .expect(403)

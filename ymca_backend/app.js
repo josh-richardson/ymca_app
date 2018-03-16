@@ -29,9 +29,9 @@ require('./config/passport');
 
 const index = require('./routes/index');
 const api_users = require('./routes/api/users');
-const api_methods = require('./routes/api/methods');
-const api_admin = require('./routes/api/admin');
-
+const api_methods = require('./routes/api/mentors');
+const api_admin = require('./routes/api/admins');
+const admin_interface = require('./routes/admin_interface');
 
 const app = express();
 
@@ -54,7 +54,8 @@ app.use(passport.initialize());
 app.use('/', index);
 app.use('/api/users', api_users);
 app.use('/api/methods', api_methods);
-app.use('/api/admin', api_admin);
+app.use('/api/admins', api_admin);
+app.use('/admin', admin_interface);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

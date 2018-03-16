@@ -2,8 +2,8 @@ const config = require('../config/config');
 const twilio = require('twilio');
 const client = new twilio(config.twilio_sid, config.twilio_token);
 
+//Sends an SMS message
 const sendSms = function (to, message) {
-    console.log(to);
     client.messages.create({
         body: message,
         to: to,
@@ -11,6 +11,8 @@ const sendSms = function (to, message) {
     }).then((message) => console.log(message.sid));
 };
 
+
+//Sends a voice call, not working yet.
 const sendEmergencyCall = function (to) {
     //todo: change to a self-hosted XML file
     client.api.calls
