@@ -8,7 +8,7 @@ import { BaseStyles } from '../BaseStyles';
 import { FullWidthButton } from '../components';
 import PropTypes from 'prop-types';
 import { NavigationActions } from 'react-navigation';
-import { Requests, StoreHydrator, Notifications } from '../model'
+import { Requests, StoreHydrator, Notifications, Storage } from '../model'
 
 /**
  * @class LoginScreen
@@ -29,19 +29,22 @@ export default class LoginScreen extends React.Component {
       email: "",
       password: "",
       message: "",
-    };
-
-    /** UNCOMMENT THIS FOR QUICK LOGIN **/
-    this.state = {
-      email: "bernardo_armstrong@gmail.com",
-      password: "bernardo_armstrong@gmail.com",
-      message: "",
-    };
+    }
   }
 
   /** Called when the component gets mounted. */
   componentDidMount() {
     Notifications.initialise()
+
+    Storage.getLoginEmailAddress().then(email => this.emailAddressRetrieved(email))
+  }
+
+  /**
+   * Notifies the screen that the email address was retrieved from the local storage.
+   * @param {string} email - The email address retrieved.
+   */
+  emailAddressRetrieved(email) {
+    if(email != null) this.setEmailAddress(email)
   }
 
   /** Initiates login process. */
@@ -50,6 +53,8 @@ export default class LoginScreen extends React.Component {
 
     Requests.login(this.state.email, this.state.password).then(jwt => {
       this.setState({message: "Successfully logged in. Retrieving information..."})
+
+      Storage.storeLoginEmailAddress(this.state.email)
 
       StoreHydrator.retrieveAndStoreMentorData(jwt).then(() => {
         const resetAction = NavigationActions.reset({
@@ -106,7 +111,7 @@ export default class LoginScreen extends React.Component {
 
           <Text>{this.state.message}</Text>
 
-          <TextInput style={styles.loginField} placeholder="  Email" keyboardType='email-address' onChangeText={(text) => this.setEmailAddress(text)} />
+          <TextInput style={styles.loginField} value={this.state.email} placeholder="  Email" keyboardType='email-address' onChangeText={(text) => this.setEmailAddress(text)} />
           <TextInput style={styles.loginField} placeholder="  Password" secureTextEntry={true} onChangeText={(text) => this.setPassword(text)} />
 
           <FullWidthButton

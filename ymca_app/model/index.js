@@ -7,4 +7,6 @@ import Mentor from './Mentor'
 
 import Notifications from './Notifications'
 
-export { Requests, StoreHydrator, Appointment, Mentee, Mentor, Notifications }
+import Storage from './Storage'
+
+export { Requests, StoreHydrator, Appointment, Mentee, Mentor, Notifications, Storage }
