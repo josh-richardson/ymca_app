@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: components/ToggleButton</title>
+    <title>JSDoc: Source: utils/dateUtils.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,228 +17,61 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: components/ToggleButton</h1>
+    <h1 class="page-title">Source: utils/dateUtils.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="pressed"><span class="type-signature"></span>pressed<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Called when the button is pressed and calls the `onPress` function passed as a prop.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="components_ToggleButton.js.html">components/ToggleButton.js</a>, <a href="components_ToggleButton.js.html#line11">line 11</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="render"><span class="type-signature"></span>render<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Renders the component.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="components_ToggleButton.js.html">components/ToggleButton.js</a>, <a href="components_ToggleButton.js.html#line16">line 16</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module utils/dateUtils
+ */
+
+/**
+ * Formats the passed date object to the app standard.
+ *
+ * @param {Date} date - The date object to be formatted.
+ * @return {string} The formatted date.
+ */
+let formatDate = (date) => {
+  const options = {
+    hour12: true,
+    month: "short",
+    year: "numeric",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  }
+
+  return date.toLocaleString('en-GB', options)
+}
+
+/**
+ * @return {string} The current date, formatted.
+ */
+let currentDate = () => {
+  return formatDate(new Date())
+}
+
+/**
+ * Returns the current date plus a given number of days, formatted appropriately.
+ *
+ * @param {number} days - The number of days to be added to the current date.
+ * @return {string} The current date plus a given number of days, formatted.
+ */
+let currentDatePlus = (days) => {
+  let date = new Date()
+  date.setDate(date.getDate() + days)
+  return formatDate(date)
+}
+
+export { formatDate, currentDate, currentDatePlus }
+</code></pre>
+        </article>
+    </section>
 
 
 
