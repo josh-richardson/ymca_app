@@ -4,7 +4,7 @@
       "recurse": true
   },
   "source": {
-      "include": [ "./model", "./screens", "./components" ],
+      "include": [ "./model", "./screens", "./components", "./config" ],
       "exclude": [ "./node_modules", "./android", "./ios", "./images", "./tests" ],
       "includePattern": ".+\\.js(doc|x)?$",
       "excludePattern": "(^|\\/|\\\\)_"
