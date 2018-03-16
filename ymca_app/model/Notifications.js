@@ -8,7 +8,8 @@ import PushNotification from 'react-native-push-notification'
 import { Platform } from 'react-native'
 
 /**
- * @class Static class to handle scheduling and canceling local notifications throughout the app.
+ * @class Notifications
+ * Static class to handle scheduling and canceling local notifications throughout the app.
  */
 export default class Notifications {
 

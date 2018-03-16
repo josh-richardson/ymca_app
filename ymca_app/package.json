@@ -13,7 +13,7 @@
     "ios": "react-native run-ios",
     "test": "node node_modules/jest/bin/jest.js --watch",
     "testAndQuit": "node node_modules/jest/bin/jest.js",
-    "jsdoc": "./node_modules/.bin/jsdoc ."
+    "jsdoc": "./node_modules/.bin/jsdoc -c jsdoc.config.json"
   },
   "jest": {
     "preset": "react-native",

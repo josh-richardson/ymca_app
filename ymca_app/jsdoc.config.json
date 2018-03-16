@@ -1,0 +1,12 @@
+{
+  "opts": {
+      "destination": "./jsdocs",
+      "recurse": true
+  },
+  "source": {
+      "include": [ "./model" ],
+      "exclude": [ "./node_modules", "./android", "./ios", "./images", "./tests" ],
+      "includePattern": ".+\\.js(doc|x)?$",
+      "excludePattern": "(^|\\/|\\\\)_"
+  }
+}

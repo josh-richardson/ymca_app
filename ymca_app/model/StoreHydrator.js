@@ -8,7 +8,8 @@ import Requests from './Requests'
 import { Appointment, Mentee, Mentor } from './'
 
 /**
- * @class Class that contains a single static method to be called at login in order to hydrate the appropriate Redux store with data retrieved from the online API that is relevant to the currently logged in mentor, including mentor information, their assigned mentees and their appointments.
+ * @class StoreHydrator
+ * Class that contains a single static method to be called at login in order to hydrate the appropriate Redux store with data retrieved from the online API that is relevant to the currently logged in mentor, including mentor information, their assigned mentees and their appointments.
  */
 export default class StoreHydrator {
 

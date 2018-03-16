@@ -8,7 +8,8 @@ import store from './store'
 import { setInfo } from './Actions'
 
 /**
- * @class Static singleton class representing the currently logged in mentor.
+ * @class Mentor
+ * Static singleton class representing the currently logged in mentor.
  */
 export default class Mentor {
   /**

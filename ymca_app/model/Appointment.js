@@ -9,7 +9,9 @@ import { addAppointment, removeAppointment, setAppointments, updateAppointment }
 import Mentee from './Mentee'
 
 /**
- * @class Class representing an Appointment stored in Redux.
+ * @class Appointment
+ *
+ * Class representing an Appointment stored in Redux.
  *
  * Also exposes more general functionality like getters for all appointments, past appointments, etc.
  */

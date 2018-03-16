@@ -8,7 +8,8 @@ import store from './store'
 import { addMentee, removeMentee, setMentees } from './Actions'
 
 /**
- * @class Class representing a Mentee stored in Redux.
+ * @class Mentee
+ * Class representing a Mentee stored in Redux.
  *
  * Also exposes more general functionality like getters for all mentees, etc.
  */
