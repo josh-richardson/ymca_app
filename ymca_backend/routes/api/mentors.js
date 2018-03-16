@@ -14,6 +14,11 @@ const mentee = require('../../models/mentee');
 const meeting = require('../../models/meeting');
 
 
+/*
+* Documentation for this section of the code is within Postman, located at:
+* https://documenter.getpostman.com/view/3091732/ymca/77o3fiZ#5121651f-1cf6-9bf1-faeb-3c634ccccf73
+* */
+
 router.post('/profile', passport.authenticate('jwt', {session: false}),
     function (req, res) {
         res.json(req.user);
@@ -75,7 +80,7 @@ router.post('/meetings/edit', passport.authenticate('jwt', {session: false}), [
         }
         const data = matchedData(req);
         const newObj = JSON.parse(data.json);
-        meeting.findOneAndUpdate({_id: data.id}, {$set:newObj}, {new: true}, function(err, doc){
+        meeting.findOneAndUpdate({_id: data.id}, {$set: newObj}, {new: true}, function (err, doc) {
             if (err) return res.json(err);
             res.json({success: true, result: doc})
         });
@@ -114,7 +119,6 @@ router.post('/meetings/extend', passport.authenticate('jwt', {session: false}), 
 
     }
 );
-
 
 
 router.post('/meetings/delete', passport.authenticate('jwt', {session: false}), [

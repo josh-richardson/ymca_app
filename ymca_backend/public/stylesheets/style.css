@@ -9,3 +9,8 @@
 .btn-right {
     float: right;
 }
+
+.logo-image {
+    max-width: 185px;
+    padding-top: 3px;
+}

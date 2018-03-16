@@ -13,6 +13,11 @@ const passport = require('passport');
 const api_utils = require('../../utils/api_utils');
 
 
+/*
+* Documentation for this section of the code is within Postman, located at:
+* https://documenter.getpostman.com/view/3091732/ymca/77o3fiZ#5121651f-1cf6-9bf1-faeb-3c634ccccf73
+* */
+
 function isAdmin(req, res, next) {
     if (req.user.linkedModel.__t === "Admin")
         return next();

@@ -30,9 +30,9 @@ router.get('/', function (req, res, next) {
     res.json({message: 'Welcome to our API'});
 });
 
-// router.get('/reset_password', function (req, res, next) {
-//     res.render("reset_password", {})
-// });
+router.get('/reset_password', function (req, res, next) {
+    res.render("reset_password", {})
+});
 
 /**
  * Sends a reset password email to a given email address.
@@ -47,16 +47,17 @@ router.post('/send_reset_email', [check('email').isEmail().withMessage('Invalid 
     const data = matchedData(req);
     api_utils.findObjectByKey(user, 'email', data.email).then(result_user => {
         var actualCode = crypto.randomBytes(16).toString('hex').substring(0, 8);
-        memcached.add(result_user.email, actualCode, 1800, function (err) {
-            if (err === null) {
+        memcached.set(result_user.email, actualCode, 1800, function (err) {
+            if (err === null || err === undefined) {
                 sendgrid.sendEmail(data.email, "YMCA Password Reset", "Your YMCA password reset code is: " + actualCode + ". It will be valid for the next 30 minutes.");
+                res.json({progressed: true});
+            }else {
+                res.json({progressed: false});
             }
         });
-
     }).catch(ex => {
-        console.log(ex);
+        res.json({progressed: false});
     });
-    res.json({progressed: true});
 });
 
 /**
@@ -83,14 +84,18 @@ router.post('/reset_password', [
             } else {
                 if (data.code === memcached_data) {
                     result_user.password = result_user.hashPassword(data.password);
-                    res.json({success: true})
-                } else {
+                    result_user.save(function (err, result) {
+                        if (err) res.json(err);
+                        memcached.del(result_user.email, (err) => {
+                            if (err !== undefined) { console.log (err) }
+                        });
+                        res.json({success: true, result: result})
+                    });
+                    } else {
                     res.json({success: false})
                 }
             }
-
         });
-
     }).catch(() => {
         res.json({success: false})
     });
