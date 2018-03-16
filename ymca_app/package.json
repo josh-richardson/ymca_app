@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "babel-preset-react-native-stage-0": "^1.0.1",
+    "jsdoc": "^3.5.5",
     "react-test-renderer": "16.0.0-beta.5"
   },
   "scripts": {
@@ -11,7 +12,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "test": "node node_modules/jest/bin/jest.js --watch",
-    "testAndQuit": "node node_modules/jest/bin/jest.js"
+    "testAndQuit": "node node_modules/jest/bin/jest.js",
+    "jsdoc": "./node_modules/.bin/jsdoc ."
   },
   "jest": {
     "preset": "react-native",
