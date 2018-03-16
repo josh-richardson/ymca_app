@@ -1,7 +1,34 @@
 doctype html
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+    head
+        title= title
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel='stylesheet', href='/stylesheets/materialize.min.css')
+        link(rel='stylesheet', href='/stylesheets/materialize.min.css')
+        script(type='text/javascript' src='/javascripts/jquery.min.js')
+        script(type='text/javascript' src='/javascripts/materialize.min.js')
+        link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+        link(href='https://fonts.googleapis.com/css?family=Montserrat', rel='stylesheet')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        meta(name='referrer', content='no-referrer')
+    body
+        nav.grey.darken-2(role='navigation')
+            .nav-wrapper.container
+                a(href="/")
+                    img.logo-image(src="/img/intellimine.png")
+                a#logo-container.brand-logo(href='/', data-dynamite-selected='true') !{brandName}
+                ul#nav-mobile.right.hide-on-med-and-down
+                    li
+                        a(href='#') Home
+                ul#navMobile.side-nav
+                    li
+                        a(href='/') Home
+
+                a#mobileNavButton.button-collapse(href='#', data-activates='navMobile')
+                    i.material-icons menu
+        main
+            noscript
+                div.red.noscript
+                    p.center-align We don't always like JavaScript either, but to use this website it needs to be enabled.
+
+            block content
