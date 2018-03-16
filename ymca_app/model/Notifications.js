@@ -1,8 +1,14 @@
 import PushNotification from 'react-native-push-notification'
 import { Platform } from 'react-native'
 
+/**
+ * Static class to handle scheduling and canceling local notifications throughout the app.
+ */
 export default class Notifications {
 
+  /**
+   * Initialises the notification system at the start of the app. This has to be called at the start of the app to allow notifications to be handled.
+   */
   static initialise() {
     PushNotification.configure({
       onNotification: function(notification) {
@@ -11,20 +17,53 @@ export default class Notifications {
     })
   }
 
+  /** @return {string} Unique identifier for notifications related to starting meetings. To be used as a notification type. */
   static get meetingStart() { return "MeetingStart" }
+  /** @return {string} Unique identifier for notifications related to ending meetings. To be used as a notification type. */
   static get meetingEnd() { return "MeetingEnd" }
+  /** @return {string} Unique identifier for notifications related to giving feedback to meetings. To be used as a notification type. */
   static get meetingFeedback() { return "MeetingFeedback" }
 
+  /**
+   * Generates appropriate ID for a meeting start notification with the given meeting ID.
+   *
+   * @param {string} id - The ID of the meeting associated with the notification.
+   *
+   * @return {string} Unique identifier for this notification.
+   */
   static nameForMeetingStart(id) {
     return `${Notifications.meetingStart}${id}`
   }
+  /**
+   * Generates appropriate ID for a meeting end notification with the given meeting ID.
+   *
+   * @param {string} id - The ID of the meeting associated with the notification.
+   *
+   * @return {string} Unique identifier for this notification.
+   */
   static nameForMeetingEnd(id) {
     return `${Notifications.meetingEnd}${id}`
   }
+  /**
+   * Generates appropriate ID for a meeting feedback notification with the given meeting ID.
+   *
+   * @param {string} id - The ID of the meeting associated with the notification.
+   *
+   * @return {string} Unique identifier for this notification.
+   */
   static nameForMeetingFeedback(id) {
     return `${Notifications.meetingFeedback}${id}`
   }
 
+  /**
+   * Schedules a notification with the given details.
+   *
+   * @param {string} title - The title that the notfication will have (only for Android).
+   * @param {string} message - The message to be displayed in the notification.
+   * @param {string} date - The date and time to send the notification.
+   * @param {string} type - A string representing the type of the notification as one of "MeetingStart", "MeetingEnd" or "MeetingFeedback".
+   * @param {string} id - The ID of the meeting associated with the notification.
+   */
   static schedule(title, message, date, type, id) {
     PushNotification.localNotificationSchedule({
       id: mapIDStringToInt(`${type}${id}`),
@@ -35,12 +74,22 @@ export default class Notifications {
       userInfo: {id: mapIDStringToInt(`${type}${id}`)}
     })
   }
+  /**
+   * Cancels a notifcation that has the given ID.
+   *
+   * @param {string} notificationID - The ID of the notification to cancel.
+   */
   static cancel(notificationID) {
     PushNotification.cancelLocalNotifications({
       id: mapIDStringToInt(notificationID)
     })
   }
 
+  /**
+   * Schedules a notification for the start of a meeting.
+   *
+   * @param {Meeting} meeting - The Meeting object representing the meeting to be started.
+   */
   static scheduleStart(meeting) {
     Notifications.schedule(
       "Meeting",
@@ -50,6 +99,11 @@ export default class Notifications {
       meeting.id
     )
   }
+  /**
+   * Schedules a notification for the end of a meeting.
+   *
+   * @param {Meeting} meeting - The Meeting object representing the meeting to be ended.
+   */
   static scheduleEnd(meeting) {
     Notifications.schedule(
       "Meeting Ending",
@@ -59,6 +113,11 @@ export default class Notifications {
       meeting.id
     )
   }
+  /**
+   * Schedules a notification for the giving feedback to a meeting.
+   *
+   * @param {Meeting} meeting - The Meeting object representing the meeting to be given feedback.
+   */
   static scheduleFeedback(meeting) {
     Notifications.schedule(
       "Meeting",
@@ -69,47 +128,99 @@ export default class Notifications {
     )
   }
 
+  /**
+   * Cancels a start meeting notification, if it is scheduled.
+   *
+   * @param {string} meetingID - The ID of the meeting associated with the notification.
+   */
   static cancelStart(meetingID) { Notifications.cancel(Notifications.nameForMeetingStart(meetingID)) }
+  /**
+   * Cancels an end meeting notification, if it is scheduled.
+   *
+   * @param {string} meetingID - The ID of the meeting associated with the notification.
+   */
   static cancelEnd(meetingID) { Notifications.cancel(Notifications.nameForMeetingEnd(meetingID)) }
+  /**
+   * Cancels a give feedback to meeting notification, if it is scheduled.
+   *
+   * @param {string} meetingID - The ID of the meeting associated with the notification.
+   */
   static cancelFeedback(meetingID) { Notifications.cancel(Notifications.nameForMeetingFeedback(meetingID)) }
 
+  /**
+   * Notifies the notifications system that a meeting was created, so that it would arrange the appropriate notifications.
+   *
+   * @param {Meeting} meeting - The meeting that was created.
+   */
   static meetingScheduled(meeting) {
     Notifications.cancelStart(meeting.id)
     Notifications.scheduleStart(meeting)
   }
 
+  /**
+   * Notifies the notifications system that a meeting was deleted, so that it would cancel the appropriate notifications.
+   *
+   * @param {Meeting} meeting - The meeting that was deleted.
+   */
   static meetingDeleted(meeting) {
     Notifications.cancelStart(meeting.id)
     Notifications.cancelEnd(meeting.id)
     Notifications.cancelFeedback(meeting.id)
   }
 
+  /**
+   * Notifies the notifications system that a meeting was started, so that it would arrange the appropriate notifications.
+   *
+   * @param {Meeting} meeting - The meeting that was started.
+   */
   static meetingStarted(meeting) {
     Notifications.cancelStart(meeting.id)
     Notifications.cancelEnd(meeting.id)
     Notifications.scheduleEnd(meeting)
   }
 
+  /**
+   * Notifies the notifications system that a meeting was extended, so that it would arrange the appropriate notifications.
+   *
+   * @param {Meeting} meeting - The meeting that was extended.
+   */
   static meetingExtended(meeting) {
     Notifications.cancelEnd(meeting.id)
     Notifications.scheduleEnd(meeting)
   }
 
+  /**
+   * Notifies the notifications system that a meeting was ended, so that it would arrange the appropriate notifications.
+   *
+   * @param {Meeting} meeting - The meeting that was ended.
+   */
   static meetingEnded(meeting) {
     Notifications.cancelEnd(meeting.id)
     Notifications.cancelFeedback(meeting.id)
     Notifications.scheduleFeedback(meeting)
   }
 
+  /**
+   * Notifies the notifications system that mentor feedback was provided for a meeting, so that it would cancel the appropriate notifications.
+   *
+   * @param {Meeting} meeting - The meeting for which feedback was provided.
+   */
   static feedbackProvided(meeting) {
     Notifications.cancelFeedback(meeting.id)
   }
 
 }
 
+/**
+ * Notifications on Android can only take strings that contain only numbers as IDs so this maps the notification IDs created by the `Notification` class to unique numbers.
+ *
+ * @param {string} id - The ID of the notification that is to be converted to a number.
+ *
+ * @return {string} A number-only string uniquely mapped from the provided ID, suitable to be used a notification ID on Android.
+ */
 function mapIDStringToInt(id) {
   if(Platform.OS === 'ios') return id
-  
+
   return id.split('').reduce((a,b) => {
     a = ((a << 5) - a) + b.charCodeAt(0)
     return Math.abs(a & a)
