@@ -5,8 +5,7 @@
  */
 
 /**
- *  Static class that has a set of functions to send requests to the API.
- *
+ *  @class Static class that has a set of functions to send requests to the API.
  */
 export default class Requests {
 

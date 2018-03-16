@@ -8,7 +8,7 @@ import store from './store'
 import { setInfo } from './Actions'
 
 /**
- * Static singleton class representing the currently logged in mentor.
+ * @class Static singleton class representing the currently logged in mentor.
  */
 export default class Mentor {
   /**
@@ -83,7 +83,7 @@ export default class Mentor {
     return Mentor.getInfoObject().phone
   }
   /**
-   * The JSON Web Token used for requests authentication of the currently logged in mentor. 
+   * The JSON Web Token used for requests authentication of the currently logged in mentor.
    *
    * @type {string}
    */
