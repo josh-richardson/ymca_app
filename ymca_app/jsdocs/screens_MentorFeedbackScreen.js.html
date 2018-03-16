@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/MentorFeedbackScreen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/MentorFeedbackScreen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module screens/MentorFeedbackScreen
+ */
+
+import React from 'react';
+import { StyleSheet, Text, View, Image, FlatList, ScrollView, TextInput, Alert } from 'react-native';
+import { BaseStyles } from '../BaseStyles'
+import { List, ListItem, Avatar, Button } from 'react-native-elements'
+import { FullWidthButton, FormQuestion } from '../components'
+import { Requests, Mentor, Mentee, Appointment, Notifications } from '../model'
+
+/**
+ * @class MentorFeedbackScreen
+ * @extends React.Component
+ *
+ * React component for the mentor feedback screen. Gets displayed after a meeting ends when the mentor presses the feedback button.
+ */
+export default class MentorFeedbackScreen extends React.Component {
+
+  /** Specifies navigation options for the current screen. */
+  static navigationOptions = ({navigation}) => ({
+      title: `Mentor Feedback`
+  });
+
+  /**
+   * Sets appropriate state for the screen.
+   * @param {object} props - Props passed to the screen.
+   */
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      meeting: props.navigation.state.params.meeting,
+
+      response1: "",
+      response2: "",
+      response3: "",
+      response4: "",
+      response5: "",
+    }
+  }
+
+  /** Sends the mentor's feedback and goes back to the previous screen. */
+  doneButtonPressed() {
+    let mentorFeedback = JSON.stringify({q1: this.state.response1, q2: this.state.response2, q3: this.state.response3, q4: this.state.response4, q5: this.state.response5})
+    Requests.sendMentorFeedback(Mentor.jwt, this.state.meeting.id, mentorFeedback).then(response => {
+      this.state.meeting.update(response.result)
+
+      Notifications.feedbackProvided(this.state.meeting)
+
+      this.props.navigation.goBack()
+    })
+  }
+
+  /** Renders the component. */
+  render() {
+    return(
+      &lt;View style={BaseStyles.container}>
+        &lt;ScrollView>
+          &lt;FormQuestion
+            question={"How was the atmosphere in the home/with the family?"}
+            placeholder={"i.e. stressed, relaxed, did parents voice any concerns?"}
+            onChangeText={(text) => {this.setState({response1: text})}}
+          />
+          &lt;FormQuestion
+            question={"How did the activity go?"}
+            placeholder={"i.e. why did you choose this activity, any behavioural issues, did young person enjoy activity?"}
+            onChangeText={(text) => {this.setState({response2: text})}}
+          />
+          &lt;FormQuestion
+            question={"How do you feel the young person is progressing?"}
+            placeholder={"i.e. is communication improving, are they working torwards goals, has self-esteem proved?"}
+            onChangeText={(text) => {this.setState({response3: text})}}
+          />
+          &lt;FormQuestion
+            question={"Is there anything that the young person feels they need to improve on?"}
+            placeholder={"i.e. barriers to reaching goals, action points for Programme Manager?"}
+            onChangeText={(text) => {this.setState({response4: text})}}
+          />
+          &lt;FormQuestion
+            question={"Is there anything else you would like to record?"}
+            placeholder={"i.e. any cause for concern, any accidents/incidents, comments or observations?"}
+            onChangeText={(text) => {this.setState({response5: text})}}
+          />
+
+          &lt;View style={BaseStyles.centerChildren}>
+            &lt;FullWidthButton
+              onPress={() => this.doneButtonPressed()}
+              style={{marginTop: '2%', marginBottom: '2%'}}
+              backgroundColor='#0075ff'
+              title="Done"
+			  iconName='check'
+            />
+          &lt;/View>
+        &lt;/ScrollView>
+      &lt;/View>
+    )
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-components_Divider.html">components/Divider</a></li><li><a href="module-components_FormQuestion.html">components/FormQuestion</a></li><li><a href="module-components_FullWidthButton.html">components/FullWidthButton</a></li><li><a href="module-components_ListSectionHeader.html">components/ListSectionHeader</a></li><li><a href="module-components_ToggleButton.html">components/ToggleButton</a></li><li><a href="module-model_Actions.html">model/Actions</a></li><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Reducers.html">model/Reducers</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen.html">screens/EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen.html">screens/OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li></ul><h3>Classes</h3><ul><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen-EmergencyAlertSentScreen.html">EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_LoginScreen-LoginScreen.html">LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingDetailsScreen-MeetingDetailsScreen.html">MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MeetingsScreen-MeetingsScreen.html">MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen-MenteeFeedbackScreen.html">MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen-MentorFeedbackScreen.html">MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen-OptionsScreen.html">OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen-ScheduleAppointmentScreen.html">ScheduleAppointmentScreen</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 16 2018 05:10:54 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,3 +1,7 @@
+/**
+ * @module screens/ScheduleAppointmentScreen
+ */
+
 import React from 'react'
 import { Platform, StyleSheet, ScrollView, Text, View, Image, FlatList, Picker, Alert, TextInput, Slider } from 'react-native'
 import { BaseStyles } from '../BaseStyles'
@@ -7,11 +11,23 @@ import { currentDate, currentDatePlus, formatDate } from '../utils'
 import { Divider, FullWidthButton } from '../components'
 import { Mentee, Appointment, Mentor, Requests, Notifications } from '../model'
 
+/**
+ * @class ScheduleAppointmentScreen
+ * @extends React.Component
+ *
+ * React component for the schedule appointment screen. Gets displayed when the mentor needs to schedule or update an appointment.
+ */
 export default class ScheduleAppointmentScreen extends React.Component {
+
+  /** Specifies navigation options for the current screen. */
   static navigationOptions = {
     title: 'Schedule New Appointment',
   };
 
+  /**
+   * Sets appropriate state for the screen.
+   * @param {object} props - Props passed to the screen.
+   */
   constructor(props) {
     super(props)
 
@@ -40,10 +56,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
     }
   }
 
-  componentDidMount() {
-
-  }
-
+  /** Initiates the schedule appointment request. */
   scheduleAppointment() {
     if(this.state.place == "") {
       Alert.alert("Meeting location", "Please specify a place to meet!")
@@ -99,6 +112,7 @@ export default class ScheduleAppointmentScreen extends React.Component {
     this.setState({datetime})
   }
 
+  /** Renders the component. */
   render() {
     return(
       <View style={[BaseStyles.container, BaseStyles.centerChildrenHorizontally]}>
@@ -155,10 +169,4 @@ export default class ScheduleAppointmentScreen extends React.Component {
       </View>
     )
   }
-
-
-
-  styles = StyleSheet.create({
-
-  });
 }

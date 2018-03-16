@@ -1,7 +1,13 @@
+/**
+ * @module components/FormQuestion
+ */
+
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 
 export default class FormQuestion extends React.Component {
+
+  /** Renders the component. */
   render() {
     const textBoxStyle = {
       width: '90%',

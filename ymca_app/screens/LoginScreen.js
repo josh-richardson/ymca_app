@@ -1,3 +1,7 @@
+/**
+ * @module screens/LoginScreen
+ */
+
 import React from 'react';
 import { StyleSheet, Text, View, Button, Image, TextInput, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles';
@@ -6,7 +10,18 @@ import PropTypes from 'prop-types';
 import { NavigationActions } from 'react-navigation';
 import { Requests, StoreHydrator, Notifications } from '../model'
 
+/**
+ * @class LoginScreen
+ * @extends React.Component
+ *
+ * React component for the login screen. Gets displayed initially when the app launches.
+ */
 export default class LoginScreen extends React.Component {
+
+  /**
+   * Sets appropriate state for the screen.
+   * @param {object} props - Props passed to the screen.
+   */
   constructor(props) {
     super(props);
 
@@ -24,10 +39,12 @@ export default class LoginScreen extends React.Component {
     };
   }
 
+  /** Called when the component gets mounted. */
   componentDidMount() {
     Notifications.initialise()
   }
 
+  /** Initiates login process. */
   loginButtonPressed() {
     this.setState({message: "Logging in..."})
 
@@ -55,17 +72,27 @@ export default class LoginScreen extends React.Component {
     })
   }
 
+  /**
+   * Sets the email address in the screen state.
+   * @param {string} email - The email typed in.
+   */
   setEmailAddress(email) {
     this.setState({email: email})
   }
+  /**
+   * Sets the password in the screen state.
+   * @param {string} password - The password typed in.
+   */
   setPassword(password) {
     this.setState({password: password})
   }
 
+  /** Specifies navigation options for the current screen. */
   static navigationOptions = {
     title: 'YMCA Mentor Login',
   };
 
+  /** Renders the component. */
   render() {
     const styles = this.styles
 
@@ -95,6 +122,7 @@ export default class LoginScreen extends React.Component {
     )
   }
 
+  /** Specifies styles used in the current component. */
   styles = StyleSheet.create({
     loginField: {
       width: '60%',

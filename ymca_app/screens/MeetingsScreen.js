@@ -1,3 +1,7 @@
+/**
+ * @module screens/MeetingsScreen
+ */
+
 import React from 'react';
 import { Platform, StyleSheet, Text, View, Image, FlatList, Alert, ScrollView, Button } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
@@ -6,13 +10,25 @@ import { formatDate } from '../utils'
 import { ListSectionHeader } from '../components'
 import { Appointment, Mentee } from '../model'
 
+/**
+ * @class MeetingsScreen
+ * @extends React.Component
+ *
+ * React component for the meetings screen. Acts as the main screen after login and displays appointments relevant to the mentor.
+ */
 export default class MeetingsScreen extends React.Component {
+
+  /** Specifies navigation options for the current screen. */
   static navigationOptions = ({navigation}) => ({
     title: Platform.OS === 'android' ? '  Your Meetings' : 'Your Meetings',
     headerRight: <Button style={{marginRight:10}} title="Schedule New" onPress={() => navigation.state.params.currentScreen.scheduleAppointmentPressed()} />,
     headerLeft: <Button style={{marginLeft:10}} title="Options" onPress={() => navigation.state.params.currentScreen.optionsPressed()} />
   })
 
+  /**
+   * Sets appropriate state for the screen.
+   * @param {object} props - Props passed to the screen.
+   */
   constructor(props) {
     super(props)
 
@@ -24,20 +40,24 @@ export default class MeetingsScreen extends React.Component {
     }
   }
 
+  /** Called before the component gets mounted. */
   componentWillMount() {
     this.props.navigation.setParams({
       currentScreen: this,
     })
   }
 
+  /** Called when the component gets mounted. */
   componentDidMount() {
     this.focusListener = this.props.navigation.addListener('didFocus', () => this.screenDidFocus())
   }
 
+  /** Called before the component gets unmounted. */
   componentWillUnmount() {
     this.focusListener.remove()
   }
 
+  /** Called whenever the screen is displayed or returned to. */
   screenDidFocus() {
     this.setState({
       upcomingMeetings: Appointment.upcomingAppointments,
@@ -47,19 +67,30 @@ export default class MeetingsScreen extends React.Component {
     })
   }
 
+  /** Navigates to the schedule appointment screen. */
   scheduleAppointmentPressed() {
     this.props.navigation.navigate("ScheduleAppointment", {})
   }
 
+  /** Navigates to the options screen. */
   optionsPressed() {
     this.props.navigation.navigate("Options")
   }
 
+  /**
+   * Displays the meeting details screen for the meeting with the given ID.
+   * @param {string} meetingID - The ID of the meeting the details of which are to be displayed.
+   */
   showMeetingDetails(meetingID) {
     this.props.navigation.navigate('MeetingDetails', {meetingID})
   }
 
-  renderItem(appointment) {
+  /**
+   * Renders an appointment item appropriately such that it foes in the list.
+   * @param {Appointment} appointment - The appointment to render.
+   * @return {ListItem} A ListItem component with the appropriate details about the appointment.
+   */
+   renderItem(appointment) {
 
     const mentee = appointment.mentee
 
@@ -79,6 +110,7 @@ export default class MeetingsScreen extends React.Component {
     )
   }
 
+  /** Renders the component. */
   render() {
     return(
       <ScrollView>
@@ -113,6 +145,7 @@ export default class MeetingsScreen extends React.Component {
     )
   }
 
+  /** Specifies styles used in the current component. */
   styles = StyleSheet.create({
     container: {
       flex: 1,

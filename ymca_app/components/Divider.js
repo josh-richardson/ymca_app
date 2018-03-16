@@ -1,7 +1,13 @@
+/**
+ * @module components/Divider
+ */
+
 import React from 'react';
 import { View } from 'react-native';
 
 export default class Divider extends React.Component {
+
+  /** Renders the component. */
   render() {
     const style = {
       backgroundColor: this.props.color || 'gray',

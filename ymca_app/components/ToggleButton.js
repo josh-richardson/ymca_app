@@ -1,16 +1,18 @@
+/**
+ * @module components/ToggleButton
+ */
+
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 export default class ToggleButton extends React.Component {
-  constructor() {
-    super()
-  }
 
+  /** Called when the button is pressed and calls the `onPress` function passed as a prop. */
   pressed() {
     if(this.props.onPress) this.props.onPress()
-    else console.log("WARNING: onPress for ToggleButton is not set.")
   }
 
+  /** Renders the component. */
   render() {
     return(
     <TouchableOpacity

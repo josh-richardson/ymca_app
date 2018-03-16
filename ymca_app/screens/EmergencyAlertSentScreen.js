@@ -1,3 +1,7 @@
+/**
+ * @module screens/EmergencyAlertSentScreen
+ */
+
 import React from 'react';
 import { StyleSheet, Text, View, Button, Image, TextInput, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles';
@@ -6,25 +10,25 @@ import PropTypes from 'prop-types';
 
 import { Mentor, Requests } from '../model'
 
+/**
+ * @class EmergencyAlertSentScreen
+ * @extends React.Component
+ *
+ * React component for the emergency alert sent screen. Gets displayed then sends the emergency signal.
+ */
 export default class EmergencyAlertSentScreen extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
-  static navigationOptions = {
-
-  };
-
+  /** Called when the component gets mounted. */
   componentDidMount() {
     return Requests.sendEmergency(Mentor.jwt)
   }
 
+  /** Goes back to the previous screen. */
   backButtonPressed() {
-    const { goBack } = this.props.navigation;
-
-    goBack()
+    this.props.navigation.goBack()
   }
 
+  /** Renders the component. */
   render() {
     return(
       <View style={[BaseStyles.container, BaseStyles.centerChildren, {backgroundColor:'red'}]}>
@@ -44,8 +48,4 @@ export default class EmergencyAlertSentScreen extends React.Component {
       </View>
     )
   }
-
-  styles = StyleSheet.create({
-
-  });
 }

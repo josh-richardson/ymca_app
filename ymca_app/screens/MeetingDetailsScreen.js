@@ -1,3 +1,7 @@
+/**
+ * @module screens/MeetingDetailsScreen
+ */
+
 import React from 'react';
 import { StyleSheet, ScrollView, Text, View, Image, FlatList, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
@@ -6,7 +10,15 @@ import { FullWidthButton, Divider } from '../components'
 import { formatDate } from '../utils'
 import { Requests, Appointment, Mentee, Mentor, Notifications } from '../model'
 
+/**
+ * @class MeetingDetailsScreen
+ * @extends React.Component
+ *
+ * React component for the meeting details screen. Gets displayed when a meeting is selected from the meetings screen.
+ */
 export default class MeetingDetailsScreen extends React.Component {
+
+  /** Specifies navigation options for the current screen. */
   static navigationOptions = ({navigation}) => {
     const meeting = Appointment.getAppointmentByID(navigation.state.params.meetingID)
     const mentee = meeting.mentee
@@ -16,6 +28,10 @@ export default class MeetingDetailsScreen extends React.Component {
     }
   }
 
+  /**
+   * Sets appropriate state for the screen.
+   * @param {object} props - Props passed to the screen.
+   */
   constructor(props) {
     super(props)
 
@@ -24,18 +40,22 @@ export default class MeetingDetailsScreen extends React.Component {
     }
   }
 
+  /** Called when the component gets mounted. */
   componentDidMount() {
     this.focusListener = this.props.navigation.addListener('didFocus', () => this.screenDidFocus())
   }
 
+  /** Called before the component gets unmounted. */
   componentWillUnmount() {
     this.focusListener.remove()
   }
 
+  /** Called whenever the screen is displayed or returned to. */
   screenDidFocus() {
     this.setState({ meeting: Appointment.getAppointmentByID(this.state.meeting.id) })
   }
 
+  /** Sends a start meeting request for the current meeting. */
   startMeeting() {
     Requests.startMeeting(Mentor.jwt, this.state.meeting.id).then(response => {
       if(response.success) {
@@ -49,9 +69,11 @@ export default class MeetingDetailsScreen extends React.Component {
       }
     })
   }
+  /** Navigates to the schedule appointment screen passing the current meeting so it can be updated. */
   changeMeeting() {
     this.props.navigation.navigate("ScheduleAppointment", {meeting: this.state.meeting})
   }
+  /** Sends an extend meeting request for the current meeting. */
   extendMeeting() {
     Requests.extendMeeting(Mentor.jwt, this.state.meeting.id).then(response => {
       if(response.success) {
@@ -68,6 +90,7 @@ export default class MeetingDetailsScreen extends React.Component {
     })
   }
 
+  /** Prompts the mentor to confirm ending of this meeting. */
   askToEndMeeting() {
     let mentee = this.state.meeting.mentee
 
@@ -81,6 +104,7 @@ export default class MeetingDetailsScreen extends React.Component {
     )
   }
 
+  /** Sends the request for ending the current meeting. */
   endMeeting() {
     Requests.endMeeting(Mentor.jwt, this.state.meeting.id).then(response => {
       if(response.success) {
@@ -94,6 +118,7 @@ export default class MeetingDetailsScreen extends React.Component {
       }
     })
   }
+  /** Prompts the mentor to confirm canceling the meeting. */
   cancelMeeting() {
     // show alert
     Alert.alert(
@@ -105,6 +130,7 @@ export default class MeetingDetailsScreen extends React.Component {
       ]
     )
   }
+  /** Sends a delete meeting request for the current meeting. */
   sendDeleteRequest() {
     Requests.deleteMeeting(Mentor.jwt, this.state.meeting.id).then(response => {
       if(response.success) {
@@ -117,14 +143,21 @@ export default class MeetingDetailsScreen extends React.Component {
     })
   }
 
+  /** Navigates to the mentor feedback screen and passes the current meeting. */
   giveMentorFeedback() {
     this.props.navigation.navigate('MentorFeedback', {meeting: this.state.meeting})
   }
 
+  /** Navigates to the emergency screen which sends an emergency request to the server. */
   emergency() {
     this.props.navigation.navigate('EmergencyAlertSent')
   }
 
+  /**
+   * Gets called in case the current meeting is in progress and returns the appropriate UI.
+   *
+   * @return {View} A view that represents the state of the screen in case the meeting is in progress.
+   */
   renderMeetingStarted() {
     return (
       <View>
@@ -155,12 +188,22 @@ export default class MeetingDetailsScreen extends React.Component {
     )
   }
 
+  /**
+   * Gets called in case the meeting cannot be started yet and returns the appropriate UI.
+   *
+   * @return {View} A view that represents the state of the screen in case the meeting cannot be started.
+   */
   renderCantStartMeetingMessage() {
     return (
       <Text style={{textAlign:'center', fontSize:16, marginTop:'5%'}} numberOfLines={4} multiline={true}>You will be able to start the meeting up to half an hour before the scheduled time.</Text>
     )
   }
 
+  /**
+   * Gets called in case the current meeting is not started and returns the appropriate UI.
+   *
+   * @return {View} A view that represents the state of the screen in case the meeting is not started.
+   */
   renderMeetingNotStarted() {
     return (
       <View style={{marginTop: this.state.meeting.canStart ? '7%' : '2%'}}>
@@ -188,6 +231,11 @@ export default class MeetingDetailsScreen extends React.Component {
     )
   }
 
+  /**
+   * Gets called in case the meeting has ended and returns the appropriate UI.
+   *
+   * @return {View} A view that represents the state of the screen in case the meeting has ended.
+   */
   renderMeetingEnded() {
     return (
       <View style={{marginTop: '5%'}}>
@@ -195,13 +243,14 @@ export default class MeetingDetailsScreen extends React.Component {
           onPress={() => {this.giveMentorFeedback()}}
           backgroundColor='#0075ff'
           title="Give Feedback"
-          iconName='message-text' // TODO: Change this
+          iconName='message-text'
         />}
         <Text style={{marginTop: '3%', fontWeight: 'bold', textAlign:'center', fontSize:16}}>{!this.state.meeting.needsFeedback ? "Meeting is over! Thanks for giving feedback." : "Meeting is over! Please give feedback."}</Text>
       </View>
     )
   }
 
+  /** Renders the component. */
   render() {
     const appointment = this.state.meeting
     const mentee = appointment.mentee
@@ -236,8 +285,4 @@ export default class MeetingDetailsScreen extends React.Component {
       </View>
     )
   }
-
-  styles = StyleSheet.create({
-
-  });
 }

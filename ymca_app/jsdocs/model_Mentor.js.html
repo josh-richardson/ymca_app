@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: model/Mentor.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: model/Mentor.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ *  Module for the Mentor class.
+ *
+ * @module model/Mentor
+ */
+
+import store from './store'
+import { setInfo } from './Actions'
+
+/**
+ * @class Mentor
+ * Static singleton class representing the currently logged in mentor.
+ */
+export default class Mentor {
+  /**
+   * Sets the info of the logged in mentor in the Redux store.
+   *
+   * @param {object} info - A mentor info JS object that must have the form passed back from the online API.
+   * @param {string} jwt - The JSON Web Token used for requests authentication. This is sent back from the API during the login process.
+   */
+  static setInfo(info, jwt) {
+    store.dispatch(setInfo({...info, jwt}))
+  }
+
+  /**
+   * Retrieves the currently stored mentor info object from the Redux store.
+   *
+   * @return {object} The mentor info object.
+   */
+  static getInfoObject() {
+    if(store.getState().mentorInfo != {}) return store.getState().mentorInfo
+    else {
+      throw "No mentor information was set."
+      return null
+    }
+  }
+
+  /**
+   * The ID of the currently logged in mentor.
+   *
+   * @type {string}
+   */
+  static get id() {
+    return Mentor.getInfoObject()._id
+  }
+  /**
+   * The email of the currently logged in mentor.
+   *
+   * @type {string}
+   */
+  static get email() {
+    return Mentor.getInfoObject().email
+  }
+  /**
+   * The first name of the currently logged in mentor.
+   *
+   * @type {string}
+   */
+  static get firstName() {
+    return Mentor.getInfoObject().firstName
+  }
+  /**
+   * The second name of the currently logged in mentor.
+   *
+   * @type {string}
+   */
+  static get secondName() {
+    return Mentor.getInfoObject().secondName
+  }
+  /**
+   * The full name of the currently logged in mentor.
+   *
+   * @type {string}
+   */
+  static get name() {
+    return `${Mentor.firstName} ${Mentor.secondName}`
+  }
+  /**
+   * The phone number of the currently logged in mentor.
+   *
+   * @type {string}
+   */
+  static get phone() {
+    return Mentor.getInfoObject().phone
+  }
+  /**
+   * The JSON Web Token used for requests authentication of the currently logged in mentor.
+   *
+   * @type {string}
+   */
+  static get jwt() {
+    return Mentor.getInfoObject().jwt
+  }
+
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-components_Divider.html">components/Divider</a></li><li><a href="module-components_FormQuestion.html">components/FormQuestion</a></li><li><a href="module-components_FullWidthButton.html">components/FullWidthButton</a></li><li><a href="module-components_ListSectionHeader.html">components/ListSectionHeader</a></li><li><a href="module-components_ToggleButton.html">components/ToggleButton</a></li><li><a href="module-model_Actions.html">model/Actions</a></li><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Reducers.html">model/Reducers</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen.html">screens/EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen.html">screens/OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li></ul><h3>Classes</h3><ul><li><a href="module-model_Appointment.html">model/Appointment</a></li><li><a href="module-model_Mentee.html">model/Mentee</a></li><li><a href="module-model_Mentor.html">model/Mentor</a></li><li><a href="module-model_Notifications.html">model/Notifications</a></li><li><a href="module-model_Requests.html">model/Requests</a></li><li><a href="module-model_StoreHydrator.html">model/StoreHydrator</a></li><li><a href="module-screens_EmergencyAlertSentScreen-EmergencyAlertSentScreen.html">EmergencyAlertSentScreen</a></li><li><a href="module-screens_LoginScreen.html">screens/LoginScreen</a></li><li><a href="module-screens_LoginScreen-LoginScreen.html">LoginScreen</a></li><li><a href="module-screens_MeetingDetailsScreen.html">screens/MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingDetailsScreen-MeetingDetailsScreen.html">MeetingDetailsScreen</a></li><li><a href="module-screens_MeetingsScreen.html">screens/MeetingsScreen</a></li><li><a href="module-screens_MeetingsScreen-MeetingsScreen.html">MeetingsScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen.html">screens/MenteeFeedbackScreen</a></li><li><a href="module-screens_MenteeFeedbackScreen-MenteeFeedbackScreen.html">MenteeFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen.html">screens/MentorFeedbackScreen</a></li><li><a href="module-screens_MentorFeedbackScreen-MentorFeedbackScreen.html">MentorFeedbackScreen</a></li><li><a href="module-screens_OptionsScreen-OptionsScreen.html">OptionsScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen.html">screens/ScheduleAppointmentScreen</a></li><li><a href="module-screens_ScheduleAppointmentScreen-ScheduleAppointmentScreen.html">ScheduleAppointmentScreen</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 16 2018 05:10:54 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

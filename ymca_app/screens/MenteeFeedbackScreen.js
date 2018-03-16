@@ -1,3 +1,7 @@
+/**
+ * @module screens/MenteeFeedbackScreen
+ */
+
 import React from 'react';
 import { StyleSheet, Text, View, Image, FlatList, ScrollView, TextInput, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
@@ -6,11 +10,23 @@ import { FullWidthButton, FormQuestion, ToggleButton } from '../components'
 import { NavigationActions } from 'react-navigation'
 import { Requests, Mentee, Appointment, Mentor } from '../model'
 
+/**
+ * @class MenteeFeedbackScreen
+ * @extends React.Component
+ *
+ * React component for the mentee feedback screen. Gets displayed when an appointment is concluded.
+ */
 export default class MenteeFeedbackScreen extends React.Component {
+
+  /** Specifies navigation options for the current screen. */
   static navigationOptions = ({navigation}) => ({
       title: `Mentee Feedback`
   });
 
+  /**
+   * Sets appropriate state for the screen.
+   * @param {object} props - Props passed to the screen.
+   */
   constructor(props) {
     super(props)
 
@@ -26,20 +42,20 @@ export default class MenteeFeedbackScreen extends React.Component {
     }
   }
 
-  componentDidMount() {
-
-  }
-
+  /** Sets the screen state to reflect the happy toggle being selected. */
   happyPressed() {
     this.setState({happyToggled: true, impartialToggled: false, sadToggled: false})
   }
+  /** Sets the screen state to reflect the impartial toggle being selected. */
   impartialPressed() {
     this.setState({impartialToggled: true, happyToggled: false, sadToggled: false})
   }
+  /** Sets the screen state to reflect the sad toggle being selected. */
   sadPressed() {
     this.setState({sadToggled: true, happyToggled: false, impartialToggled: false})
   }
 
+  /** Sends the mentee's feedback to the server and prompts the mentor to schedule the next meeting. */
   doneButtonPressed() {
     let menteeFeedback = JSON.stringify({response: this.state.response})
     let menteeRating = this.sadToggled ? 1 : (this.impartialToggled ? 2 : (this.happyToggled ? 3 : 0))
@@ -51,6 +67,7 @@ export default class MenteeFeedbackScreen extends React.Component {
     })
   }
 
+  /** Asks the mentor if they would like to schedule the next meeting and acts accordingly. */
   promptScheduleNextMeeting() {
     let mentee = this.state.meeting.mentee
 
@@ -64,6 +81,7 @@ export default class MenteeFeedbackScreen extends React.Component {
     )
   }
 
+  /** Resets the navigation stack such that the mentor is at the schedule meeting screen. */
   scheduleNextMeeting() {
     const resetAction = NavigationActions.reset({
       index: 1,
@@ -80,18 +98,7 @@ export default class MenteeFeedbackScreen extends React.Component {
     this.props.navigation.dispatch(resetAction);
   }
 
-  resetNavStack() {
-    const resetAction = NavigationActions.reset({
-      index: 0,
-      actions: [
-        NavigationActions.navigate({
-          routeName: 'Meetings',
-        }),
-      ],
-    });
-    this.props.navigation.dispatch(resetAction);
-  }
-
+  /** Renders the component. */
   render() {
     return(
       <View style={BaseStyles.container}>
@@ -128,8 +135,4 @@ export default class MenteeFeedbackScreen extends React.Component {
       </View>
     )
   }
-
-  styles = StyleSheet.create({
-
-  });
 }

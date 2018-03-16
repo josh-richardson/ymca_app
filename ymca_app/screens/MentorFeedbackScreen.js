@@ -1,3 +1,7 @@
+/**
+ * @module screens/MentorFeedbackScreen
+ */
+
 import React from 'react';
 import { StyleSheet, Text, View, Image, FlatList, ScrollView, TextInput, Alert } from 'react-native';
 import { BaseStyles } from '../BaseStyles'
@@ -5,11 +9,23 @@ import { List, ListItem, Avatar, Button } from 'react-native-elements'
 import { FullWidthButton, FormQuestion } from '../components'
 import { Requests, Mentor, Mentee, Appointment, Notifications } from '../model'
 
+/**
+ * @class MentorFeedbackScreen
+ * @extends React.Component
+ *
+ * React component for the mentor feedback screen. Gets displayed after a meeting ends when the mentor presses the feedback button.
+ */
 export default class MentorFeedbackScreen extends React.Component {
+
+  /** Specifies navigation options for the current screen. */
   static navigationOptions = ({navigation}) => ({
       title: `Mentor Feedback`
   });
 
+  /**
+   * Sets appropriate state for the screen.
+   * @param {object} props - Props passed to the screen.
+   */
   constructor(props) {
     super(props)
 
@@ -24,10 +40,7 @@ export default class MentorFeedbackScreen extends React.Component {
     }
   }
 
-  componentDidMount() {
-
-  }
-
+  /** Sends the mentor's feedback and goes back to the previous screen. */
   doneButtonPressed() {
     let mentorFeedback = JSON.stringify({q1: this.state.response1, q2: this.state.response2, q3: this.state.response3, q4: this.state.response4, q5: this.state.response5})
     Requests.sendMentorFeedback(Mentor.jwt, this.state.meeting.id, mentorFeedback).then(response => {
@@ -39,6 +52,7 @@ export default class MentorFeedbackScreen extends React.Component {
     })
   }
 
+  /** Renders the component. */
   render() {
     return(
       <View style={BaseStyles.container}>
@@ -82,8 +96,4 @@ export default class MentorFeedbackScreen extends React.Component {
       </View>
     )
   }
-
-  styles = StyleSheet.create({
-
-  });
 }

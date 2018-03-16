@@ -1,8 +1,14 @@
+/**
+ * @module components/FullWidthButton
+ */
+
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default class FullWidthButton extends React.Component {
+
+  /** Renders the component. */
   render() {
     return(
     <TouchableOpacity

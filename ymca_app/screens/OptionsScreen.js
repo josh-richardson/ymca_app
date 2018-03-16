@@ -1,3 +1,7 @@
+/**
+ * @module screens/OptionsScreen
+ */
+
 import React from 'react'
 import { StyleSheet, Text, View, Image, FlatList, Alert, Linking } from 'react-native'
 import { BaseStyles } from '../BaseStyles'
@@ -7,19 +11,20 @@ import { NavigationActions } from 'react-navigation'
 
 import { store } from '../model'
 
+/**
+ * @class OptionsScreen
+ * @extends React.Component
+ *
+ * React component for the options screen. Gets displayed when the mentor presses the Options button from the main screen.
+ */
 export default class OptionsScreen extends React.Component {
+
+  /** Specifies navigation options for the current screen. */
   static navigationOptions = {
     title: 'Options',
   };
 
-  constructor(props) {
-    super(props)
-  }
-
-  componentDidMount() {
-
-  }
-
+  /** Goes back to the previous screen. */
   goBack() {
     this.props.navigation.goBack()
   }
@@ -40,6 +45,7 @@ export default class OptionsScreen extends React.Component {
     Linking.openURL("http://ymca.pw/reset_password")
   }
 
+  /** Renders the component. */
   render() {
     return(
       <View style={[BaseStyles.container, BaseStyles.centerChildrenHorizontally]}>
@@ -66,12 +72,13 @@ export default class OptionsScreen extends React.Component {
           style={{marginTop: '2%'}}
           backgroundColor='#0075ff'
           title="Go Back"
-		      iconName='arrow-left-box' // TODO: change this
+		      iconName='arrow-left-box'
         />
       </View>
     )
   }
 
+  /** Specifies styles used in the current component. */
   styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -80,5 +87,4 @@ export default class OptionsScreen extends React.Component {
       justifyContent: 'center',
     },
   });
-
 }
