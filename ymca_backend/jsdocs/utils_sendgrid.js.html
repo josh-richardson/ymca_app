@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: models/meeting.js</title>
+    <title>JSDoc: Source: utils/sendgrid.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: models/meeting.js</h1>
+    <h1 class="page-title">Source: utils/sendgrid.js</h1>
 
     
 
@@ -27,33 +27,32 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @module models/meeting
+ * @module utils/sendgrid
  */
 
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+
+const config = require('../config/config');
 
 /**
- * Define meeting schema, meetings have a mentor, mentee, address, start and end time (for when they're meant to start and stop), actual start and end time (for when they actually start and stop), notes from the mentor, and notes from the mentee, as well as a meeting rating from the mentee. The number of extensions is also stored as there's a maximum number of extensions.
- * @type {Schema}
+ * @method sendEmail - Sends an email via sendgrid.
+ * @param {string} to - The email address to which the email will be sent.
+ * @param {string} subject - The subject of the email.
+ * @param {string} message - The body of the email.
  */
-const meetingSchema = new Schema({
-    mentor: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-    mentee: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-    meetingAddress: {type: String, required: true},
-    startTime: {type: Date},
-    endTime: {type: Date},
-    actualStartTime: {type: Date},
-    actualEndTime: {type: Date},
-    mentor_notes: {type: String},
-    mentee_notes: {type: String},
-    mentee_rating: {type: Number},
-    number_of_extensions: {type: Number, default: 0},
-});
+const sendEmail = function (to, subject, message) {
+    const sgMail = require('@sendgrid/mail');
+    sgMail.setApiKey(config.sendgrid_api_key);
+    const msg = {
+        to: to,
+        from: 'mailer@ymca.pw',
+        subject: subject,
+        text: message,
+    };
+    sgMail.send(msg);
+};
 
 
-
-module.exports = mongoose.model('Meeting', meetingSchema);
+module.exports = {sendEmail};
 </code></pre>
         </article>
     </section>

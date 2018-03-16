@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: models/user</title>
+    <title>JSDoc: Module: utils/twilio</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: models/user</h1>
+    <h1 class="page-title">Module: utils/twilio</h1>
 
     
 
@@ -54,82 +54,6 @@
     
 
     
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id="~userSchema"><span class="type-signature">(inner, constant) </span>userSchema<span class="type-signature"> :Schema</span></h4>
-
-
-
-
-<div class="description">
-    User is a base schema for all objects which can log in.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Schema</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_user.js.html">models/user.js</a>, <a href="models_user.js.html#line14">line 14</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -140,7 +64,7 @@
     
 
     
-    <h4 class="name" id="~hashPassword-Methodtohashpasswordswhenuseriscreated."><span class="type-signature">(inner) </span>hashPassword - Method to hash passwords when user is created.<span class="signature">(password)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="~sendEmergencyCall-SendsacallviaTwillio."><span class="type-signature">(inner) </span>sendEmergencyCall - Sends a call via Twillio.<span class="signature">(to)</span><span class="type-signature"></span></h4>
     
 
     
@@ -180,7 +104,7 @@
 
         <tr>
             
-                <td class="name"><code>password</code></td>
+                <td class="name"><code>to</code></td>
             
 
             <td class="type">
@@ -196,7 +120,7 @@
 
             
 
-            <td class="description last">The password to hash.</td>
+            <td class="description last">The number to which the call will be sent.</td>
         </tr>
 
     
@@ -237,7 +161,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_user.js.html">models/user.js</a>, <a href="models_user.js.html#line20">line 20</a>
+        <a href="utils_twilio.js.html">utils/twilio.js</a>, <a href="utils_twilio.js.html#line23">line 23</a>
     </li></ul></dd>
     
 
@@ -260,28 +184,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The hashed password.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -293,111 +195,7 @@
     
 
     
-    <h4 class="name" id="~toJSON-RemovesuserpasswordwhenuserisserializedtoJSON."><span class="type-signature">(inner) </span>toJSON - Removes user password when user is serialized to JSON.<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h4>
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_user.js.html">models/user.js</a>, <a href="models_user.js.html#line39">line 39</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The user object without the password.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="~validPassword-Methodtocheckagivenpasswordisvalidwhenauserattemptstologin."><span class="type-signature">(inner) </span>validPassword - Method to check a given password is valid when a user attempts to log in.<span class="signature">(password)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="~sendSms-SendsanSMSviaTwillio."><span class="type-signature">(inner) </span>sendSms - Sends an SMS via Twillio.<span class="signature">(to, message)</span><span class="type-signature"></span></h4>
     
 
     
@@ -437,7 +235,7 @@
 
         <tr>
             
-                <td class="name"><code>password</code></td>
+                <td class="name"><code>to</code></td>
             
 
             <td class="type">
@@ -453,7 +251,30 @@
 
             
 
-            <td class="description last">The password to check validity.</td>
+            <td class="description last">The number to which the SMS will be sent.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The body of the SMS.</td>
         </tr>
 
     
@@ -494,7 +315,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_user.js.html">models/user.js</a>, <a href="models_user.js.html#line30">line 30</a>
+        <a href="utils_twilio.js.html">utils/twilio.js</a>, <a href="utils_twilio.js.html#line9">line 9</a>
     </li></ul></dd>
     
 
@@ -517,28 +338,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Whether the password is valid.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 

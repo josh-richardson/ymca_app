@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: models/meeting.js</title>
+    <title>JSDoc: Source: utils/twilio.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: models/meeting.js</h1>
+    <h1 class="page-title">Source: utils/twilio.js</h1>
 
     
 
@@ -27,33 +27,44 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @module models/meeting
+ * @module utils/twilio
  */
 
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const config = require('../config/config');
+const twilio = require('twilio');
+const client = new twilio(config.twilio_sid, config.twilio_token);
 
 /**
- * Define meeting schema, meetings have a mentor, mentee, address, start and end time (for when they're meant to start and stop), actual start and end time (for when they actually start and stop), notes from the mentor, and notes from the mentee, as well as a meeting rating from the mentee. The number of extensions is also stored as there's a maximum number of extensions.
- * @type {Schema}
+ * @method sendSms - Sends an SMS via Twillio.
+ * @param {string} to - The number to which the SMS will be sent.
+ * @param {string} message - The body of the SMS.
  */
-const meetingSchema = new Schema({
-    mentor: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-    mentee: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-    meetingAddress: {type: String, required: true},
-    startTime: {type: Date},
-    endTime: {type: Date},
-    actualStartTime: {type: Date},
-    actualEndTime: {type: Date},
-    mentor_notes: {type: String},
-    mentee_notes: {type: String},
-    mentee_rating: {type: Number},
-    number_of_extensions: {type: Number, default: 0},
-});
+const sendSms = function (to, message) {
+    client.messages.create({
+        body: message,
+        to: to,
+        from: config.twilio_number
+    }).then((message) => console.log(message.sid));
+};
 
 
+/**
+ * @method sendEmergencyCall - Sends a call via Twillio.
+ * @param {string} to - The number to which the call will be sent.
+ */
+const sendEmergencyCall = function (to) {
+    //todo: change to a self-hosted XML file
+    client.api.calls
+        .create({
+            url: 'http://demo.twilio.com/docs/voice.xml',
+            to: to,
+            from: config.twilio_number,
+        })
+        .then((call) => console.log(call.sid));
+};
 
-module.exports = mongoose.model('Meeting', meetingSchema);
+
+module.exports = {sendSms, sendEmergencyCall};
 </code></pre>
         </article>
     </section>
