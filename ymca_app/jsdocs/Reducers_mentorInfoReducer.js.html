@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: Actions/mentorInfoActions.js</title>
+    <title>JSDoc: Source: Reducers/mentorInfoReducer.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: Actions/mentorInfoActions.js</h1>
+    <h1 class="page-title">Source: Reducers/mentorInfoReducer.js</h1>
 
     
 
@@ -27,24 +27,24 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @module model/Actions
+ * @module model/Reducers
  */
 
-// MARK: Action Types
-
-/** Identifier for the set mentor info action. */
-export const SET_INFO = 'SET_INFO'
-
-// MARK: Action Creators
+import { SET_INFO } from '../Actions/mentorInfoActions'
 
 /**
- * Redux action for setting appointments in bulk.
+ * Redux reducer for mentor info.
  *
- * @param {object} info - JS object that contains mentor information, ideally the one recieved from the online API.
- * @return {object} Returns an action suitable to be used in the store action dispatcher.
+ * @param {object} state - Current state of the mentor info store. Typically an onject.
+ * @param {string} action - The ID of the action to be taken.
  */
-export function setInfo(info) {
-  return { type: SET_INFO, info }
+export default function mentorInfo(state = {}, action) {
+  switch(action.type) {
+    case SET_INFO:
+      state = action.info
+  }
+
+  return state
 }
 </code></pre>
         </article>

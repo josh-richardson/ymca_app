@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: Actions/mentorInfoActions.js</title>
+    <title>JSDoc: Source: Reducers/appointmentReducer.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: Actions/mentorInfoActions.js</h1>
+    <h1 class="page-title">Source: Reducers/appointmentReducer.js</h1>
 
     
 
@@ -27,24 +27,37 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @module model/Actions
+ * @module model/Reducers
  */
 
-// MARK: Action Types
-
-/** Identifier for the set mentor info action. */
-export const SET_INFO = 'SET_INFO'
-
-// MARK: Action Creators
+import { ADD_APPOINTMENT, REMOVE_APPOINTMENT, SET_APPOINTMENTS, UPDATE_APPOINTMENT } from '../Actions/appointmentActions'
 
 /**
- * Redux action for setting appointments in bulk.
+ * Redux reducer for appointments.
  *
- * @param {object} info - JS object that contains mentor information, ideally the one recieved from the online API.
- * @return {object} Returns an action suitable to be used in the store action dispatcher.
+ * @param {array} state - Current state of the appointments store. Typically an array.
+ * @param {string} action - The ID of the action to be taken.
  */
-export function setInfo(info) {
-  return { type: SET_INFO, info }
+export default function appointments(state = [], action) {
+  switch(action.type) {
+    case ADD_APPOINTMENT:
+      return [...state, action.appointmentObject]
+
+    case REMOVE_APPOINTMENT:
+      return state.filter(appointment => action.id != appointment.id)
+
+    case SET_APPOINTMENTS:
+      return action.appointmentObjects
+
+    case UPDATE_APPOINTMENT:
+      return state.map(appointment => {
+        if(action.id == appointment.id) { return action.newAppointmentObject }
+        return appointment
+      })
+
+  }
+
+  return state
 }
 </code></pre>
         </article>

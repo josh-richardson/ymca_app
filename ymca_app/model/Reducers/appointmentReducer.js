@@ -1,5 +1,15 @@
+/**
+ * @module model/Reducers
+ */
+
 import { ADD_APPOINTMENT, REMOVE_APPOINTMENT, SET_APPOINTMENTS, UPDATE_APPOINTMENT } from '../Actions/appointmentActions'
 
+/**
+ * Redux reducer for appointments.
+ *
+ * @param {array} state - Current state of the appointments store. Typically an array.
+ * @param {string} action - The ID of the action to be taken.
+ */
 export default function appointments(state = [], action) {
   switch(action.type) {
     case ADD_APPOINTMENT:
