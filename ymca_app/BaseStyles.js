@@ -1,5 +1,10 @@
+/**
+ * @module BaseStyles
+ */
+
 import { StyleSheet } from 'react-native';
 
+/** A style sheet object containing some commonly used styles in the app. */
 export const BaseStyles = StyleSheet.create({
 
   container: {
