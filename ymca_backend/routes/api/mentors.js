@@ -95,11 +95,7 @@ router.post('/meetings/extend', passport.authenticate('jwt', {session: false}), 
         const data = matchedData(req);
         meeting.findOne({_id: data.id, mentor: req.user}, (err, meeting) => {
             if (err) {
-<<<<<<< HEAD:ymca_backend/routes/api/methods.js
-                res.json({error: "Failed to find", success:false});
-=======
                 res.json({error: "Failed to find", success: false});
->>>>>>> backend-rewrite:ymca_backend/routes/api/mentors.js
             }
             if (meeting.number_of_extensions === undefined || meeting.number_of_extensions === null) {
                 meeting.number_of_extensions = 0;

@@ -1,8 +1,16 @@
+/**
+ * @module utils/twilio
+ */
+
 const config = require('../config/config');
 const twilio = require('twilio');
 const client = new twilio(config.twilio_sid, config.twilio_token);
 
-//Sends an SMS message
+/**
+ * @method sendSms - Sends an SMS via Twillio.
+ * @param {string} to - The number to which the SMS will be sent.
+ * @param {string} message - The body of the SMS.
+ */
 const sendSms = function (to, message) {
     client.messages.create({
         body: message,
@@ -12,7 +20,10 @@ const sendSms = function (to, message) {
 };
 
 
-//Sends a voice call, not working yet.
+/**
+ * @method sendEmergencyCall - Sends a call via Twillio.
+ * @param {string} to - The number to which the call will be sent.
+ */
 const sendEmergencyCall = function (to) {
     //todo: change to a self-hosted XML file
     client.api.calls

@@ -1,3 +1,7 @@
+/**
+ * @module utils/api_utils
+ */
+
 const mongoose = require('mongoose');
 const {check, validationResult} = require('express-validator/check');
 const {matchedData, sanitize} = require('express-validator/filter');
@@ -7,7 +11,13 @@ const manager = require('../models/users/manager');
 const user = require('../models/user');
 const onymous = require('../models/onymous');
 
-//Checks if a database object exists by key and value
+/**
+ * @method objectExistsByKey - Checks if a database object exists by key and value.
+ * @param {string} model - The database object type.
+ * @param {string} key - The key to look by.
+ * @param {string} value - The value to look by.
+ * @return {boolean} Whether the object exists.
+ */
 const objectExistsByKey = function (model, key, value) {
     return new Promise(function (resolve, reject) {
         model.findOne({[key]: value}, function (err, result) {
@@ -18,7 +28,13 @@ const objectExistsByKey = function (model, key, value) {
     });
 };
 
-//Returns a database object if it exists by a key and value
+/**
+ * @method findObjectByKey - Returns a database object if it exists by a key and value.
+ * @param {string} model - The database object type.
+ * @param {string} key - The key to look by.
+ * @param {string} value - The value to look by.
+ * @return {object} - The object if found.
+ */
 const findObjectByKey = function (model, key, value) {
     return new Promise(function (resolve, reject) {
         model.findOne({[key]: value}, function (err, result) {
@@ -29,7 +45,12 @@ const findObjectByKey = function (model, key, value) {
     });
 };
 
-//Creates a user when passed a user type object for the given user.
+/**
+ * @method createUser - Creates a user when passed a user type object for the given user.
+ * @param {object} value - JS object with details of user to be created.
+ * @param {object} userObject - User model type.
+ * @return {user} The user object, if successfully created.
+ */
 const createUser = (value, userObject) => {
     return new Promise((resolve, reject) => {
         const newUser = new user();
@@ -51,7 +72,11 @@ const createUser = (value, userObject) => {
     })
 };
 
-//Creates a mentor & returns it
+/**
+ * @method createMentor - Creates a mentor and returns it.
+ * @param {object} value - JS object containing mentor details.
+ * @return {mentor} The mentor object, if successfully created.
+ */
 const createMentor = (value) => {
     return new Promise((resolve, reject) => {
         const mentorObject = new mentor();
@@ -66,7 +91,11 @@ const createMentor = (value) => {
     });
 };
 
-//Creates an admin and returns it
+/**
+ * @method createAdmin - Creates an admin and returns it.
+ * @param {object} value - JS object containing admin details.
+ * @return {mentor} The admin object, if successfully created.
+ */
 const createAdmin = (value) => {
     return new Promise((resolve, reject) => {
         const adminObject = new admin();
@@ -81,7 +110,11 @@ const createAdmin = (value) => {
     });
 };
 
-//Creates a manager and returns it
+/**
+ * @method createManager - Creates a manager and returns it.
+ * @param {object} value - JS object containing manager details.
+ * @return {manager} The manager object, if successfully created.
+ */
 const createManager = (value) => {
     return new Promise((resolve, reject) => {
         const managerObject = new manager();

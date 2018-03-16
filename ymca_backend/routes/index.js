@@ -1,3 +1,7 @@
+/**
+ * @module routes
+ */
+
 const sendgrid = require("../utils/sendgrid");
 
 const express = require('express');
@@ -18,7 +22,10 @@ const memcached = new Memcached('127.0.0.1:11211');
 * https://documenter.getpostman.com/view/3091732/ymca/77o3fiZ#5121651f-1cf6-9bf1-faeb-3c634ccccf73
 * */
 
-/* GET home page. */
+/**
+ * GET home page.
+ * @method get_home
+ */
 router.get('/', function (req, res, next) {
     res.json({message: 'Welcome to our API'});
 });
@@ -27,7 +34,11 @@ router.get('/', function (req, res, next) {
 //     res.render("reset_password", {})
 // });
 
-//Sends a reset password email to a given email address.
+/**
+ * Sends a reset password email to a given email address.
+ * @method send_reset_email
+ * @param {string} email - The email address associated with the account to reset.
+ */
 router.post('/send_reset_email', [check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail().escape()], function (req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -48,6 +59,13 @@ router.post('/send_reset_email', [check('email').isEmail().withMessage('Invalid 
     res.json({progressed: true});
 });
 
+/**
+ * Resets a password.
+ * @method reset_password
+ * @param {string} email - Email address associated with the account.
+ * @param {string} password - New password.
+ * @param {string} code - Password reset code
+ */
 router.post('/reset_password', [
     check('email').isEmail().withMessage('Invalid email').trim().normalizeEmail().escape(),
     check('password', 'Passwords must be at least 5 characters').isLength({min: 5}),

@@ -1,12 +1,14 @@
+/**
+ * @module models/meeting
+ */
 
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-/*
-Define meeting schema, meetings have a mentor, mentee, address, start and end time (for when they're meant to start and stop),
-actual start and end time (for when they actually start and stop), notes from the mentor, and notes from the mentee, as well as a
-meeting rating from the mentee. The number of extensions is also stored as there's a maximum number of extensions.
-*/
+/**
+ * Define meeting schema, meetings have a mentor, mentee, address, start and end time (for when they're meant to start and stop), actual start and end time (for when they actually start and stop), notes from the mentor, and notes from the mentee, as well as a meeting rating from the mentee. The number of extensions is also stored as there's a maximum number of extensions.
+ * @type {Schema}
+ */
 const meetingSchema = new Schema({
     mentor: {type: Schema.Types.ObjectId, ref: 'User', required: true},
     mentee: {type: Schema.Types.ObjectId, ref: 'User', required: true},
