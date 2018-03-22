@@ -241,7 +241,7 @@ export default class Appointment {
    * @type {array}
    */
   static get inProgressAppointments() {
-    return Appointment.allAppointments.filter(appointment => appointment.isInProgress && appointment.needsFeedback)
+    return Appointment.allAppointments.filter(appointment => appointment.isInProgress)
   }
 
   /**
